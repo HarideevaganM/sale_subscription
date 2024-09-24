@@ -2,12 +2,12 @@ from odoo import models, fields, _
 from odoo.exceptions import UserError
 from .account_edi_proxy_auth import OdooEdiProxyAuth
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.fernet import Fernet
+# from cryptography.hazmat.backends import default_backend
+# from cryptography.hazmat.primitives.asymmetric import rsa
+# from cryptography.hazmat.primitives import serialization
+# from cryptography.hazmat.primitives import hashes
+# from cryptography.hazmat.primitives.asymmetric import padding
+# from cryptography.fernet import Fernet
 from psycopg2 import OperationalError
 import requests
 import uuid

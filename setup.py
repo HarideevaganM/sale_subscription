@@ -25,7 +25,7 @@ setup(
     install_requires=[
         'babel >= 1.0',
         'chardet',
-        'cryptography',
+        # 'cryptography',
         'decorator',
         'docutils',
         'gevent',
