@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!--Adding customer class below the customer name in CSM-->
+        <record id="bbis_customer_support_inherit" model="ir.ui.view">
+            <field name="name">bbis.customer.support.form</field>
+            <field name="model">fms.customer.support</field>
+            <field name="inherit_id" ref="fms_customer_support.fms_customer_support_form_view"/>
+            <field name="arch" type="xml">
+                <!--Customer class below the customer-->
+                <xpath expr="//field[@name='partner_id']" position= 'after'>
+                    <field name="customer_class"/>
+                    <field name="approve_customer_x" invisible="1"/>
+                </xpath>
+
+                <!-- Add buttons for customer class x approval -->
+                 <button name="button_confirm" position="before">
+                     <button name="action_approve_customer_x" string="Approve Customer X" type="object"
+                             attrs="{'invisible': ['|', ('customer_class', '!=', 'class_x'), ('approve_customer_x', '=', True)]}"
+                             groups="account.group_account_manager"/>
+                 </button>
+
+                <!-- Make customer readonly after order has opened so that approve customer x button will not
+                show again if they edited the customer -->
+                <xpath expr="//field[@name='partner_id']" position= 'attributes'>
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

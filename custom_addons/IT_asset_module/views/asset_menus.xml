@@ -1,0 +1,36 @@
+<odoo>
+    <data>
+        <menuitem name="Asset Management" id="IT_asset_menu_root" groups="base.group_user" sequence="200" />
+<!--                  web_icon="IT_asset_module,static/description/icon.png"-->
+
+
+        <menuitem name="Operation" id="IT_operation_menu_root" parent="IT_asset_menu_root" groups="base.group_user" sequence="10"/>
+
+        <menuitem name="Report" id="IT_report_menu_root" parent="IT_asset_menu_root" groups="base.group_user" sequence="20"/>
+
+
+        <record id="IT_configuration_menu_root" model="ir.ui.menu">
+            <field name="name">Configuration</field>
+            <field name="parent_id" eval="ref('IT_asset_menu_root')" />
+            <field name="sequence">40</field>
+            <field name="groups_id" eval="[(6, 0 ,[ref('IT_asset_module.group_requester'), ref('base.group_no_one')])]"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock_location_action">
+            <field name="name">Stock</field>
+            <field name="res_model">stock.location</field>
+            <!--          <field name="view_type">form</field>-->
+             <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_internal_loc': 1}</field>
+
+        </record>
+
+
+        <menuitem name="Location" id="IT_stock_location_menu" parent="IT_configuration_menu_root"
+                  action="stock_location_action" groups="IT_asset_module.group_requester" sequence="20"/>
+
+
+
+
+    </data>
+</odoo>

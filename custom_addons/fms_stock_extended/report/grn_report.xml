@@ -1,0 +1,158 @@
+<odoo>
+    <data>
+
+        <template id="fms_report_delivery_document" inherit_id="stock.report_delivery_document">
+            <xpath expr="//t[@t-if='o.backorder_ids and backorders']" position="after">
+                <div>
+                    <p>Should you have any enquiries concerning this delivery slip, please call the Operations
+                        department at +971 2 555 4991
+                    </p>
+                </div>
+            </xpath>
+        </template>
+
+        <template id="action_stock_picking_extended_document">
+            <t t-call="fms_stock_extended.fms_stock_external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <img src="/fms_stock_extended/static/img/black_box.jpeg" width="250" height="120"/><br/>
+                        </div>
+                        <div class="col-xs-6" style="text-align: right;">
+                            <div t-field="o.partner_id" 
+                                t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True}'/>
+                            <span t-field="o.partner_id.vat"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12" style="text-align: center;font-size: 30px;font-weight: 700;">
+                            GOODS RECEIVED NOTE
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top: 50px;">
+                        <div class="col-xs-6">
+                            <span><strong>SUPPLIER DETAILS:</strong></span>
+                            <table>
+                                <tr>
+                                    <td style="width: 35%;">Name:</td>
+                                    <td><span t-field="o.partner_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 35%;">Code:</td>
+                                    <td><span t-field="o.code"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 35%;">Address:</td>
+                                    <td>PO Box 16095, Ras Al Khaimah, UAE</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 35%;">Tel No.:</td>
+                                    <td><span t-field="o.partner_id.phone"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 35%;">E-mail Address:</td>
+                                    <td><span t-field="o.partner_id.email"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="col-xs-6">
+                            <span><strong>RECEIPT DETAILS:</strong></span>
+                            <table>
+                                <tr>
+                                    <td style="width: 50%;">GRN No.:</td>
+                                    <td><t t-esc="o.name"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%;">Received Date:</td>
+                                    <td t-if="o.scheduled_date">
+                                       <span t-field="o.scheduled_date"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%;">Courier:</td>
+                                    <td><span t-field="o.courier"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50%;">AWB No:</td>
+                                    <td><span t-field="o.awb_no"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <style>
+                            .table_border > thead > tr > th {
+                                border: solid 1px black;
+                                text-align: center;
+                                padding: 5px;
+                            }
+                            .table_border > tbody > tr > td {
+                                border: solid 1px black;
+                                text-align: center;
+                            }
+                    </style>
+                    <div class="row" style="padding-top: 50px;">
+                        <table class="table_border" style="width: 100%;">
+                            <thead>
+                                <tr style="background-color: lightgray;">
+                                    <th>SN</th>
+                                    <th>PRODUCT CODE</th>
+                                    <th>PRODUCT DESCRIPTION</th>
+                                    <th>SERIAL NO.</th>
+                                    <th>PO NO.</th>
+                                    <th>DO NO.</th>
+                                    <th>ORDER QTY</th>
+                                    <th>RECEIVED QTY</th>
+                                    <th>REMARKS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="lines" t-value="o.move_line_ids"/>
+                                <tr t-foreach="lines" t-as="l">
+                                    <td><t t-esc="l_index+1"/></td>
+                                    <td><span t-field="l.product_id.default_code"/></td>
+                                    <td><span t-field="l.product_id.name"/></td>
+                                    <td><span t-field="l.lot_id.name"/></td>
+                                    <td><span t-field="l.picking_id.po_number"/></td>
+                                    <td><span t-field="l.picking_id.name"/></td>
+                                    <td><span t-field="l.move_id.product_uom_qty"/></td>
+                                    <td><span t-field="l.qty_done"/></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" style="padding-top: 50px;">
+                        <div class="col-xs-6" style="text-align: center">
+                            <span><strong>Received by:</strong></span><br/>
+                            <span> - </span>
+                        </div>
+                        <div class="col-xs-6" style="text-align: center">
+                            <span><strong>Approved by:</strong></span><br/>
+                            <span t-if="o.supervisor_id">
+                                <span t-esc="o.supervisor_id and o.supervisor_id.name"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <p>Should you have any enquiries concerning this GRN, please call Operation department at + 971 2 555 4991</p>
+            </t>
+        </template>
+
+        <template id="report_stock_picking_extended">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="fms_stock_extended.action_stock_picking_extended_document" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Menu-->
+        <menuitem id="menu_itc_permit_root" name="ITC Permit" parent="sale_subscription.menu_sale_subscription_root" sequence="6"/>
+        <menuitem id="menu_itc_permit" name="ITC Permit" action="itc_permit_action"
+                  parent="bbis_itc_permits.menu_itc_permit_root" sequence="10"/>
+        <menuitem id="menu_itc_permit_update" name="ITC Permit Status Update" action="bbis_itc_permits.itc_permit_status_update"
+                  parent="bbis_itc_permits.menu_itc_permit_root" sequence="20"/>
+
+        <record id="sale_subscription.menu_report_product_all" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4,ref('bbis_itc_permits.group_itc_permit_users'))]"/>
+        </record>
+    </data>
+</odoo>

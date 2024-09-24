@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Group for ITC Permit Users-->
+        <record id="group_itc_permit_users" model="res.groups">
+            <field name="name">ITC Permit Users</field>
+        </record>
+
+        <!-- Group for ITC Permit Mail Users-->
+        <record id="group_itc_mail_users" model="res.groups">
+            <field name="name">ITC - Mail Users</field>
+        </record>
+
+    </data>
+</odoo>

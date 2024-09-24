@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <!-- Add email_cc -->
+        <record model="ir.ui.view" id="bbis_email_compose_form_inherit">
+            <field name="name">bbis.mail.compose.message.form.inherit</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='subject']" position="before">
+                    <field name="email_cc"/>
+                </xpath>
+            </field>
+        </record>
+
+</odoo>

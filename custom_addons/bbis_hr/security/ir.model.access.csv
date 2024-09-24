@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+hr_working_branch,hr_working_branch,model_hr_working_branch,hr_attendance.group_hr_attendance_user,1,1,1,1
+bbis_process_leave_adjustment,bbis process leave adjustment,model_process_leave_adjustments,hr_holidays.group_hr_holidays_user,1,1,1,1
+hr_work_outside,hr_work_outside,model_hr_work_outside,base.group_user,1,1,1,1
+hr_employee_private,hr_employee_private,model_hr_employee_private,hr.group_hr_manager,1,1,1,1
+leave_report_wizard,leave_report_wizard,model_leave_report_wizard,hr_holidays.group_hr_holidays_manager,1,1,1,1
+leave_report_wizard_accounts,leave_report_wizard_accounts,model_leave_report_wizard,account.group_account_manager,1,1,1,1
+hr_holidays_report,hr_holidays_report,model_hr_holidays_report,hr_holidays.group_hr_holidays_manager,1,1,1,1
+hr_holidays_report_accounts,hr_holidays_report_accounts,model_hr_holidays_report,account.group_account_manager,1,1,1,1

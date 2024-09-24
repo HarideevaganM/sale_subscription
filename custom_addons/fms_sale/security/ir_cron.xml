@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	
+	<record model="ir.cron" id="ir_cron_confirmation_renewal">
+            <field name="name">Renewal List</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_contract_order"/>
+            <field name="state" >code</field>
+            <field name="code">model.cron_renewal()</field>
+    </record>
+
+	<record model="ir.cron" id="ir_cron_renewal_mail_intimations">
+		<field name="name">Renewal List Intimation</field>
+		<field name="user_id" ref="base.user_root"/>
+		<field name="interval_number">1</field>
+		<field name="interval_type">days</field>
+		<field name="numbercall">-1</field>
+		<field name="doall" eval="False"/>
+		<field name="model_id" ref="model_contract_order"/>
+		<field name="state" >code</field>
+		<field name="code">model.renewal_mail()</field>
+    </record>
+    
+    <record model="ir.cron" id="ir_cron_confirmation_alert_id">
+            <field name="name">Email Alert To Account holder and the Managers For Pending Orders</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="state" >code</field>
+            <field name="code">model.email_alert_for_pending_order()</field>
+      </record>  
+      
+
+	
+	</data>
+
+</odoo>

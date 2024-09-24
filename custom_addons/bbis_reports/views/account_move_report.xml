@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <menuitem id="bbis_account_reports_legal_statements_menu" name="BBIS Reports" parent="account.menu_finance_reports" sequence="2" groups="account.group_account_user"/>
+
+        <!-- Accounting Report Base -->
+        <record id="account_move_report_tree" model="ir.ui.view">
+            <field name="name">account.move.report.tree</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <tree string="Journal Entries">
+                    <field name="date"/>
+                    <field name="move_id"/>
+                    <field name="journal_id"/>
+                    <field name="account_id"/>
+                    <field name="partner_id"/>
+                    <field name="credit" sum="Total Credit"/>
+                    <field name="debit" sum="Total Debit"/>
+                    <field name="balance" sum="Total Balance"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_move_report_form" model="ir.ui.view">
+            <field name="name">account.move.report.form</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <form string="Journal Entries">
+                    <sheet>
+                        <group>
+                            <group >
+                                <field name="date"/>
+                                <field name="partner_id"/>
+                                <field name="product_id"/>
+                                <field name="prod_category_id"/>
+                            </group>
+                            <group string="Amount">
+                                <field name="debit"/>
+                                <field name="credit"/>
+                                <field name="balance"/>
+                                <field name="quantity"/>
+                            </group>
+                            <group string="Account">
+                                <field name="move_id"/>
+                                <field name="journal_id"/>
+                                <field name="invoice_id"/>
+                                <field name="account_id"/>
+                                <field name="account_type_id"/>
+                                <field name="account_group_id"/>
+
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_move_report_search" model="ir.ui.view">
+            <field name="name">account.move.report.search</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter string="This Month" name="this_month" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <filter string="Last Month" name="last_month" domain="['&amp;', ('date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-01')), ('date', '&lt;', context_today().strftime('%%Y-%%m-01'))]"/>
+                    <separator/>
+                    <filter string="This Year" name="this_year" domain="[('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                    <filter string="Last Year" name="last_year" domain="['&amp;', ('date', '&gt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-01-01')), ('date', '&lt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-12-31'))]"/>
+                    <separator/>
+                    <filter string="Posted" name="posted_entries" domain="[('move_id.state','=','posted')]"/>
+                    <filter string="Unposted" name="unposted_entries" domain="[('move_id.state','=','draft')]"/>
+                    <!--<separator/>-->
+                    <!--<filter string="Financial Performance" invisible="1" context="{'group_by':['account_type_id', 'account_group_id', 'account_id']}"
+                            domain="[('account_type_id', 'in', (14,13,17,16,15))]" help="Financial Performance" name="financial_performance"/>-->
+                    <!--<filter string="Sales" invisible="1" domain="[('account_type_id', '=', 14)]" help="Sales Report" name="sales_report"/>-->
+                    <!--<filter string="Purchases" invisible="1" domain="[('account_type_id', '=', 17),('account_id.code','=','221100')]" help="Purchases Report" name="purchases_report"/>-->
+                    <!--<filter string="Receipts" invisible="1" domain="[('journal_id.type', 'in', ('cash','bank')),('account_id.code','=','132200')]" help="Receipts Report" name="receipts_report"/>-->
+                    <!--<filter string="Installations" invisible="1" domain="[('prod_category_id', '=', 'Unit Device'), ('account_type_id', '=', 14)]" help="Installations Report" name="installation_report"/>-->
+                    <!-- <filter string="Receivables" invisible="1" domain="[('account_id.internal_type', '=', 'receivable')]" help="Receivables Report" name="receivables_report"/>-->
+                </search>
+            </field>
+        </record>
+
+        <record id="action_account_move_report" model="ir.actions.act_window">
+            <field name="name">Journal Entries Report</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_id" ref="account_move_report_tree"/>
+            <field name="view_mode">tree,form,pivot,graph</field>
+        </record>
+        <!-- <menuitem action="action_account_move_report" id="menu_account_move_report" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="11" groups="account.group_account_manager" />-->
+        <!-- End: Accounting Report Base -->
+
+        <!-- Financial Performance -->
+        <record id="account_move_report_income_pivot" model="ir.ui.view">
+            <field name="name">account.move.income.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Journal Entries">
+                    <field name="journal_id" type="row"/>
+                    <field name="date" type="col"/>
+                    <field name="balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_income_graph" model="ir.ui.view">
+            <field name="name">account.move.income.graph</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <graph string="Financial Performance" type="bar">
+                    <field name="date"/>
+                    <field name="balance" operator="+" type='measure'/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_income" model="ir.actions.act_window">
+            <field name="name">Financial Performance</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('account_type_id', 'in', (14,13,17,16,15))]</field>
+            <field name="context">{'group_by':['account_type_id', 'account_group_id', 'account_id'], 'search_default_this_year': 1, 'search_default_posted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_income_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_income_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_income"/>
+        </record>
+
+        <record id="action_account_move_report_income_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_income_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_income"/>
+        </record>
+        <!-- End: Actions -->
+
+        <menuitem action="action_account_move_report_income" id="menu_account_move_report_income" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="12" groups="account.group_account_manager" />
+        <!-- End: Financial Performance -->
+
+        <!-- Sales Report -->
+        <record id="account_move_report_sales_tree" model="ir.ui.view">
+            <field name="name">account.move.sales.tree</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <tree string="Sales">
+                    <field name="date"/>
+                    <field name="product_id"/>
+                    <field name="prod_category_id"/>
+                    <field name="partner_id"/>
+                    <field name="quantity" sum="Total Quantity"/>
+                    <field name="credit" sum="Total Credit"/>
+                    <field name="debit" sum="Total Debit"/>
+                    <field name="balance" sum="Total Balance"/>
+                    <field name="tax" sum="Total Tax"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_move_report_sales_graph" model="ir.ui.view">
+            <field name="name">account.move.sales.graph</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Sales" type="pie">
+                    <field name="prod_category_id" type="row"/>
+                    <field name="credit" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="account_move_report_sales_pivot" model="ir.ui.view">
+            <field name="name">account.move.sales.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales">
+                    <field name="account_id" type="row"/>
+                    <field name="prod_category_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="credit" type="measure"/>
+                    <field name="debit" type="measure"/>
+                    <field name="balance" type="measure"/>
+                    <field name="tax" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_sales" model="ir.actions.act_window">
+            <field name="name">Sales Report</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('account_type_id', '=', 14)]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_sales_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_sales_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_sales"/>
+        </record>
+
+        <record id="action_account_move_report_sales_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_sales_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_sales"/>
+        </record>
+
+        <record id="action_account_move_report_sales_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_move_report_sales_tree"/>
+            <field name="act_window_id" ref="action_account_move_report_sales"/>
+        </record>
+        <!-- End: Actions -->
+
+        <menuitem action="action_account_move_report_sales" id="menu_account_move_report_sales" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="13" groups="account.group_account_manager" />
+        <!-- End: Sales Report -->
+
+        <!--  Sales Report Quantity -->
+        <record id="account_move_report_sales_qty_pivot" model="ir.ui.view">
+            <field name="name">account.move.sales.qty.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales">
+                    <field name="account_id" type="row"/>
+                    <field name="prod_category_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="quantity" type="measure" widget="integer"/>
+                    <field name="balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_sales_qty_graph" model="ir.ui.view">
+            <field name="name">account.move.sales.qty.graph</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Sales" type="bar">
+                    <field name="prod_category_id" type="row"/>
+                    <field name="quantity" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_sales_qty" model="ir.actions.act_window">
+            <field name="name">Sales Report - Quantity</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('account_type_id', '=', 14)]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_sales_qty_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_sales_qty_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_sales_qty"/>
+        </record>
+
+        <record id="action_account_move_report_sales_qty_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_sales_qty_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_sales_qty"/>
+        </record>
+
+        <record id="action_account_move_report_sales_qty_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_move_report_sales_tree"/>
+            <field name="act_window_id" ref="action_account_move_report_sales_qty"/>
+        </record>
+        <!-- End: Actions -->
+
+        <menuitem action="action_account_move_report_sales_qty" id="menu_account_move_report_sales_qty" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="14" groups="account.group_account_manager" />
+        <!--  End: Sales Report Quantity -->
+
+        <!--  Purchases -->
+        <record id="account_move_report_purchase_pivot" model="ir.ui.view">
+            <field name="name">account.move.purchase.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Purchases">
+                    <field name="partner_id" type="row"/>
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="debit" type="measure"/>
+                    <field name="credit" type="measure"/>
+                    <field name="balance" type="measure"/>
+                    <field name="quantity" type="measure" widget="integer"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_purchase_graph" model="ir.ui.view">
+            <field name="name">account.move.purchase.graph</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Purchases" type="bar" stacked="1">
+                    <field name="date" type="row"/>
+                    <field name="credit" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_purchase" model="ir.actions.act_window">
+            <field name="name">Purchases Report</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('account_type_id', '=', 17),('account_id.code','=','221100')]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_purchase_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_purchase_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_purchase"/>
+        </record>
+
+        <record id="action_account_move_report_purchase_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_purchase_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_purchase"/>
+        </record>
+
+        <record id="action_account_move_report_purchase_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_move_report_sales_tree"/>
+            <field name="act_window_id" ref="action_account_move_report_purchase"/>
+        </record>
+
+        <menuitem action="action_account_move_report_purchase" id="menu_account_move_report_purchase" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="14" groups="account.group_account_manager" />
+        <!--  End: Purchases -->
+
+        <!--  Receipts -->
+        <record id="account_move_report_receipt_pivot" model="ir.ui.view">
+            <field name="name">account.move.receipt.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Receipts">
+                    <field name="partner_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="debit" type="measure"/>
+                    <field name="credit" type="measure"/>
+                    <field name="balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_receipt_graph" model="ir.ui.view">
+            <field name="name">account.move.receipt.graph</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Receipts" type="bar" stacked="1">
+                    <field name="date" type="row"/>
+                    <field name="credit" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_receipt" model="ir.actions.act_window">
+            <field name="name">Receipts Report</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('journal_id.type', 'in', ('cash','bank')),('account_id.code','=','132200')]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted_entries': 1 , 'search_default_unposted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_receipt_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_receipt_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_receipt"/>
+        </record>
+
+        <record id="action_account_move_report_receipt_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_receipt_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_receipt"/>
+        </record>
+
+        <menuitem action="action_account_move_report_receipt" id="menu_account_move_report_receipt" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="15" groups="account.group_account_manager" />
+        <!--  End: Receipts -->
+
+        <!-- Device Installations -->
+        <record id="account_move_report_device_pivot" model="ir.ui.view">
+            <field name="name">account.move.device.pivot</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Device Installations">
+                    <field name="product_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="quantity" type="measure" widget="integer"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_device_graph" model="ir.ui.view">
+            <field name="name">account.move.device.graph</field>
+            <field name="model">account.move.report</field>
+            <field name="arch" type="xml">
+                <graph string="Device Installations" type="bar" stacked="1">
+                    <field name="product_id" type="row"/>
+                    <field name="quantity" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_device" model="ir.actions.act_window">
+            <field name="name">Device Installations</field>
+            <field name="res_model">account.move.report</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('prod_category_id', '=', 'Unit Device'), ('account_type_id', '=', 14)]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted_entries': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_device_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_device_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_device"/>
+        </record>
+
+        <record id="action_account_move_report_device_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_device_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_device"/>
+        </record>
+
+        <record id="action_account_move_report_device_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_move_report_sales_tree"/>
+            <field name="act_window_id" ref="action_account_move_report_device"/>
+        </record>
+
+        <menuitem action="action_account_move_report_device" id="menu_account_move_report_device" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="16" groups="account.group_account_manager" />
+        <!-- End: Device Installations -->
+
+        <!-- Receivables -->
+        <record id="account_move_report_receivables_pivot" model="ir.ui.view">
+            <field name="name">account.move.receivables.pivot</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Receivables">
+                    <field name="partner_id" type="row"/>
+                    <field name="date" type="col" interval="month"/>
+                    <field name="debit" type="measure"/>
+                    <field name="credit" type="measure"/>
+                    <field name="balance" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="account_move_report_receivables_graph" model="ir.ui.view">
+            <field name="name">account.move.receivables.graph</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <graph string="Receivables" type="bar" stacked="1">
+                    <field name="date" type="row"/>
+                    <field name="balance" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_account_move_report_receivables" model="ir.actions.act_window">
+            <field name="name">Receivables</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_mode">pivot,graph</field>
+            <field name="domain">[('account_id.internal_type', '=', 'receivable')]</field>
+            <field name="context">{'search_default_this_year': 1, 'search_default_posted': 1}</field>
+        </record>
+
+        <record id="action_account_move_report_receivables_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="account_move_report_receivables_pivot"/>
+            <field name="act_window_id" ref="action_account_move_report_receivables"/>
+        </record>
+
+        <record id="action_account_move_report_receivables_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="account_move_report_receivables_graph"/>
+            <field name="act_window_id" ref="action_account_move_report_receivables"/>
+        </record>
+
+        <menuitem action="action_account_move_report_receivables" id="menu_account_move_report_receivables" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="17" groups="account.group_account_manager" />
+        <!-- End: Receivables -->
+    </data>
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+view_hr_gratuity,view.hr.gratuity,model_hr_gratuity,hr.group_hr_manager,1,1,1,1
+view_hr_others,view.other.settlement,model_other_settlements,hr.group_hr_manager,1,1,1,1
+access_hr_leave_balance,access_hr_leave_balance,model_hr_leave_balance,base.group_user,1,0,0,0
+access_hr_flight_ticket,access_hr_flight_ticket,model_hr_flight_ticket,base.group_user,1,0,0,0
+access_hr_other_gratuity,access_hr_other_gratuity,model_hr_other_gratuity,base.group_user,1,0,0,0
+
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        
+        <report
+            id="lot_serial_csv"
+            model="lot.serial.wizard"
+            string="upload_job_serial"
+            report_type="csv"
+            name="lot_import_csv.lot_serial_template_csv"
+            file="lot_import_csv.lot_serial_template_csv"
+            attachment_use="False"
+        />
+    </data>
+</odoo>

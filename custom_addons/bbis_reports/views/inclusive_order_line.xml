@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="inclusive_order_line_form_view">
+            <field name="name">inclusive.order.line.form</field>
+            <field name="model">inclusive.order.line</field>
+            <field name="arch" type="xml">
+                <form string="Sale Order Lines">
+                    <group>
+                        <field name="name"/>
+                        <field name="order_line_ids" domain="[('order_id','=',parent.id)]"
+                               context="{'search_default_order_id': parent.id, 'tree_view_ref' : 'bbis_reports.inclusive_sale_order_line_tree', 'default_order_id': parent.id}" options="{'no_create': True}">
+                            <tree string="Order Lines">
+                                <field name="product_id"/>
+                                <field name="price_unit"/>
+                            </tree>
+                        </field>
+                        <field name="quantity" attrs="{'invisible': [('parent.sale_type', '=', 'pilot')]}"/>
+                        <field name="group_quantity" attrs="{'invisible': [('parent.sale_type', '!=', 'pilot')]}"/>
+                        <field name="price_unit" invisible="1"/>
+                        <field name="discount" invisible="1"/>
+                        <field name="price_tax" invisible="1"/>
+                        <field name="price_subtotal" invisible="1"/>
+                        <field name="price_total" invisible="1"/>
+                        <field name="contract_period" invisible="1"/>
+
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Change the number of columns of Sale Order Line when adding products -->
+        <record model="ir.ui.view" id="inclusive_sale_order_line_tree">
+            <field name="name">inclusive.sale.order.line.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="price_unit"/>
+                    <field name="product_uom_qty"/>
+<!--                    <field name="discount_amount"/>-->
+                    <field name="tax_id" widget="many2many_tags"/>
+                    <field name="price_subtotal"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

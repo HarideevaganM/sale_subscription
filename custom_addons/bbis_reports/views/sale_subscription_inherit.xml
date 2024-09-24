@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+        <!--<record id="bbis_sale_subscription_tree_inherit" model="ir.ui.view">
+            <field name="name">bbis.sale.subscription.tree.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="fms_sale.sale_subscription_list_inherit_id"/>
+            <field name="arch" type="xml">
+                <field name="store_end_date" position="replace">
+                    <field name="date"/>
+                </field>
+            </field>
+        </record>-->
+
+        <!--<record id="bbis_sale_subscription_view_form_inherit" model="ir.ui.view">
+            <field name="name">bbis.sale.subscription.view.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="fms_sale_extended.sale_subscription_inherit_sale_extended"/>
+            <field name="arch" type="xml">
+                <field name='is_fls' position="after">
+                    <field name='is_itc_renewal' readonly='1'/>
+                </field>
+            </field>
+        </record>-->
+
+        <!-- Subscription List Only -->
+        <record id="bbis_sales_subscription_tree_only" model="ir.ui.view">
+            <field name="name">bbis.sales.subscription.tree.only</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Subscription List Only" edit="false" create="false" delete="false"
+                      decoration-danger="renewal_status == 'over_due'" decoration-success="renewal_status == 'running'"
+                      decoration-info="renewal_status == 'due_for_renewal'" default_order="id desc"
+                >
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="vehicle_number"/>
+                    <field name="serial_no" string="Device"/>
+                    <field name="date_start" string="Start Date"/>
+                    <field name="date" string="End Date"/>
+                    <field name="subscription_period" string="Period"/>
+                    <field name="renewal_date"/>
+                    <field name="recurring_total"/>
+                    <field name="state" string="Subscription Status"/>
+                    <field name="renewal_status"/>
+                    <field name="sales_tag"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Subscription List Only -->
+        <record id="bbis_sales_subscription_tree_for_jobs" model="ir.ui.view">
+            <field name="name">bbis.sales.subscription.tree.only.for.jobs</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Subscription List Only" edit="false" create="false" delete="false">
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="vehicle_number"/>
+                    <field name="serial_no"/>
+                    <field name="subscription_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_bbis_sale_subscription_list_only" model="ir.actions.act_window">
+            <field name="name">All Subscriptions - List Only</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_id" ref="bbis_sales_subscription_tree_only"/>
+            <field name="view_mode">tree</field>
+        </record>
+
+<!--        <record id="itc_renewal_subscription_list_action" model="ir.actions.act_window">-->
+<!--            <field name="name">ITC Renewal Subscriptions</field>-->
+<!--            <field name="type">ir.actions.act_window</field>-->
+<!--            <field name="res_model">sale.order</field>-->
+<!--            <field name="domain">[('is_itc_renewal', '=', 1)]</field>-->
+<!--            <field name="context">{'default_is_itc_renewal': 1}</field>-->
+<!--            <!--          <field name="view_type">form</field>-->-->
+<!--            <field name="view_mode">tree,form</field>-->
+<!--        </record>-->
+
+        <menuitem action="action_bbis_sale_subscription_list_only" id="menu_subscription_list_only" parent="sale_subscription.menu_sale_subscription" sequence="11" />
+<!--        <menuitem id="menu_itc_renewal_subscription_list" name="ITC Renewal Subscriptions" action="itc_renewal_subscription_list_action" parent="sale_subscription.menu_sale_subscription" sequence="21"/>-->
+    </data>
+</odoo>

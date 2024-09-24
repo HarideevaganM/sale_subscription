@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Make the reporting menu as sub menu and added the Subscription Report under this.-->
+    <menuitem name="Reporting"
+              id="sale_subscription.menu_report_product_all"
+              parent="sale_subscription.menu_sale_subscription_root" sequence="7"/>
+
+    <menuitem name="Subscription Report"
+          action="sale_subscription.action_subscription_report_all"
+          id="menu_subscription_report_product_all"
+          groups="sales_team.group_sale_manager"
+          parent="sale_subscription.menu_report_product_all" sequence="1"/>
+
+</odoo>

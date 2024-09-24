@@ -1,0 +1,259 @@
+<odoo>
+    <data>
+        <record id="fms_customer_support_form_closure_inherit_view" model="ir.ui.view">
+            <field name="name">view.customer.support.form.closure.inherit</field>
+            <field name="model">fms.customer.support</field>
+            <field name="inherit_id" ref="fms_customer_support.fms_customer_support_form_view"/>
+            <field name="arch" type="xml">
+                <field name="sale_order_ids" position="before">
+                    <field name="subscription_id"/>
+                    <field name="request_type"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_subscription_form_closure_inherit" model="ir.ui.view">
+            <field name="name">view.subscription.form.closure.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_subscription.sale_subscription_order_view_form"/>
+            <field name="arch" type="xml">
+                <button name="%(sale_subscription.sale_subscription_close_reason_wizard_action)d" position="attributes">
+                    <attribute name="attrs">{'invisible': [('stage_category','not in',['progress'])]}</attribute>
+                </button>
+                <button name="%(sale_subscription.sale_subscription_close_reason_wizard_action)d" position="after">
+                    <button name="create_work_order" type="object" string="Reactivate Subscription" class="oe_highlight"
+                            attrs="{'invisible': [('stage_category', '!=', 'closed')]}"/>
+                </button>
+                <button name="open_subscription_history" position="after">
+                    <button class="oe_stat_button"
+                            icon="fa-times-circle"
+                            name="action_open_closure"
+                            type="object"
+                            attrs="{'invisible': [('closure_count', '=', 0)]}">
+                        <field name="closure_count" widget="statinfo" string="Closure of Subscription"/>
+                    </button>
+                    <button class="oe_stat_button"
+                            icon="fa-life-ring"
+                            name="action_open_work_order"
+                            type="object"
+                            attrs="{'invisible': [('work_order_count', '=', 0)]}">
+                        <field name="work_order_count" widget="statinfo" string="Work Order"/>
+                    </button>
+                </button>
+            </field>
+        </record>
+
+        <record id="view_subscription_closure_form" model="ir.ui.view">
+            <field name="name">view.subscription.closure.form</field>
+            <field name="model">subscription.close</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="submit" type="object" string="Submit" class="oe_highlight" states="draft"/>
+                        <button name="terminate" type="object" string="Terminate" class="oe_highlight" states="hold"/>
+                        <!--                        <button name="create_ticket" type="object" string="Create Ticket" class="oe_highlight"-->
+                        <!--                                attrs="{'invisible': ['|',('ticket_id', '!=', False),('state', '!=', 'termination')]}"/>-->
+                        <button name="create_work_order" type="object" string="Create Work Order" class="oe_highlight"
+                                attrs="{'invisible': ['|', ('work_order_count', '!=', 0),('state', '!=', 'termination')]}"/>
+                        <button name="close" type="object" string="Close" class="oe_highlight" states="termination"/>
+                        <button name="restart" type="object" string="Release Subscription" states="hold,termination"/>
+                        <!--                                attrs="{'invisible': ['|', ('work_order_count', '!=', 0),('state', 'not in', ['hold', 'termination'])]}"/>-->
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!--                            <button class="oe_stat_button" icon="fa-life-ring" name="open_ticket"-->
+                            <!--                                    type="object" string="Ticket" attrs="{'invisible': [('ticket_id', '=', False)]}"/>-->
+                            <button class="oe_stat_button"
+                                    icon="fa-book"
+                                    name="action_open_work_order"
+                                    type="object"
+                                    attrs="{'invisible': [('work_order_count', '=', 0)]}">
+                                <field name="work_order_count" widget="statinfo" string="Work Order"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Reference" class="oe_edit_only"/>
+                            <h2>
+                                <field name="name" readonly="1"/>
+                            </h2>
+                        </div>
+                        <!--                        <field name="ticket_id" invisible="1"/>-->
+                        <group>
+                            <group>
+                                <field name="subscription_id" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                                <field name="date_from" invisible="1"/>
+                                <field name="days" invisible="1"/>
+                                <field name="date_to" readonly="1" force_save="1" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="sale_type"/>
+                                <field name="reason_id" invisible="1"/>
+                                <field name="release_reason_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="details" string="Device &amp; Vehicle Details">
+                                <group>
+                                    <group>
+                                        <field name="lot_id"/>
+                                        <field name="device_id"/>
+                                        <field name="device_status"/>
+                                        <field name="engineer_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="vehicle_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="hold" string="Hold" invisible="1">
+                                <group>
+                                    <group>
+                                        <field name="approved_by_id"/>
+                                        <field name="approved_date"/>
+                                        <field name="released_by_id"/>
+                                        <field name="released_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="hold_by_id"/>
+                                        <field name="hold_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="sim" string="Sim Status">
+                                <group>
+                                    <group>
+                                        <field name="sim_no"/>
+                                        <field name="mobile_no"/>
+                                        <field name="sim_status"/>
+                                    </group>
+                                    <group>
+                                        <field name="sim_approved_by_id"/>
+                                        <field name="sim_approved_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="portal" string="Portal">
+                                <group>
+                                    <group>
+                                        <field name="portal_status"/>
+                                    </group>
+                                    <group>
+                                        <field name="portal_approved_by_id"/>
+                                        <field name="portal_approved_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_subscription_closure_tree" model="ir.ui.view">
+            <field name="name">view.subscription.closure.tree</field>
+            <field name="model">subscription.close</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="date_to &lt; current_date">
+                    <field name="name"/>
+                    <field name="subscription_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="device_status"/>
+                    <field name="sim_status"/>
+                    <field name="portal_status"/>
+                    <field name="order_status"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_subscription_closure_search" model="ir.ui.view">
+            <field name="name">view.subscription.closure.search</field>
+            <field name="model">subscription.close</field>
+            <field name="arch" type="xml">
+                <search string="Closure of Subscription">
+                    <field name="name"/>
+                    <field name="subscription_id"/>
+                    <field name="partner_id"/>
+                    <filter string="Hold" name="hold" domain="[('state','=','hold')]" help="Recognition in hold state"/>
+                    <group expand="0" name="group_by" string="Group By">
+                       <filter name="partner_id" string="Customer" domain="[]" context="{'group_by' : 'partner_id'}" />
+                       <filter string="Company" name="company" context="{'group_by': 'company_id'}"/>
+                   </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_subscription_close" model="ir.actions.act_window">
+            <field name="name">Closure of Subscription</field>
+            <field name="res_model">subscription.close</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'create':False}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Go to Subscription make close to create the closure.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_subscription_close" name="Closure of Subscription"
+                  parent="sale_subscription.menu_sale_subscription" action="action_subscription_close" sequence="99"/>
+
+        <!-- Inherit subscription closure wizard -->
+        <record id="subscription_close_wiz_form_inherit" model="ir.ui.view">
+            <field name="name">subscription.close.wiz.form.inherit</field>
+            <field name="model">sale.subscription.close.reason.wizard</field>
+            <field name="inherit_id" ref="sale_subscription.sale_subscription_close_reason_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@class='oe_title']" position="after">
+                    <group>
+                        <group>
+                            <field name="sim_status"/>
+                            <field name="portal_status"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+<!--                            <field name="days"/>-->
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add multiple subscription closure -->
+<!--        <act_window name="Close Subscriptions"-->
+<!--            res_model="sale.subscription.close.reason.wizard"-->
+<!--            src_model="sale.subscription"-->
+<!--            view_mode="form"-->
+<!--            target="new"-->
+<!--            id="action_close_subscription_multi"-->
+<!--            groups="sales_team.group_sale_manager"-->
+<!--            multi="True"-->
+<!--            />-->
+        <record id="action_close_subscription_multi" model="ir.actions.act_window">
+            <field name="name">Close Subscriptions</field>
+            <field name="res_model">sale.subscription.close.reason.wizard</field>
+            <field name="binding_model_id" ref="sale_subscription.model_sale_order"/>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <!-- Add Multiple Creation of Work Orders -->
+        <record id="gfms_sub_close_create_work_order_multi" model="ir.actions.server">
+            <field name="name">Create Work Orders</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="subscription_close.model_subscription_close"/>
+            <field name="binding_model_id" ref="subscription_close.model_subscription_close"/>
+            <field name="code">
+for r in records:
+    r.create_work_order()
+action = model.action_view_work_order_multi(records)
+            </field>
+        </record>
+    </data>
+</odoo>

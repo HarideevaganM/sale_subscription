@@ -1,0 +1,36 @@
+<odoo>
+    <data>
+        <report
+        id="IT_asset_label"
+        model="account.asset.asset"
+        string="Print Asset Label"
+        name="IT_asset_module.asset_label_view"
+        file="IT_asset_module.asset_label"
+        report_type="qweb-pdf" />
+
+        <template id="asset_label_view">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+
+                            <div class="row mt32 mb32" id="informations">
+                                <div class="col-xs-12">
+                                    <h3>Asset Name: <span t-field="doc.name"/></h3>
+                                </div>
+
+                                <div  class="col-xs-12">
+                                    <h4> Asset Code: <span t-field="doc.asset_number"/></h4>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+
+    </data>
+</odoo>

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format -->
+    <record id="bbis_report_paper_soa_format" model="report.paperformat">
+        <field name="name">European A4 low margin</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">43</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_statement_of_account"
+        model="account.move.line"
+        string="Statement Of Account"
+        report_type="qweb-pdf"
+        file="bbis_reports.statement_of_account"
+        name="bbis_reports.statement_of_account"
+        paperformat="bbis_reports.bbis_report_paper_soa_format"
+        print_report_name="Statement of Account"
+        menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Excel report print -->
+    <report
+            id="statement_of_account_report_xlsx"
+            model="account.move.line"
+            string="Statement Of Account"
+            report_type="xlsx"
+            name="bbis_reports.statement_of_account_xlsx"
+            file="Statement Of Account"
+            attachment_use="True"
+            menu = "False"
+        />
+    <!-- End of report tag -->
+
+    <!-- Report Template -->
+    <template id="statement_of_account_document">
+        <div class="header">
+            <t t-call="bbis_reports.bbis_custom_sale_header"/>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page" style="font-size:9pt">
+                <h1 class="text-center text-uppercase" style="margin:30px 0 5px 0; font-size:25pt">
+                    <strong>Statement of Account</strong>
+                </h1>
+                <p class="text-center" style="margin-bottom:30px;">
+                    as of <span t-esc="start_date.strftime('%B %d, %Y')"/>
+                </p>
+                <div class="bbis-sale-quote-order-header clearfix" style="font-size:9pt">
+                    <table>
+                        <tr>
+                            <th>Customer</th><td class="colon-space">:</td>
+                            <td>
+                                <span t-esc="partner.name" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="vertical-align: top;">Address</th><td class="colon-space">:</td>
+                            <td>
+                                <t t-if="partner.street"><span t-esc="partner.street"/><br/></t>
+
+                                <t t-if="partner.street2"><span t-esc="partner.street2"/>,</t>
+                                <t t-if="partner.city and partner.city.strip()"><span t-esc="partner.city"/>,</t>
+                                <t t-if="partner.state_id">, <span t-esc="partner.state_id.name"/>,</t>
+                                <t t-if="partner.zip and partner.zip.strip()"><span t-esc="partner.zip"/>,</t>
+                                <span t-if="partner.country_id" t-esc="partner.country_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="nowrap">Tel No.</th><td class="colon-space">:</td>
+                            <td>
+                                <t t-if="partner.phone"><span t-esc="partner.phone"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="nowrap">Mobile No.</th><td class="colon-space">:</td>
+                            <td>
+                                <t t-if="partner.mobile"><span t-esc="partner.mobile"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Email</th><td class="colon-space">:</td>
+                            <td>
+                                <span t-esc="partner.email"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>TRN</th><td class="colon-space">:</td>
+                            <td><span t-esc="partner.vat"/></td>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td>
+                                <table style="float:right">
+                                    <tr>
+                                        <th class="text-right nowrap">
+                                            <spsan t-if="account_type == 'receivable'">Customer</spsan>
+                                            <spsan t-else="account_type == 'payable'">Vendor</spsan>
+                                            Code</th><td class="colon-space">:</td>
+                                        <td><span t-field="partner.customer_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-right">Payment Terms</th><td class="colon-space">:</td>
+                                        <td><span t-field="partner.property_payment_term_id"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- SOA lines -->
+
+                <table class="bbis-tax-invoice-table soa" style="width:100%;font-size:9pt">
+                    <thead>
+                        <tr>
+                            <td colspan="9" style="background:#f05a29; height:20px"> </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center" style="width:90px">Date</th>
+                            <th class="text-center" style="width:110px">Ref. No.</th>
+                            <th class="text-center" style="width:auto">Description</th>
+                            <th class="text-center" style="width:90px">Original<br/>Amount</th>
+                            <th class="text-center" style="width:90px">
+                                Transaction<br/>
+                                <spsan t-if="account_type == 'receivable'">Credit</spsan>
+                                <spsan t-else="account_type == 'payable'">Debit</spsan>
+                            </th>
+                            <th class="text-center" style="width:90px">Pending<br/>Amount</th>
+                            <th class="text-center" style="width:50px">Overdue<br/>by Days</th>
+                        </tr>
+                    </thead>
+                    <t t-set="total_pending" t-value="0.00"/>
+                    <t t-set="pending_amount" t-value="0.00"/>
+                    <tbody>
+                        <!-- Receivable -->
+                        <t t-if="account_type == 'receivable'">
+                            <t t-foreach="data['list']" t-as="l">
+                                <t t-if="l['transaction_credit']">
+                                    <t t-if="l['credit'] > 0" t-set="pending_amount" t-value="l['balance'] + l['transaction_credit']"/>
+                                    <t t-else="" t-set="pending_amount" t-value="l['balance'] - l['transaction_credit']"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="pending_amount" t-value="l['balance']"/>
+                                </t>
+                                <tr t-if="pending_amount != 0">
+
+                                    <t t-if="l['journal'] in ('Tax Invoices','Cash Invoice','Miscellaneous Operations')">
+                                        <td class="text-center" style="vertical-align:middle; width:90px; white-space:nowrap">
+                                            <t t-set="date_tmp" t-value="datetime.datetime.strptime(l['date'], '%Y-%m-%d')"/>
+                                            <span t-esc="date_tmp.strftime('%d-%b-%Y')"/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:110px">
+                                            <span t-esc="l.get('invoice')"/>
+                                        </td>
+                                        <td class="text-left" style="vertical-align:middle; width:auto; ">
+                                            <span t-if="l['description']" t-esc="l.get('description')"/>
+                                            <span t-else="" t-esc="l.get('ref')"/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="l['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-if="l['transaction_credit']" t-esc="l.get('transaction_credit')" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="pending_amount" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:50px">
+                                            <span t-if="l.get('days_overdue')" t-esc="l.get('days_overdue')" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-else=""> </span>
+                                        </td>
+                                        <t t-if="pending_amount" t-set="total_pending" t-value="total_pending + pending_amount"/>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="5" class="text-right text-uppercase"><strong>Sub Total</strong></td>
+                                <td class="text-right"><strong t-esc="total_pending" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td> </td>
+                            </tr>
+                            <t t-foreach="data['list']" t-as="l">
+                                <t t-if="l['transaction_credit']">
+                                    <t t-if="l['credit'] > 0" t-set="pending_amount" t-value="l['balance'] + l['transaction_credit']"/>
+                                    <t t-else="" t-set="pending_amount" t-value="l['balance'] - l['transaction_credit']"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="pending_amount" t-value="l['balance']"/>
+                                </t>
+                                <tr t-if="pending_amount != 0">
+                                    <t t-if="l['journal'] not in ('Tax Invoices','Cash Invoice','Miscellaneous Operations')">
+                                        <td class="text-center" style="vertical-align:middle; width:90px; white-space:nowrap">
+                                            <t t-set="date_tmp" t-value="datetime.datetime.strptime(l['date'], '%Y-%m-%d')"/>
+                                            <span t-esc="date_tmp.strftime('%d-%b-%Y')"/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:110px">
+                                            <span t-esc="l.get('invoice')"/>
+                                        </td>
+                                        <td class="text-left" style="vertical-align:middle; width:auto; ">
+                                            <span t-if="l['description']" t-esc="l.get('description')"/>
+                                            <span t-else="" t-esc="l.get('ref')"/>
+                                        </td>
+
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="l['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-if="l['transaction_credit']" t-esc="l.get('transaction_credit')" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="pending_amount" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:50px">
+                                            <span t-if="l.get('days_overdue')" t-esc="l.get('days_overdue')" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-else=""> </span>
+                                        </td>
+                                        <t t-if="pending_amount" t-set="total_pending" t-value="total_pending + pending_amount"/>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="5" class="text-right text-uppercase"><strong>Total</strong></td>
+                                <td class="text-right"><strong t-esc="total_pending" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td> </td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <!-- Payable -->
+                            <t t-foreach="data['list']" t-as="l">
+                                <t t-set="balance" t-value="abs(l['balance'])"/>
+                                <t t-set="transaction_credit" t-value="0"/>
+                                <t t-if="l['transaction_credit']">
+                                    <t t-set="transaction_credit" t-value="l['transaction_credit'] * -1"/>
+                                    <t t-if="l['credit'] &lt; 0" t-set="pending_amount" t-value="balance - transaction_credit"/>
+                                    <t t-else="" t-set="pending_amount" t-value="balance + transaction_credit"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="pending_amount" t-value="balance"/>
+                                </t>
+                                <tr t-if="pending_amount != 0">
+                                    <t t-if="l['journal'] in ('Vendor Bills','Expenses','Miscellaneous Operations')">
+                                        <td class="text-center" style="vertical-align:middle; width:90px; white-space:nowrap">
+                                            <t t-set="date_tmp" t-value="datetime.datetime.strptime(l['date'], '%Y-%m-%d')"/>
+                                            <span t-esc="date_tmp.strftime('%d-%b-%Y')"/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:110px">
+                                            <span t-esc="l.get('ref')"/>
+                                        </td>
+                                        <td class="text-left" style="vertical-align:middle; width:auto; ">
+                                            <span t-if="l['description']" t-esc="l.get('description')"/>
+                                            <span t-else="" t-esc="l.get('ref')"/>
+                                        </td>
+
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="balance" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-if="transaction_credit" t-esc="transaction_credit" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="pending_amount" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:50px">
+                                            <span t-if="l.get('days_overdue')" t-esc="l.get('days_overdue')" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-else=""> </span>
+                                        </td>
+                                        <t t-if="pending_amount" t-set="total_pending" t-value="total_pending + pending_amount"/>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="5" class="text-right text-uppercase"><strong>Sub Total</strong></td>
+                                <td class="text-right"><strong t-esc="total_pending" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td> </td>
+                            </tr>
+                            <t t-foreach="data['list']" t-as="l">
+                                <t t-if="l['transaction_credit']">
+                                    <t t-if="l['credit'] > 0" t-set="pending_amount" t-value="(l['balance'] * -1) + (l['transaction_credit'] * -1)"/>
+                                    <t t-else="" t-set="pending_amount" t-value="(l['balance'] * -1) - (l['transaction_credit'] * -1)"/>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="pending_amount" t-value="l['balance'] * -1"/>
+                                </t>
+                                <tr t-if="pending_amount != 0">
+                                    <t t-if="l['journal'] not in ('Vendor Bills', 'Expenses','Miscellaneous Operations')">
+                                        <td class="text-center" style="vertical-align:middle; width:90px; white-space:nowrap">
+                                            <t t-set="date_tmp" t-value="datetime.datetime.strptime(l['date'], '%Y-%m-%d')"/>
+                                            <span t-esc="date_tmp.strftime('%d-%b-%Y')"/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:110px">
+                                            <span t-esc="l.get('ref')"/>
+                                        </td>
+                                        <td class="text-left" style="vertical-align:middle; width:auto; ">
+                                            <span t-if="l['description']" t-esc="l.get('description')"/>
+                                            <span t-else="" t-esc="l.get('ref')"/>
+                                        </td>
+
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="l['balance'] * -1" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-if="l['transaction_credit']" t-esc="l.get('transaction_credit')" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" style="vertical-align:middle; width:90px">
+                                            <span t-esc="pending_amount" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-center" style="vertical-align:middle; width:50px">
+                                            <span t-if="l.get('days_overdue')" t-esc="l.get('days_overdue')" t-options='{"widget": "float", "precision": 0}'/>
+                                            <span t-else=""> </span>
+                                        </td>
+                                        <t t-if="pending_amount" t-set="total_pending" t-value="total_pending + pending_amount"/>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="5" class="text-right text-uppercase"><strong>Total</strong></td>
+                                <td class="text-right"><strong t-esc="total_pending" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td> </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <!-- Bank Details -->
+                <div t-if="page_break_notes" style="page-break-before: always;"/>
+                <table t-if="account_type == 'receivable'" class="bbis-invoice-bank-details" style="width:100%; margin-top:30px;">
+                    <tr>
+                        <td class="bbis-bank-details-td" style="vertical-align:top; height:155px">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td><strong>Notes:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:18px"> </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <ol style="margin-left:0; padding-left:20px; line-height:1.2;">
+                                            <li>Please settle dues within credit terms stated otherwise credit facility will be forfeited and/or penalty will be applied.</li>
+                                            <li>Statement will be assumed correct if no dispute or request for revision is received within ten (10) days.</li>
+                                            <li>Payments by cheque for invoices included in this statement are valid only upon realization.</li>
+                                        </ol>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="width:10px"> </td>
+                        <td style="width:430px;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <t t-set="bank_account" t-value="bank"/>
+                                    <t t-if="not bank" t-set="bank_account" t-value="default_bank"/>
+                                    <td class="bbis-bank-details-td" style="line-height:1.3; height:155px">
+                                        <span>Please issue all payments on below Company's bank account details:</span>
+                                        <br/><br/>
+                                        <strong>Account Name : </strong>
+                                        <span t-esc="company.acc_name"/><br/>
+                                        <strong>Account Number : </strong>
+                                        <!--<span t-esc="company.account_number"/>-->
+                                        <span t-field="bank_account.bank_acc_number"/>
+                                        <br/>
+                                        <strong>IBAN Number : </strong>
+                                        <!--<span>AE380030010039157020001</span>-->
+                                        <span t-field="bank_account.bank_account_id.iban"/>
+                                        <br/>
+                                        <strong>Bank Name : </strong>
+                                        <!--<span t-esc="company.bank_name"/>-->
+                                        <span t-field="bank_account.bank_id.name"/><br/>
+                                        <strong>Bank Address : </strong>
+                                        <!--<span t-esc="company.branch_name"/>-->
+                                        <span>
+                                            <t t-if="bank_account.bank_id.street"><span t-esc="bank_account.bank_id.street"/>,</t>
+
+                                            <t t-if="bank_account.bank_id.street2"><span t-esc="bank_account.bank_id.street2"/>,</t>
+                                            <t t-if="bank_account.bank_id.city and bank_account.bank_id.city.strip()"><span t-esc="bank_account.bank_id.city"/>,</t>
+                                            <t t-if="bank_account.bank_id.state"> <span t-esc="bank_account.bank_id.state.name"/></t>
+                                        </span>
+                                        <br/>
+                                        <strong>SWIFT Code : </strong>
+                                        <!--<span t-esc="company.shift_code"/>-->
+                                        <span t-field="bank_account.bank_id.bic"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table><!-- End : Bank Details -->
+            </div>
+        </div>
+        <div t-if="account_type == 'receivable'" class="footer bbis-tax-invoice-footer text-center" style="font-size:9pt">
+            <p style="padding-top:5px"><strong>This is a system generated statement of account and does not require any signature.</strong></p>
+            <div style="border-top: 1px solid black;" />
+
+            <p style="font-size:10pt; margin:5px 0 0 0">Should you have any enquiries concerning this SOA, please email Finance department at bbis-accounting@fms-tech.com or call + 971 2 555 4991</p>
+            <div>
+                <strong>Thank you for your business!</strong>
+            </div>
+        </div>
+    </template>
+
+    <template id="statement_of_account">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.statement_of_account_document"/>
+        </t>
+    </template><!-- End: Report Template -->
+</odoo>

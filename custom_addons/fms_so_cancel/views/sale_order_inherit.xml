@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="sale_order_form_inherit_id" model="ir.ui.view">
+        <field name="name">sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+         <button name="action_cancel" position="replace">
+            <button name="%(fms_so_cancel.action_view_sale_cancel_inv)d" attrs="{'invisible':[('state', 'in', ('draft', 'sent', 'cancel'))]}" type="action" string="Cancel"/>
+        </button>
+            <field name="analytic_account_id" position="after">
+             <field name="cancellation_reason" />
+
+
+        </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format -->
+    <record id="bbis_report_paper_format" model="report.paperformat">
+        <field name="name">European A4 low margin</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">43</field>
+        <field name="margin_bottom">18</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_tax_invoice"
+        model="account.move"
+        string="Tax Invoice Report"
+        report_type="qweb-pdf"
+        file="bbis_reports.tax_invoice"
+        name="bbis_reports.tax_invoice"
+        paperformat="bbis_reports.bbis_report_paper_format"
+        print_report_name="(object._get_printed_report_name())"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="tax_invoice_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:130px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+
+                <div class="bbis-company-details">
+                    <div t-esc="company.street"/>
+                    <div>
+                        <t t-if="company.street2"><span t-esc="company.street2"/>,</t>
+                        <t t-if="company.city"><span t-esc="company.city"/></t>
+                        <t t-if="company.state_id">, <span t-esc="company.state_id.name"/>,</t>
+                        <t t-if="company.zip"><span t-esc="company.zip"/></t>
+
+                    </div>
+                    <div t-if="company.country_id" t-esc="company.country_id.name"/>
+                    <div>
+                        Tel : <span t-esc="company.phone"/>
+                        <t t-if="company.fax_new">Fax : <span t-esc="company.fax_new"/></t>
+                    </div>
+                    <div> Email : <span t-esc="company.email"/></div>
+                    <div>Website : <span t-esc="company.website"/></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <!-- Invoice Header -->
+                <div class="bbis-report-header">
+                    <h1 class="text-center text-uppercase" style="margin:30px 0; font-size:25pt">
+                        <strong t-if="o.journal_id and o.journal_id.label_type == 'cash_tax_inv'"> CASH TAX INVOICE </strong>
+                        <strong t-if="o.journal_id and o.journal_id.label_type == 'cash_tax_inv_inclu'"> CASH TAX INVOICE-INCLUSIVE </strong>
+                        <strong t-if="o.journal_id and o.journal_id.label_type == 'tax_inv'"> TAX INVOICE </strong>
+                        <strong t-if="o.journal_id and o.journal_id.label_type == 'tax_inv_incl'"> TAX INVOICE-INCLUSIVE </strong>
+                    </h1>
+                    <p style="margin:0" class="text-uppercase">Customer:</p>
+                    <table class="bbis-report-header-table" style="width:100%;">
+                        <tr>
+                            <td style="width:50%; padding-right:30px">
+                                <table style="width:100%; vertical-align:top">
+                                    <tr>
+                                        <td><h4 style="margin:0"><strong><span t-esc="o.partner_id.name"/></strong></h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <t t-if="o.partner_id.street"><span t-esc="o.partner_id.street"/><br/></t>
+
+                                            <t t-if="o.partner_id.street2"><span t-esc="o.partner_id.street2"/>,</t>
+                                            <t t-if="o.partner_id.city and o.partner_id.city.strip()"><span t-esc="o.partner_id.city"/>,</t>
+                                            <t t-if="o.partner_id.state_id">, <span t-esc="o.partner_id.state_id.name"/>,</t>
+                                            <t t-if="o.partner_id.zip and o.partner_id.zip.strip()"><span t-esc="o.partner_id.zip"/>,</t>
+                                            <span t-if="o.partner_id.country_id" t-esc="o.partner_id.country_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <t t-if="o.partner_id.phone">Tel No: <span t-esc="o.partner_id.phone"/></t>
+                                            <t t-elif="o.partner_id.mobile">Mobile No: <span t-esc="o.partner_id.mobile"/></t>
+                                            <t t-else="">Tel No: </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email: <span t-esc="o.partner_id.email"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TRN: <span t-esc="o.partner_id.vat"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="width:25%; vertical-align:top">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td>Invoice No: <span t-field="o.number"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoice Date: <span t-field="o.date_invoice"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Payment Terms: <span t-field="o.payment_term_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Due Date: <span t-field="o.date_due"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Currency: <span t-field="o.currency_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="width:25%; vertical-align:top">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td>Sale Order: <span t-esc="o.origin"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PO No: <span t-esc="o.purchase_order_no"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PO Date: <span t-field="o.purchase_order_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="word-break: break-word;">Job Card No:
+                                            <span t-field="o.job_invoice_ref"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Job Card Date:
+                                            <span t-field="o.job_card_date"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div><!-- End : Invoice Header -->
+
+                <!-- Invoice order lines -->
+<!--                <table style="width:100%; margin-top:15px">-->
+<!--                    <tr>-->
+<!--                        <td colspan="11" style="background:#f05a29; height:20px"> </td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+                <table class="bbis-tax-invoice-table" style="width:100%; margin-top:10px;">
+                    <tr>
+                        <th colspan="11" style="background:#f05a29; height:20px; border: none;"></th>
+                    </tr>
+                    <tr>
+                        <th class="text-center" style="width:25px">SN</th>
+                        <th class="text-center" style="width:90px">Item Code</th>
+                        <th class="text-center" style="width:auto">Item Description</th>
+                        <th class="text-center" style="width:50px">Qty</th>
+                        <th class="text-center bbis_invoice_text_wrap" style="width:80px">Per Unit <br/>Rate</th>
+                        <th class="text-center" style="width:80px">VAT Rate</th>
+                        <th class="text-center bbis_invoice_text_wrap" style="width:80px;">Per Unit <br/>VAT</th>
+                        <th class="text-center" style="width:65px">Discount</th>
+                        <th class="text-center bbis_invoice_text_wrap" style="width:80px;">Amount Exc. <br/>VAT</th>
+                        <th class="text-center bbis_invoice_text_wrap" style="width:80px;">Output <br/>VAT (5%)</th>
+                        <th class="text-center" style="width:80px">Total</th>
+                    </tr>
+
+                    <t t-set="subtotal" t-value="0.0" />
+                    <t t-set="total_discount" t-value="0.0" />
+                    <t t-set="total_taxebal_amount" t-value="0.0" />
+                    <t t-set="total_vat" t-value="0.0" />
+                    <t t-set="total_amount" t-value="0.0" />
+                    <t t-set="temp_seq" t-value="0" />
+
+                    <t t-if="o.sale_type == 'pilot' or o.sale_type == 'lease' or o.sale_type == 'rental'">
+                        <t t-foreach="group_invoice_lines" t-as="l">
+                            <tr>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="l_index + 1"/></td>
+                                <td class="text-center" style="width:100px; vertical-align:middle; white-space: nowrap;"><span t-esc="l.get('default_code')"/></td>
+<!--                                <td style="vertical-align:middle"><span t-esc="l.get('name')"/></td>-->
+                                <td><pre style="max-width: 350px;" class="bbis_word_wrap_description" t-esc="l.get('name')"/></td>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="int(l.get('total_quantity'))"/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('price_unit')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="l.get('tax_name')"/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('tax_unit')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('total_discount')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('total_price_exclude_vat')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('total_vat')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('total_amount')" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <t t-set="subtotal" t-value="subtotal + (l.get('price_unit') * l.get('total_quantity'))"/>
+                            <t t-set="total_discount" t-value="total_discount + l.get('total_discount')"/>
+                            <t t-set="total_taxebal_amount" t-value="total_taxebal_amount + l.get('total_price_exclude_vat')"/>
+                            <t t-set="total_vat" t-value="total_vat + l.get('total_vat')"/>
+                            <t t-set="total_amount" t-value="total_amount + l.get('total_amount')"/>
+                            <t t-set="temp_seq" t-value="temp_seq + 1"/>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="invoice_lines" t-as="l">
+                            <tr>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="l.get('sequence_ref')"/></td>
+                                <td class="text-center" style="width:100px; vertical-align:middle; white-space: nowrap;"><span t-esc="l.get('default_code')"/></td>
+                                <td style="vertical-align:middle;">
+                                    <pre style="max-width: 350px;" class="bbis_word_wrap_description" t-esc="l.get('name')[l.get('name').find('] ')+1:]"/>
+<!--                                    <span t-esc="l.get('name')[l.get('name').find('] ')+1:]"/>-->
+                                </td>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="int(l.get('quantity'))"/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('price_unit')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-center" style="vertical-align:middle;"><span t-esc="l.get('tax_name')"/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('tax_unit')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('discount_fix')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('amount_excluding_vat')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('output_vat')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                <td class="text-right" style="vertical-align:middle;"><span t-esc="l.get('total')" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <t t-set="subtotal" t-value="subtotal + (l.get('price_unit') * l.get('quantity'))"/>
+                            <t t-set="total_discount" t-value="total_discount + l.get('discount_fix')"/>
+                            <t t-set="total_taxebal_amount" t-value="total_taxebal_amount + l.get('amount_excluding_vat')"/>
+                            <t t-set="total_vat" t-value="total_vat + l.get('output_vat')"/>
+                            <t t-set="total_amount" t-value="total_amount + l.get('total')"/>
+                            <t t-set="temp_seq" t-value="temp_seq + 1"/>
+                        </t>
+                    </t>
+
+                </table><!-- End : Invoice order lines -->
+
+                <!-- Invoice total computation in words and number -->
+                <div t-if="o.amounts_pb" style="page-break-before: always;"/>
+
+                <table class="bbis-tax-invoice-computation" style="width:100%; margin-top:15px">
+                    <tr>
+                        <td style="width:75%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td>
+                                        <strong>VAT AMOUNT in words:</strong><br/>
+                                        <span t-esc="o.total_amount_in_word_v2(float(total_vat),o.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height:10px"> </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>TOTAL AMOUNT in words:</strong><br/>
+                                        <span t-esc="o.total_amount_in_word_v2(float(total_amount),o.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="width:25%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Subtotal:</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="subtotal" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Discount:</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="total_discount" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Taxable Amount:</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="total_taxebal_amount" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>VAT (5%):</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="total_vat" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Total Amount:</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong><span t-esc="total_amount" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table> <!-- End : Invoice total computation in words and number -->
+
+                <!-- Invoice Remarks and Declaration -->
+                <div t-if="o.remarks_pb" style="page-break-before: always;"/>
+
+                <div class="bbis-tax-invoice-remarks">
+                    <strong>Remarks: </strong><br/>
+                    <span t-esc="o.comment"/>
+                </div>
+
+                <div class="bbis-tax-invoice-declaration">
+                    <strong>Declaration:</strong><br/>
+                    <span t-esc="company.declaration"/>
+                </div><!-- End: Invoice Remarks and Declaration -->
+
+                <img class="bbis-tax-invoice-seal" t-att-src="'data:image/png;base64,%s' % to_text(company.seal)" width="280px"/>
+                <img class="bbis-tax-invoice-sign" t-att-src="'data:image/png;base64,%s' % to_text(company.authorized_signature)" width="100px"/>
+
+                <div style="margin-bottom:30px">
+                    <strong>Company's VAT TRN:</strong>
+                    <span t-esc="company.vat"/>
+                </div>
+
+                <!-- Bank Details -->
+                <table class="bbis-invoice-bank-details" style="width:100%">
+                    <tr>
+                        <td style="vertical-align:top">
+                            <table style="width:100%">
+                                <tr>
+                                    <td><strong>Customer's Seal &amp; Signature</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="height:30px"> </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date &amp; Mobile No:</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td style="width:430px;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td class="text-center" style="padding-bottom:5px"><strong>for <span class="text-uppercase" t-esc="company.name"/></strong></td>
+                                </tr>
+                                <tr>
+                                    <t t-set="bank_account" t-value="o.account_journal_id"/>
+                                    <t t-if="not o.account_journal_id" t-set="bank_account" t-value="default_bank"/>
+                                    <td class="bbis-bank-details-td">
+                                        <span>Please issue all payments on below Company's bank account details:</span><br/>
+                                        <strong>Account Name : </strong>
+                                        <span t-esc="company.acc_name"/><br/>
+                                        <strong>Account Number : </strong>
+                                        <!--<span t-esc="company.account_number"/>-->
+                                        <span t-field="bank_account.bank_acc_number"/>
+                                        <br/>
+                                        <strong>IBAN Number : </strong>
+                                        <!--<span>AE380030010039157020001</span>-->
+                                        <span t-field="bank_account.bank_account_id.iban"/>
+                                        <br/>
+                                        <strong>Bank Name : </strong>
+                                        <!--<span t-esc="company.bank_name"/>-->
+                                        <span t-field="bank_account.bank_id.name"/><br/>
+                                        <strong>Bank Address : </strong>
+                                        <!--<span t-esc="company.branch_name"/>-->
+                                        <span>
+                                            <t t-if="bank_account.bank_id.street"><span t-esc="bank_account.bank_id.street"/>,</t>
+
+                                            <t t-if="bank_account.bank_id.street2"><span t-esc="bank_account.bank_id.street2"/>,</t>
+                                            <t t-if="bank_account.bank_id.city and bank_account.bank_id.city.strip()"><span t-esc="bank_account.bank_id.city"/>,</t>
+                                            <t t-if="bank_account.bank_id.state"> <span t-esc="bank_account.bank_id.state.name"/></t>
+                                        </span>
+                                        <br/>
+                                        <strong>SWIFT Code : </strong>
+                                        <!--<span t-esc="company.shift_code"/>-->
+                                        <span t-field="bank_account.bank_id.bic"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table><!-- End : Bank Details -->
+
+                <!--  Check if it is renewal/rental/lease -->
+                <!--<t t-if="o.sale_type == 'pilot' or o.sale_type == 'lease' or o.sale_type == 'rental'">-->
+                    <t t-if="vehicles">
+                        <div t-if="o.vehicles_pb" style="page-break-before: always;"/>
+                        <table style="width:100%">
+                            <tr>
+                                <td colspan="4" class="bbis-table-header"><strong>Vehicle Details</strong></td>
+                            </tr>
+                        </table>
+                        <table class="bbis-report-vehicle-details">
+                            <tr>
+                                <th class="text-center" style="width:50px">S/N</th>
+                                <th class="text-center">Vehicle Details</th>
+                                <th class="text-center">Device Serial No.</th>
+                                <th class="text-center">NEW Renewal Covered Period</th>
+                            </tr>
+                            <t t-foreach="vehicles" t-as="v">
+                                <tr>
+                                    <td class="text-center"><span t-esc="v_index + 1"/></td>
+                                    <td class="text-center"><span t-esc="v.get('vehicle')"/></td>
+                                    <td class="text-center"><span t-esc="v.get('serial')"/></td>
+                                    <td class="text-center">
+                                        <span t-esc="v.get('start_date')" t-options='{"widget": "date", "format":"dd/MM/Y"}'/>
+                                        to
+                                        <span t-esc="v.get('end_date')" t-options='{"widget": "date", "format":"dd/MM/Y"}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </t>
+                <!-- </t> -->
+            </div>
+        </div>
+
+        <div class="footer bbis-tax-invoice-footer text-center">
+            <p class=""><strong>This is a system generated invoice and does not require original signature and stamp.</strong></p>
+            <div style="border-top: 1px solid black;" />
+
+            <p style="font-size:10pt; margin:5px 0 0 0">Should you have any enquiries concerning this invoice, please email Finance department at bbis-accounting@fms-tech.com or call + 971 2 555 4991</p>
+            <div>
+                <strong>Thank you for your business!</strong>
+            </div>
+        </div>
+    </template>
+
+    <template id="tax_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="bbis_reports.tax_invoice_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template><!-- End: Report Template -->
+</odoo>

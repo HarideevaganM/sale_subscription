@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <!--Adding customer class below the customer name in CRM-->
+        <record id="bbis_crm_lead_inherit" model="ir.ui.view">
+            <field name="name">bbis.crm.lead.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position= 'after'>
+                    <field name="customer_class"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Adding customer class below the customer name in CRM-->
+        <record id="bbis_crm_pipeline_inherit" model="ir.ui.view">
+            <field name="name">bbis.crm.pipeline.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position= 'after'>
+                    <field name="customer_class"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

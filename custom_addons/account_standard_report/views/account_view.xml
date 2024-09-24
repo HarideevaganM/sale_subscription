@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="view_account_specific_form">
+        <field name="name">account.account.form.inherit</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="model">account.account</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <field name="deprecated" position="after">
+                <field name="compacted"/>
+                <field name="type_third_parties"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_move_tree_ars_account_inherit" model="ir.ui.view">
+            <field name="name">account.move.tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <field name="ref" position="after">
+                    <field name="narration"/>
+                </field>
+            </field>
+        </record>
+</odoo>

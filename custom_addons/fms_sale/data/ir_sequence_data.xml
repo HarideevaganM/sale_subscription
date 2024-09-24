@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+		<record id="division_invoice_seq" model="ir.sequence">
+			<field name="name">Division Invoice</field>
+			<field name="code">division.invoice</field>
+			<field name="padding">4</field>
+			<field name="prefix">DINV/</field>
+			<field name="number_increment">1</field>
+			<field name="company_id" eval="False"/>
+		</record>
+		
+		<record id="contract_sequence" model="ir.sequence">
+            <field name="name"> Contract Order</field>
+            <field name="code">contract.order</field>
+            <field name="padding">4</field>
+            <field name="prefix">CON/</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="job_card_sequence" model="ir.sequence">
+            <field name="name"> JOB CARD</field>
+            <field name="code">job.card</field>
+            <field name="padding">4</field>
+            <field name="prefix">JOB/CARD/</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="installation_certificate_sequence" model="ir.sequence">
+            <field name="name">Installation Certificate</field>
+            <field name="code">installation.certificate</field>
+            <field name="padding">3</field>
+            <field name="prefix">GFMS/IC/</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="project_sequence" model="ir.sequence">
+            <field name="name">Project</field>
+            <field name="code">project.project</field>
+            <field name="padding">3</field>
+            <field name="prefix">PRO/</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+                
+    </data>
+</odoo>

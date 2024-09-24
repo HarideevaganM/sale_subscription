@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+    	<record id="fms_action_picking_tree_internal" model="ir.actions.act_window">
+            <field name="name">Internal Transfer</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_id.code','=','internal'), ('state','in', ('assigned', 'draft'))]</field>
+            <field name="context">{
+                   'default_code': 'internal',
+                   'contact_display': 'partner_address',
+
+            }
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediately or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+
+
+        <record id="view_picking_form_inherit_approval" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_confirm']" position="before">
+                    <button name="approval_internal_picking" string="Approve" type="object" attrs="{'invisible': ['|', ('is_approved', '=', True), ('picking_type_code', '!=', 'internal')]}" class="oe_highlight" groups="stock.group_stock_manager"/>
+                </xpath>
+                <field name="move_type" position="before">
+                    <field name="is_approved"/>
+                </field>
+            </field>
+        </record>
+
+        <menuitem id="main_internal_transfer_menu_root" 
+            name="Internal Transfer" 
+
+            sequence="1"/>
+<!--         web_icon="fms_picking_approve,static/description/icon.png"-->
+
+        <menuitem id="sub_main_internal_transfer_menu_root" 
+            name="Internal Transfer" 
+            parent="main_internal_transfer_menu_root"
+            sequence="5"/>
+
+        <menuitem id="all_internal_picking" name="Internal Transfers"
+            parent="sub_main_internal_transfer_menu_root"
+            sequence="10"
+            action="fms_action_picking_tree_internal"/>
+         
+    </data>
+</odoo>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="report_lease_invoice" model="ir.actions.report">
+        <field name="name">Division Invoice</field>
+        <field name="model">division.invoice</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">fms_sale.lease_invoice_report</field>
+        <field name="report_file">fms_sale.lease_invoice_report</field>
+<!--        <field name="print_report_name">'Delivery Order' if object.picking_type_id.name == 'Delivery Orders' else 'GRN Report'</field>-->
+        <field name="binding_model_id" ref="model_division_invoice"/>
+        <field name="binding_type">report</field>
+    </record>
+
+   <!-- <report id="report_lease_invoice"
+        model="division.invoice"
+        string="Division Invoice"
+        report_type="qweb-pdf"
+        file="fms_sale.lease_invoice_report"
+        name="fms_sale.lease_invoice_report"/>-->
+
+    <template id="lease_invoice_report">
+        <tr t-call="web.html_container">
+            <tr t-foreach="docs" t-as="doc">
+                <t t-set="total" t-value="[]"/>
+                <tr t-call="web.basic_layout">
+                    <t t-if="o and 'company_id' in o">
+                        <t t-set="company" t-value="o.company_id.sudo()"/>
+                    </t>
+                    <t t-if="not o or not 'company_id' in o">
+                        <t t-set="company" t-value="res_company"/>
+                    </t>
+                    <div class="page" style="font-size:13px;font-family:Liberation Serif;">
+                        <table style="width:100%;">
+                            <div class="header">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="padding-left:40%" width="50%">
+                                            <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % to_text(res_company.logo)" class="pull-left" width="140px"/>
+                                        </td>
+                                                                                                              
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#024963;text-align:center;">
+                                            <span t-field="res_company.name"></span><br/>
+                                            <span style="color:#04596b;" t-field="company.street"></span>,
+                                            <span t-field="company.street2"></span>,
+                                            <span t-field="company.city"></span>,
+                                            <span t-field="company.country_id"></span><br/>
+                                            T. :<span t-field="company.phone"></span><span>|</span>
+                                                <span t-field="company.email"></span><span>|</span>
+                                                <span t-field="company.website"></span><span>.</span>                                                                    
+                                        </td>
+                                    </tr>
+                                   
+                                </table>
+                            </div>
+                            <div class="row">
+                                <table width="100%">
+                                    <tr>
+                                        <tr><td><br/></td></tr>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <table style="width:100%;" cellpadding="1" cellspacing="0">
+                                    <tr>
+                                        <td>
+                                            <span> Bill To : <span t-field="doc.partner_id"/></span><br/>                                           
+                                            <span> Attention : Manager, Accounting Services</span><br/><br/>
+                                            <b><span style="font-size: 17px;" t-field="doc.partner_id.name"/></b><br/>
+                                            <span t-field="doc.partner_id.street"/>
+                                            <span t-field="doc.partner_id.street2"/>,
+                                            <span t-field="doc.partner_id.city"/>,
+                                            <span t-field="doc.partner_id.country_id"/><br/>
+                                            <span> Tel No. : <span t-field="doc.partner_id.phone"/></span>, <span> Fax No. : </span>
+                                        </td>
+                                        <td>
+                                            <b><span style="font-size: 15px;font-color:blue;">Invoice</span></b><br/>
+                                             <span>Date : <span t-field="doc.invoice_date"/></span><br/>
+                                             <span>Invoice # : <span t-field="doc.name"/></span><br/>
+                                             <span>Customer ID : <span t-field="doc.partner_id.name"/></span><br/>
+                                             <span>Contract : </span><br/>
+                                             <span>Purchase Order # : </span><br/>
+                                             <span>Purchase Date # : </span><br/>
+                                        </td>                                        
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span> Email : <span t-field="doc.partner_id.email"/></span>                                           
+                                        </td>
+                                    </tr>
+                                    <tr><td><br/></td></tr>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <table style="width:100%;" cellpadding="1" cellspacing="0">
+                                    <tr style="width:100%;border:1px solid black;background-color:black;">
+                                        <td style="width:70%;"><br/></td>
+                                    </tr>
+                                    <tr><td><span>All details mentioned in this invoice are as supporting documents attached</span></td></tr>
+                                    <tr><td><br/></td></tr>
+                                    <tr><td><br/></td></tr>                                    
+                                </table>
+                            </div>                                                        
+                            <div class="row">
+                                <table class="table table-bordered" style="width:100%;cellspacing:0px; !important;font-family:Liberation Serif;" cellpadding="1">
+                                    <thead style="font-size:14px;width:100%;">
+                                        <th><center>Item #</center></th>
+                                        <th><center>Division</center></th>
+                                        <th><center>Description</center></th>
+                                        <th><center>QTY</center></th>
+                                        <th><center>UOM</center></th>
+                                        <th><center>Total</center></th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="counter" t-value="1"/>
+                                        <tr style="page-break-inside: avoid;font-size: 14px;width:100%;" t-foreach="doc.division_invoice_line_ids" t-as="d">
+                                            <td>
+                                                <span style="text-align:center;" t-esc="counter"/><t t-set="counter" t-value="counter+1"/>
+                                            </td>
+                                            <td><span style="text-align:center;" t-field="d.name"/></td>
+                                            <td><span style="text-align:left;" t-field="d.product_id"/></td>
+                                            <td><span style="text-align:left;" t-field="d.product_uom_qty"/></td>
+                                            <td><span style="text-align:left;" t-field="d.product_uom"/></td>
+                                            <td><span style="text-align:right;" t-field="d.price_subtotal"/><t t-set="total" t-value="total+[d.price_subtotal]"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+<!--
+                                <table style="width:100%;" cellpadding="1" cellspacing="0">
+                                    <tr width="100%;">
+                                        <td width="100%;" style="font-size:16px"><b>INWORDS: <span t-esc="doc.currency_id.amount_to_text(doc.amount_total)"/> Only</b></td>
+                                    </tr>
+                                    <tr><td><br/></td></tr>
+                                </table>
+-->
+								<p style="font-size:12px;">
+                                    IN WORDS: - <span t-esc="convert_num_to_word(doc)"></span> Rial Omani Only
+                                </p>
+                            </div>
+                            <div class="row">
+                                <table style="width:100%;" cellpadding="1" cellspacing="0">
+                                    <tr style="width:100%;">
+                                        <td style="width:70%;border:1px solid black;"><span>Special Notes and Instructions</span><br/>
+                                        <span>Please issue all payments on below bank account details:</span><br/>
+                                        <span>Account Name : <span t-field="doc.partner_id.phone"/></span><br/>
+                                        <span>Bank Name : <span t-field="doc.partner_id.phone"/></span><br/>
+                                        <span>Shift Code : <span t-field="doc.partner_id.phone"/></span>
+                                        </td>
+                                        <td style="text-align:right;width:30%;">Total <span t-field="doc.amount_total"></span></td>
+                                    </tr>
+                                    <tr><td><br/></td></tr>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <table style="width:100%;" cellpadding="1" cellspacing="0">
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="width:100%;"><b>Authorized Signatory &amp; Stamp</b></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><b>Thank you for your business!</b></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;"><br/></td></tr>
+                                    <tr style="width:100%;"><td style="text-align:center;width:100%;">Should you have any enquiries concerning this invoice, please contact Mr.Pasha on + 968 92934369</td></tr>
+                                </table>
+                            </div>
+                            <div class="row" style="page-break-before:always;">
+								<t t-if="doc.prorate_invoice_line">
+									<table class="table table-bordered" style="width:100%;cellspacing:0px; !important;font-family:Liberation Serif;" cellpadding="1">
+										<thead style="font-size:14px;width:100%;">
+											<th><center>S No.</center></th>
+											<th><center>Vehicle Name</center></th>
+											<th><center>Reg No.</center></th>
+											<th><center>Device Type</center></th>
+											<th><center>Device Serial</center></th>
+											<th><center>Chasis No.</center></th>
+											<th><center>SIM No.</center></th>
+											<t t-if="doc.invoice_type=='division'">
+												 <th><center>Company Division</center></th>
+											</t>
+											<th><center>Location</center></th>
+											<th><center>Installation Date</center></th>
+											<th><center>Status</center></th>
+												<th t-if="get_date_details(doc) == 1">
+													<span>January</span>
+												</th>
+												<th t-if="get_date_details(doc) == 2">
+												   <span>February</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 3">
+												   <span>March</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 4">
+													<span>April</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 5">
+													<span>May</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 6">
+													<span>June</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 7">
+													<span>July</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 8">
+													<span>August</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 9">
+													<span>September</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 10">
+													<span>October</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 11">
+													<span>November</span>
+												 </th>
+												<th t-if="get_date_details(doc) == 12">
+													<span>December</span>
+												</th>
+										</thead>
+										<tbody>
+											<tr>
+												<t t-set="counter" t-value="1"/>
+													<tr t-foreach="doc.prorate_invoice_line" t-as="a">
+														<td style="text-align:center;"><span t-esc="counter"></span><t t-set="counter" t-value="counter+1"/></td>
+														<td style="padding:10px;"><span t-esc="a.name"/></td>
+														<td style="padding:10px;"><span t-esc="a.vehicle_number.name"/></td>
+														<td style="padding:10px;"><span t-esc="a.device_type_id.name"/></td>
+														<td style="padding:10px;"><span t-esc="a.device_serial_no_id.name"/></td>
+														<td style="padding:10px;"><span t-esc="a.chassis_no"/></td>
+														<td style="padding:10px;"><span t-esc="a.sim_no"/></td>
+														<t t-if="doc.invoice_type=='division'">
+															<td style="padding:10px;"><span t-esc="a.partner_id.name"/></td>
+														</t>
+														<td style="padding:10px;"><span t-esc="a.installation_location.name"/></td>
+														<td style="padding:10px;"><span t-esc="a.installation_date"/></td>
+														<td style="padding:10px;"><t t-if = "a.subscription_status == 'in_active'">In Active</t>
+														<t t-else = " ">Active</t></td>
+														<td style="padding:10px;"><span t-esc="a.amount"/></td>
+													</tr>
+											</tr>
+										</tbody>
+									</table>
+								</t>
+                            </div>                                                       
+                        </table>
+                    </div>
+<!--
+                    <div class="footer">
+                        <div style="border-top: 1px solid black;padding-left:100px;">
+                            <span t-esc="doc.company_id.street"></span>,
+                            <span t-esc="doc.company_id.street2"></span>,
+                            <span t-esc="doc.company_id.city"></span>,
+                            <span t-esc="doc.company_id.country_id.name"></span><br/>
+                            Tel:<span t-esc="doc.company_id.phone"></span>
+                            Fax:<span></span>
+                            Email:<span t-esc="doc.company_id.email"></span>
+                            Website:<span t-esc="doc.company_id.website"></span>
+                        </div>                        
+                    </div>                                      
+-->
+                </tr>
+                </tr>
+            </tr>
+    </template>
+</odoo>

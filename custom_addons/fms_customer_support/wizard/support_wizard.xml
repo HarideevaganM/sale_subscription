@@ -1,0 +1,41 @@
+<odoo>
+	<data>
+		<record id="generate_support_tickets_view_form" model="ir.ui.view">
+			<field name="name">generate.support.tickets.view</field>
+			<field name="model">partial.support</field>
+			<field name="arch" type="xml">
+				<form string="Generate Support Ticket">
+					<group>
+						<group>
+							<field name="no_of_vehicles" readonly="1"/>							
+						</group>
+						<group>
+							<field name="partner_id" readonly="1"/>	
+						</group>
+					</group>
+					<field name="support_lines">
+						<tree editable='bottom'>
+							<field name="service_type" required='1'/>	
+							<field name="service_sub_type" required='1'/>	
+						</tree>
+					</field>
+					<footer>
+						<button name="create_support_ticket" string="Create Tickets" type="object" class="oe_highlight" />
+						or						
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="partial_support_act" model="ir.actions.act_window">
+			<field name="name">Generate Support Ticket</field>
+			<field name="res_model">partial.support</field>
+<!--			<field name="view_type">form</field>-->
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="generate_support_tickets_view_form" />
+			<field name="target">new</field>
+		</record>
+
+	</data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_inherit_hr_holidays" model="ir.ui.view">
+        <field name="name">res.company.inherit</field>
+        <field name="model">hr.holidays</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[last()]/separator" position="replace"/>
+            <xpath expr="//field[@name='notes']" position="replace"/>
+            <xpath expr="//field[@name='report_note']" position="replace"/>
+            <xpath expr="//field[@name='state']" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate1,validate"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="replace">
+                <field name="name" required='1' string="Reason"/>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm']" position="replace">
+                <button string="HOD Approval" name="action_confirm" states="draft" type="object" class="oe_highlight" groups="hr_holidays.group_hr_holidays_manager"/>
+            </xpath>
+            <xpath expr="//button[@name='action_approve']" position="replace">
+                <button string="HR Approval" name="action_approve" states="confirm" type="object" groups="hr_holidays.group_hr_holidays_manager" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//button[@name='action_validate']" position="replace">
+                <button string="CEO Approval" name="action_validate" states="validate1" type="object" groups="hr_holidays.group_hr_holidays_manager" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//group[last()]" position="after">
+                <notebook>
+                    <page string="Extra Info" attrs="{'invisible':[('type','=','add')]}">
+                        <group>
+                            <group>
+                                <field name="ticket_eligibility" widget="radio" options="{'horizontal':true}" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <field name="duty_date" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <field name="illness_type" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                            </group>
+                            <group>
+                                <field name="contact_no" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <label string="Contact Address" attrs="{'invisible':[('type','=','add')]}"/>
+                                    <div class="o_address_format">
+                                        <field name="street" placeholder="Street..." class="o_address_street" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                        <field name="street2" placeholder="Street 2..." class="o_address_street" attrs="{'invisible':[('type','=','add')]}"/>
+                                        <field name="city" placeholder="City" class="o_address_city" attrs="{'invisible':[('type','=','add')]}"/>
+                                        <field name="state_id" class="o_address_state" placeholder="State" attrs="{'invisible':[('type','=','add')]}"/>
+                                        <field name="add_zip" placeholder="ZIP" class="o_address_zip" attrs="{'invisible':[('type','=','add')]}"/>
+                                        <field name="country_id" placeholder="Country" class="o_address_country" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                    </div>
+                            </group>
+                        </group>
+                         <group>
+                            <group>
+                                <field name="balance_available" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <field name="balance_leave" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                            </group>
+                            <group>
+                                <field name="is_certificate" widget="radio" options="{'horizontal':true}" attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <field name="attachment_id"  filename="file_name"  attrs="{'invisible':[('type','=','add')], 'required':[('type','=','remove')]}"/>
+                                <field name="file_name" invisible="1"/>
+                            </group>
+                             <group colspan='6'>
+                               <field name="notes" nolabel="1" colspan="4" placeholder="Add a reason..." attrs="{'invisible': [('type', '=', 'remove')]}"/>
+                                <div groups="hr_holidays.group_hr_holidays_manager" attrs="{'invisible':[('type','=','add')]}">
+                                    <separator string="Comment by Manager"/>
+                                    <field name="report_note" placeholder="e.g. Report to the next month..."/>
+                                </div>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>

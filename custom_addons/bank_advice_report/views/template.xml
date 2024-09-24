@@ -1,0 +1,987 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>   	
+		<template id="bank_advice_report_form_id">
+            <t t-call="web.html_container">
+					<t t-call="web.basic_layout">
+						<t t-if="doc and 'company_id' in doc">
+								<t t-set="company" t-value="doc.company_id.sudo()"/>
+							</t>
+							<t t-if="not doc or not 'company_id' in doc">
+								<t t-set="company" t-value="res_company"/>
+							</t>
+                        <div class="oe_structure"/>
+						<div class="header">
+								<table style="width:100%;margin-bottom:5%;">
+									<tr>
+										<td style="width=100%">
+                                          <center><img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % to_text(res_company.logo)" class="pull-left" width="200px"/></center> 
+
+                                        </td>
+<!--
+										<td style="padding-left:10px;font-size:18px;">
+											<span>Global Fleet Management Systems &#38; Technology</span>,<br/>
+											<span> PO.Box 2006</span>,<br/>
+											<span> Muscat &#44; Oman</span>,
+										</td>
+-->
+									</tr>
+								</table>
+							</div>
+                        <div class="page">
+                            <h4 class="text-center mb32" style="font-family:Liberation Serif;"><strong>Bank Advice Report </strong>
+                            </h4>                        
+						<div>
+							<style>
+								th,td,tr .table{border-collapse:collapse; font-family:Liberation Serif;border-1px solid black}
+								th,td {vertical-align:middle; font-size:13px; white-space:nowrap;}
+							</style>
+							 <table style="width:100%;line-height: 18px;">
+										 <tr>
+											 <td style="border-left:1px solid black;border-top:1px solid black;padding-top:1%;width:25%;padding-left:2px;font-size:16px;">
+												<strong> Date : </strong> <span t-esc="time.strftime('%d-%m-%Y')"/>
+											 </td>
+											 <td style="border-top:1px solid black;width:25%;padding-top:1%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;width:15%;padding-top:1%;">
+												 
+											 </td>
+											 <td style="border-top:1px solid black;width:10%;padding-top:1%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;width:15%;font-size:16px;padding-top:1%;padding-left:50%;">
+												<strong>Ref : </strong> <span t-esc="data.get('reference_code')"/>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;width:10%;padding-top:1%;">
+												 
+											 </td>
+										 </tr>																					 
+																		 
+							 </table> 
+									
+									 <table style="border-1px solid black;width:100%;line-height:15px;line-height: 18px;padding-left:12px;">
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:16px;padding-top:3%;">
+												<strong> To : </strong>
+											 </td>
+											 <td style="width:25%;padding-top:6%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:6%;">
+												 
+											 </td>
+											 <td style="width:10%;padding-top:6%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:6%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;padding-top:6%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;font-size:18px;padding-left:2px;">
+												 The Branch Manager 
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:18px;">
+<!--												<span style="font-size:16px" t-field="company.bank_name"/>-->
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:18px;">
+												<span style="font-size:16px" t-field="company.branch_name"/>
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:18px;">
+												Muscat, Sultanate Of Oman 
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>										 
+										 </table>										
+										 <table style="width:100%;line-height: 18px;padding-top:3%;">	
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;padding-top:2%;font-size:16px;">
+												Dear Sir/Madam,
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>										
+									</table>					
+									  <table width="100%">	
+										 <tr>										
+											 <td style="border-left:1px solid black;border-right:1px solid black;width:100%;line-height: 30px;padding-left:2px;font-size:16px;padding-top:1%;">
+												<strong>Sub : Salary Payment Advice from Global Fleet Management Systems &#38; Technology - for <span t-esc="datetime.datetime.strptime(data.get('date_end'), '%Y-%m-%d').strftime('%B %Y')"/></strong>
+											</td>																			 
+										 </tr>											 
+									</table>		
+									  	<table style="width:100%;line-height: 18px;padding-top:1%;">												 	
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;padding-top:1%;font-size:16px;">
+												A/C No : <span style="font-size:16px" t-field="company.account_number"/>
+											 </td>
+											 <td style="width:25%;padding-top:1%">											
+											 </td>
+											 <td style="width:15%;padding-top:1%">												 
+											 </td>
+											 <td style="width:10%;padding-top:1%">												
+											 </td>
+											 <td style="width:15%;padding-top:1%">												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;padding-top:1%">												 
+											 </td>
+										 </tr>		
+									</table>											
+									 <table style="width:100%;">	
+										 <tr>
+											 <td style="border-left:1px solid black;border-right:1px solid black;font-size:17px;width:100%;line-height:18px;padding-right:2px;padding-left:2px;padding-bottom:2%;padding-top:2%;">
+												<p> Please make the payroll transfer from the above account number to the below mentioned account numbers towards <br/> employee
+												Salary for the month of <span t-esc="datetime.datetime.strptime(data.get('date_end'), '%Y-%m-%d').strftime('%B-%Y')"/></p>
+											 </td>											 
+										 </tr>		
+									</table>							
+									 
+									 <table style="width:100%;line-height: 18px;font-size:16px;">											 
+										 <tr>
+											 <td style="border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:7%;font-size:16px;">
+												<strong><center>S.No :</center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:30%;font-size:16px;">
+												<strong><center> Name Of the Employee </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;font-size:16px;">
+												<strong><center> Bank Name </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;font-size:16px;">
+												<strong><center> Branch </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:18%;font-size:16px;">
+												<strong><center> Account Numbers </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;font-size:16px;">
+												<strong><center> Amount</center></strong>
+											 </td>
+										 </tr>
+										 <tr>
+											 <td style="border-left:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:7%;">
+
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:30%;">
+
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:18%;">
+
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												<strong><center>[in R.O]</center></strong>
+											 </td>
+										 </tr>
+									 </table>
+										 <table style="width:100%;line-height: 18px;font-size:16px;" >										
+											<tr t-foreach="data.get('payslip')" t-as="l">												
+													 <td style="border-left:1px solid black;border-right:1px solid black;font-size:15px;text-align:left;padding-left:2px;border-bottom:1px solid black;width:7%;">
+														<center><span t-esc="l_index+1"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;font-size:15px;width:30%;padding-left:2px;">
+														<span t-esc="l.get('name')"/>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;font-size:15px;width:15%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('bank_name')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;font-size:15px;width:15%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('branch_name')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;font-size:15px;width:18%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('bank_number_id')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;font-size:15px;width:15%;text-align:right;padding-right:2px;">
+														<span t-esc="l.get('amount')" t-options='{"widget": "float", "precision": 3}'/>
+													 </td>												
+										 </tr>	
+									
+										 </table>										
+									 <table style="font-family:Liberation Serif;width:100%; font-size:16px;width:100%;line-height: 18px;">
+									 <tr>
+										 <td style="border-left:1px solid black;width:7%;border-bottom:1px solid black;">
+										 </td>
+										 <td style="width:30%;border-bottom:1px solid black;"> </td>
+										 <td style="width:15%;border-bottom:1px solid black;"> </td>
+										 <td style="border-right:1px solid black;width:15%;border-bottom:1px solid black;"> </td>
+										 <td style="border-right:1px solid black;width:18%;padding-right:2px;text-align:right;border-bottom:1px solid black;font-size:16px;"> <strong>Total</strong></td>
+										 <td style="border-right:1px solid black;font-size:16px;width:15%;text-align:right;padding-right:2px;border-bottom:1px solid black;">
+											 <b><span t-esc="data.get('total_amount')" t-options='{"widget": "float", "precision": 3}'/></b></td>
+									 </tr>									 									
+									 </table>		
+									  <table style="width:100%;line-height: 18px;">	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;padding-top:3%;font-size:16px;">
+												Thanking You,
+											 </td>
+											 
+											 <td style="width:15%;padding-top:3%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:3%;">
+												
+											 </td>
+											 <td style="width:18%;padding-top:3%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;padding-top:3%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												Yours faithfully,
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>												 									 
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px;padding-top:2%;">
+												  For
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>											
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  Global Fleet Management Systems &#38; Technology
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  PO.Box 2006
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  P.C. 130
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												 Muscat &#44; Oman
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+																		
+										 <tr>
+											 <td style="border-left:1px solid black;font-size:16px;padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:37%;padding-left:2px;">
+												  Authorized Signatures
+											 </td>
+											 
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>		
+									 </table>			
+								</div>
+						</div>				
+				</t>
+            </t>
+		</template>
+	</data>  					
+</odoo> 
+
+        
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
+<!--
+		<template id="bank_advice_report_form_id">
+            <t t-call="web.html_container">
+					<t t-call="web.internal_layout">
+						<t t-if="doc and 'company_id' in doc">
+								<t t-set="company" t-value="doc.company_id.sudo()"/>
+							</t>
+							<t t-if="not doc or not 'company_id' in doc">
+								<t t-set="company" t-value="res_company"/>
+							</t>					
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div class="row">
+                            <h4 class="text-center mb32" style="font-family:Liberation Serif;"><strong>Bank Advice Report </strong>
+                            </h4>
+                        </div>
+						<div>
+							<style>
+								th,td,tr .table{border-collapse:collapse; font-family:Liberation Serif;border-1px solid black}
+								th,td {vertical-align:middle; font-size:13px; white-space:nowrap;}
+							</style>
+							 <table style="width:100%;line-height: 18px;">
+										 <tr>
+											 <td style="border-left:1px solid black;border-top:1px solid black;padding-top:1%;width:25%;padding-left:2px;font-size:16px;">
+												<strong> Date : </strong> <span t-esc="time.strftime('%d-%m-%Y')"/> 
+											 </td>
+											 <td style="border-top:1px solid black;width:25%;padding-top:1%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;width:15%;padding-top:1%;">
+												 
+											 </td>
+											 <td style="border-top:1px solid black;width:10%;padding-top:1%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;width:15%;font-size:16px;padding-top:1%;">
+												<strong>Ref : </strong> <span t-esc="data.get('reference_code')"/>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;width:10%;padding-top:1%;">
+												 
+											 </td>
+										 </tr>																					 
+																		 
+							 </table> 
+									
+									 <table style="border-1px solid black;width:100%;line-height:15px;line-height: 18px;padding-left:12px;">
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:16px;padding-top:3%;">
+												<strong> To : </strong>
+											 </td>
+											 <td style="width:25%;padding-top:6%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:6%;">
+												 
+											 </td>
+											 <td style="width:10%;padding-top:6%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:6%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;padding-top:6%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;font-size:16px;padding-left:2px;">
+												 The Branch Manager 
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:16px;">
+												<span style="font-size:16px" t-field="company.bank_name"/>
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:16px;">
+												<span style="font-size:16px" t-field="company.branch_name"/>
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;font-size:16px;">
+												Muscat, Sultanate Of Oman 
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>										 
+										 </table>										
+										 <table style="width:100%;line-height: 18px;padding-top:3%;">	
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;padding-top:2%;font-size:16px;">
+												Dear Sir/Madam,
+											 </td>
+											 <td style="width:25%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												 
+											 </td>
+											 <td style="width:10%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;">
+												 
+											 </td>
+										 </tr>										
+									</table>					
+									  <table width="100%">	
+										 <tr>										
+											 <td style="border-left:1px solid black;border-right:1px solid black;width:100%;line-height: 30px;padding-left:2px;font-size:16px;padding-top:1%;">
+												<strong>Sub : </strong> Salary Payment Advice From Global Fleet Management Systems &#38; Technology, <span t-esc="datetime.datetime.strptime(data.get('date_end'), '%Y-%m-%d').strftime('%B %Y')"/>	
+											</td>																			 
+										 </tr>											 
+									</table>		
+									  	<table style="width:100%;line-height: 18px;padding-top:1%;">												 	
+										 <tr>
+											 <td style="border-left:1px solid black;width:25%;padding-left:2px;padding-top:1%;font-size:16px;">
+												A/C No : <span style="font-size:16px" t-field="company.account_number"/>
+											 </td>
+											 <td style="width:25%;padding-top:1%">											
+											 </td>
+											 <td style="width:15%;padding-top:1%">												 
+											 </td>
+											 <td style="width:10%;padding-top:1%">												
+											 </td>
+											 <td style="width:15%;padding-top:1%">												
+											 </td>
+											 <td style="border-right:1px solid black;width:10%;padding-top:1%">												 
+											 </td>
+										 </tr>		
+									</table>											
+									 <table style="width:100%;">	
+										 <tr>
+											 <td style="border-left:1px solid black;border-right:1px solid black;font-size:16px;width:100%;line-height: 23px;padding-left:2px;padding-bottom:2%;padding-top:2%;">
+												Please make the Payroll Transfer from the above account to the below mentioned account number towards Employee
+											 </td>											 
+										 </tr>		
+									</table>							
+									 
+									 <table style="width:100%;line-height: 18px;font-size:16px;">											 
+										 <tr>
+											 <td style="border-left:1px solid black;border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:7%;">
+												<strong><center>S.No :</center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:30%;">
+												<strong><center> Name Of the Employee </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												<strong><center> Bank Name </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												<strong><center> Branch </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:18%;">
+												<strong><center> Account Numbers </center></strong>
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												<strong><center> Amount</center></strong>
+											 </td>
+										 </tr>
+										 <tr>
+											 <td style="border-left:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:7%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:30%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:18%;">
+												
+											 </td>
+											 <td style="border-right:1px solid black;border-top:1px solid black;border-bottom:1px solid black;width:15%;">
+												<strong><center> [in R.O]</center></strong>
+											 </td>
+										 </tr>													
+									 </table>
+										 <table style="width:100%;line-height: 18px;font-size:16px;" >										
+											<tr t-foreach="data.get('payslip')" t-as="l">												
+													 <td style="border-left:1px solid black;border-right:1px solid black;text-align:left;padding-left:2px;border-bottom:1px solid black;width:7%;">
+														<center><span t-esc="l_index+1"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;width:30%;padding-left:2px;">
+														<span t-esc="l.get('name')"/>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;width:15%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('bank_name')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;width:15%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('branch_name')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;width:18%;text-align:left;padding-left:2px;">
+														<center><span t-esc="l.get('bank_number_id')"/></center>
+													 </td>
+													 <td style="border-right:1px solid black;border-bottom:1px solid black;width:15%;text-align:right;padding-right:2px;">
+														<span t-esc="l.get('amount')" t-options='{"widget": "float", "precision": 3}'/>
+													 </td>												
+										 </tr>	
+									
+										 </table>										
+									 <table style="font-family:Liberation Serif;width:100%; font-size:16px;width:100%;line-height: 18px;">
+									 <tr>
+										 <td style="border-left:1px solid black;width:7%;border-bottom:1px solid black;">
+										 </td>
+										 <td style="width:30%;border-bottom:1px solid black;"> </td>
+										 <td style="width:15%;border-bottom:1px solid black;"> </td>
+										 <td style="border-right:1px solid black;width:15%;border-bottom:1px solid black;"> </td>
+										 <td style="border-right:1px solid black;width:18%;padding-right:2px;text-align:right;border-bottom:1px solid black;font-size:16px;"> <strong>Total</strong></td>
+										 <td style="border-right:1px solid black;font-size:16px;width:15%;text-align:right;padding-right:2px;border-bottom:1px solid black;">
+											<span t-esc="data.get('total_amount')" t-options='{"widget": "float", "precision": 3}'/></td>
+									 </tr>									 									
+									 </table>		
+									  <table style="width:100%;line-height: 18px;">	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;padding-top:3%;font-size:16px;">
+												Thanking You,
+											 </td>
+											 
+											 <td style="width:15%;padding-top:3%;">
+												
+											 </td>
+											 <td style="width:15%;padding-top:3%;">
+												
+											 </td>
+											 <td style="width:18%;padding-top:3%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;padding-top:3%;">
+												 
+											 </td>
+										 </tr>		
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												Yours faithfully,
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>												 									 
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px;padding-top:2%;">
+												  For
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>											
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  Global Fleet Management Systems &#38; Technology
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  PO.Box 2006
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												  P.C. 130
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+										 <tr>
+											 <td style="border-left:1px solid black;width:37%;padding-left:2px;font-size:16px">
+												 Muscat &#44; Oman
+											 </td>
+											 
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:15%;">
+												
+											 </td>
+											 <td style="width:18%;">
+											 </td>
+											 <td style="width:15%;border-right:1px solid black;">
+												 
+											 </td>
+										 </tr>	
+																		
+										 <tr>
+											 <td style="border-left:1px solid black;font-size:16px;padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:37%;padding-left:2px;">
+												  Authorized Signatures
+											 </td>
+											 
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												
+											 </td>
+											 <td style="padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:18%;">
+											 </td>
+											 <td style="border-right:1px solid black;padding-top:2%;padding-bottom:4%;border-bottom:1px solid black;width:15%;">
+												 
+											 </td>
+										 </tr>		
+									 </table>			
+								</div>
+						</div>				
+				</t>
+            </t>
+		</template>
+-->
+         
+           
+                
+                
+                
+		
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+ 

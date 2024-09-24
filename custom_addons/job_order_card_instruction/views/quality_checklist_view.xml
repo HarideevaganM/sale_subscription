@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<odoo>
+
+        <record model="ir.ui.view" id="quality_checklist_form_view">
+            <field name="name">quality checklist form view</field>
+            <field name="model">quality.checklist</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_quality_checklist_tree" model="ir.ui.view">
+            <field name="name">quality.checklist.tree</field>
+            <field name="model">quality.checklist</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Quality Checklist">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="action_view_quality_checklist" model="ir.actions.act_window">
+            <field name="name">Quality Checklists</field>
+            <field name="res_model">quality.checklist</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p>
+                    Odoo's project management allows you to manage the pipeline of your tasks efficiently. You can track progress, discuss on tasks, attach documents, etc.
+                </p>
+            </field>
+        </record>
+        
+        <menuitem id="menu_quality_checklist" name="Quality Checklists" parent="odoo_job_costing_management.menu_job_cost_configuration" action="action_view_quality_checklist"/>
+</odoo>

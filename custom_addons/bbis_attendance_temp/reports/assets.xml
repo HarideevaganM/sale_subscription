@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="bbis_leave_reports" name="BBIS Custom Report CSS" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link href="/bbis_attendance_temp/static/less/leave_report.less" rel="stylesheet" type="text/css"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

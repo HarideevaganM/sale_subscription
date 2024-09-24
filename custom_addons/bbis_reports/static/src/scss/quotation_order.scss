@@ -1,0 +1,56 @@
+.bbis-sale-quote-order-header {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.bbis-sale-quote-order-header .colon-space {
+  font-weight:bold;
+  padding:2px 10px;
+  vertical-align:top;
+}
+
+.bbis-sale-quote-order-header table:first-child {
+  display: inline-block;
+}
+
+.bbis-sale-quote-order-header table:last-child {
+  float: right;
+}
+
+.bbis-sale-quote-order-header table th, .bbis-sale-quote-order-header table td {
+  white-space: nowrap;
+  padding:1px 0;
+}
+
+.bbis-sale-quote-order-items-table{
+  width:100%;
+}
+.bbis-sale-quote-order-items-table thead th {
+  background-color: #f05a29;
+  color: #fff;
+  padding: 5px 10px;
+  border-bottom: none !important;
+  font-size: 11pt;
+}
+
+.bbis-footer-social-link-ul {
+  text-align:center;
+  margin-top:10px;
+
+  li {
+    margin-right: 4px;
+    padding:0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  li img {
+    height: 15px;
+    width: auto;
+  }
+
+  li span {
+    font-size: 7pt;
+  }
+}

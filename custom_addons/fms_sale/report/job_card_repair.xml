@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="custom_report_job_card_repair" model="ir.actions.report">
+        <field name="name">Support/Repair</field>
+        <field name="model">job.card</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">fms_sale.fms_report_job_card_repair</field>
+        <field name="report_file">fms_sale.fms_report_job_card_repair</field>
+<!--        <field name="print_report_name">'Delivery Order' if object.picking_type_id.name == 'Delivery Orders' else 'GRN Report'</field>-->
+        <field name="binding_model_id" ref="model_job_card"/>
+        <field name="binding_type">report</field>
+    </record>
+
+<!--        <report id="custom_report_job_card_repair"-->
+<!--                model="job.card"-->
+<!--                string="Support/Repair"-->
+<!--                report_type="qweb-pdf"-->
+<!--                file="fms_sale.fms_report_job_card_repair"-->
+<!--                name="fms_sale.fms_report_job_card_repair"/>-->
+
+
+        <template id="fms_report_job_card_repair">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout"> 
+						<div class="header" style="padding-top:10px;">
+							<t t-if="o and 'company_id' in o">
+								<t t-set="company" t-value="o.company_id.sudo()"/>
+							</t>
+							<t t-if="not o or not 'company_id' in o">
+								<t t-set="company" t-value="res_company"/>
+							</t>
+							<table>
+									<tr width="100%">
+										<td width="50%">
+											<img   style="text-align:center;" t-if="company.logo" 
+											t-att-src="'data:image/png;base64,%s' % to_text(company.logo)"  width="150px"/>                                     
+										</td>
+										<td width="50%" style="padding-left:180px;">
+											<t t-if="company.street">
+												<span t-field="company.street"></span>,
+											</t>
+											<t t-if="company.street2">
+												<span t-field="company.street2"></span>,
+												<br/>
+											</t>
+											<t t-if="company.city">
+												<span t-field="company.city"></span>,
+											</t>
+											<t t-if="company.state_id">
+												<span t-field="company.state_id"></span>,
+												<br/>
+											</t>
+											<t t-if="company.zip">
+												<span t-field="company.zip"></span>,
+											</t>
+											<t t-if="company.country_id">
+												<span t-field="company.phone"></span>,
+												<br/>
+											</t>
+											<t t-if="company.country_id">
+												<span t-field="company.country_id"></span>,
+												<br/>
+											</t>
+											<t t-if="company.email">
+												<span t-field="company.email"></span>,
+												<br/>
+											</t>
+											<t t-if="company.website">
+												<span t-field="company.website"></span>,
+												<br/>
+											</t>
+
+
+										</td>
+									</tr>
+							</table>
+							<br></br>
+						</div>
+						<div class="row">
+							<table width="100%">
+								<tr><center><h2><u>Job Card</u></h2></center></tr>
+								<tr width="100%">
+									<td width="50%">
+										<span style="font-size:12px"><b>Date:</b></span>
+									</td>
+									<td width="50%">
+										<span style="padding-left:150px;font-size:12px"><b>Job No:</b></span><span style="font-size:12px" t-field="doc.name"></span>
+									</td>
+								</tr>
+								<tr width="100%">
+									<td width="50%">
+										<span style="font-size:12px"><b>Client/Company Name: </b></span><span style="font-size:12px" t-field="doc.company_id"></span>
+									</td>
+									<td width="50%">
+										<span style="padding-left:150px;font-size:12px"><b>Location:</b></span>
+									</td>
+								</tr>
+								<tr width="100%">
+									<td width="50%">
+										<span style="font-size:12px"><b>Job Card Type: </b></span><span style="font-size:12px" t-field="doc.job_card_type"></span>
+									</td>
+									<t t-if="doc.job_card_type=='support'">
+										<td width="50%">
+											<span style="padding-left:150px;font-size:12px"><b>Job Type: </b></span><span style="font-size:12px" t-field="doc.repair_job_type"></span>
+										</td>
+									</t>
+									
+								</tr>
+								
+							</table>
+						</div>
+	
+                            <div class="row">
+								<br></br>
+                                <table class="table table-bordered"
+                                       style="width:100%;"
+                                       >
+                                    <thead>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Vehicle description</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.vehicle_description"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                               <strong>Registration No</strong> 
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.vehicle_number"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Model/Year</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.model"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                               <strong>VIN(chassis) NO</strong> 
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.chassis_number_old"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Device Serial No</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.device_serial_number_old_id"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>GSM No</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.gsm_number_old"/>
+                                            </td>
+                                        </tr> <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                              <strong>Vehicle Number</strong>  
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.vehicle_number_old"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                               <strong>Satellite Modem IMEI</strong> 
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.imei_no_old"/>
+                                            </td>
+                                        </tr><tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                              <strong>GSM IMEI</strong>  
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.gsm_imei_no_old"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Speed Input</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.speed_input"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Seat Belt</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.seat_belt"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                               <strong>Panic Button</strong> 
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.panic_button"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>RPM</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.rpm"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <strong>Can Bus</strong>
+                                            </td>
+                                            <td width="50%"
+                                                style="text-align:center;font-size:11px">
+                                                <span t-field="doc.can_bus"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;font-size:11px">
+                                                <strong>Problem</strong>
+                                            </td>
+                                            <td style="text-align:center;font-size:11px">
+                                                <span t-field="doc.problem"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;font-size:11px">
+                                                <strong>Rectification</strong>
+                                            </td>
+                                            <td style="text-align:center;font-size:11px">
+                                                <span t-field="doc.rectification"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;font-size:11px">
+                                               <strong>Remarks</strong> 
+                                            </td>
+                                            <td style="text-align:center;font-size:11px">
+                                                <span t-field="doc.remarks"/>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <table width="100%" class="table table-bordered">
+                                    <thead style="font-size: 14px;">
+                                        <th style="text-align:center;font-size:11px"><strong>Job done by</strong></th>
+                                        <th style="text-align:center;font-size:11px"><strong>Checked/Noted by</strong></th>
+                                        <th style="text-align:center;font-size:11px"><strong>Start Time</strong></th>
+                                        <th style="text-align:center;font-size:11px"><strong>End Time</strong></th>
+                                        <th style="text-align:center;font-size:11px"><strong>Date Accomplished</strong></th>
+                                            
+                                    </thead>
+									<tr>
+										<tr t-foreach="doc.card_line" t-as="data">
+											<td style="text-align:center;font-size:11px">
+												<span t-field="data.name"/>
+											</td>
+											<td style="text-align:center;font-size:11px">
+												<span t-field="data.checked_by"/>
+											</td>
+											<td style="text-align:center;font-size:11px">
+												<span t-field="data.job_start_time"/>
+											</td>
+											<td style="text-align:center;font-size:11px">
+												<span t-field="data.job_end_time"/>
+											</td>
+											<td style="text-align:center;font-size:11px">
+												<span t-field="data.date_accomplished"/>
+											</td>
+										</tr>
+									</tr>
+									
+                                </table>
+                                
+                            </div>
+                            <div class="row">
+								<table width="100%">
+									<tr width="100%">
+										<p>I agree that all work has been performed to my satisfaction.</p><br></br>
+										<td width="50%" style="font-size: 15px;">Client Signature:
+											
+										</td>
+										<td width="50%">
+											<span style="padding-left:50%">
+												Date:
+											</span>
+											<br/>
+										</td>
+									</tr>
+								</table>    
+                            </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bbis_requirements_bbis_requirements,bbis_requirements.bbis_requirements,model_bbis_requirements_bbis_requirements,,1,0,0,0

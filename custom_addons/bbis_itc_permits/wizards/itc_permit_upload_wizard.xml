@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- Create the wizard view for upload the vehicle details for ITC Permits. -->
+        <record id="bbis_itc_permit_upload_wizard" model="ir.ui.view">
+            <field name="name">bbis.itc.permit.upload.wizard</field>
+            <field name="model">itc.permit.wizard</field>
+            <field name="arch" type="xml">
+                <!-- Add the screen fields -->
+                <form string="ITC Permit Vehicle Details">
+                    <group>
+                        <group colspan='6'>
+                            <field name='file'/>
+                            <field name='sale_order_id' invisible="1"/>
+                            <field name='permit_count' attrs="{'invisible': [('sale_order_id', '>', 0)]}"/>
+                        </group>
+                    </group>
+                    <field name="permit_wizard_line_ids" mode="tree,form" widget="one2many_list" attrs="{'invisible': [('sale_order_id', '>', 0)]}">
+                        <tree string="Selected Permits" create="false" editable="top"
+                            decoration-success="permit_issued == True"
+                            decoration-danger="portal_status == 'Permit Cancelled'"
+                        >
+                            <field name="request_no" readonly="1"/>
+                            <field name="permit_no" readonly="1"/>
+                            <field name="partner" readonly="1"/>
+                            <field name="vehicle_no" readonly="1"/>
+                            <field name="current_status" readonly="1"/>
+                            <field name="portal_status" readonly="1"/>
+                            <field name="permit_issued" string="Permit Issued?"/>
+                        </tree>
+                    </field>
+
+                    <footer>
+                        <button string='Upload ITC' name="upload_applied_permits" type="object" class="btn-primary"
+                            attrs="{'invisible': [('sale_order_id', '=', 0)]}"/>
+                        <button string='Update Status' name="update_permit_status" type="object" class="btn-primary"
+                            attrs="{'invisible': [('sale_order_id', '>', 0)]}"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            name="Vehicle ITC Permits"
+            res_model="itc.permit.wizard"
+            src_model="itc.permit.wizard"
+            view_mode="form"
+            view_type = "form"
+            target="new"
+            key2="client_action_multi"
+            id="itc_permit_status_update"
+            multi="True" />
+
+    </data>
+</odoo>

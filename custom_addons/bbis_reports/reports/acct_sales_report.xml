@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format -->
+    <record id="bbis_sales_rpt_paper_format" model="report.paperformat">
+        <field name="name">Legal</field>
+        <field name="default" eval="True"/>
+        <field name="format">A3</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">12</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_sales"
+        model="account.move.line"
+        string="Sales Report"
+        report_type="qweb-pdf"
+        file="bbis_reports.sales_report"
+        name="bbis_reports.sales_report"
+        paperformat="bbis_reports.bbis_sales_rpt_paper_format"
+        print_report_name="Sales" menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="sales_report_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:100px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+                <div class="bbis-company-details">
+                    <h1 class="text-uppercase" style="margin:0; font-size:22pt"><strong>Sales Report</strong></h1>
+                    <div>
+                        <span t-if="move_state == 'posted'" t-esc="'All Posted Entries'"/>
+                        <span t-else="" t-esc="'All Entries'"/>
+                        <br/>
+                        <span t-if="date == 'this_year'" t-esc="'This Year'"/>
+                        <span t-elif="date == 'last_year'" t-esc="'Last Year'"/>
+                        <span t-else="">
+                            <t t-esc="start_date.strftime('%B %Y')"/> -
+                            <t t-esc="end_date.strftime('%B %Y')"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <t t-set="start_range" t-value="data['start_range']"/>
+                <t t-if="date != 'custom'" t-set="start_range" t-value="start_range + 1"/>
+                <t t-set="end_range" t-value="data['end_range']"/>
+
+                <t t-set="table1_width" t-value="'width: auto;'"/>
+                <t t-if="date_range > 5" t-set="table1_width" t-value="'width: 100%;'"/>
+
+                <t t-call="bbis_reports.bbis_sales_report_comp">
+                    <t t-set="sched_title">Sales Report</t>
+                    <t t-set="sched_total_title">Sales</t>
+                    <t t-set="sched_data" t-value="data"/>
+                </t>
+
+
+                <!--<div style="page-break-before: always;"/>
+                <div class="accounting-subtitle"><strong t-esc="'Sales Details'"/></div>
+                <table class="bbis-accounting-report-table1 row-striped" style="width:100%">
+                    <tr>
+                        <thead>
+                        <th class="sub-header">Date</th>
+                        <th class="sub-header">Account Group</th>
+                        <th class="sub-header">Product Name</th>
+                        <th class="sub-header">Product Category</th>
+                        <th class="sub-header">Customer Name</th>
+                        <th class="sub-header">Qty</th>
+                        <th class="sub-header">Balance</th>
+                        </thead>
+                    </tr>
+                    <tbody>
+                        <t t-if="sale_list">
+                            <t t-set="total_qty" t-value="0.00"/>
+                            <t t-set="total_balance" t-value="0.00"/>
+                            <tr t-foreach="sale_list" t-as="l">
+                                <t t-set="date_tmp" t-value="datetime.datetime.strptime(l['date'], '%Y-%m-%d')"/>
+                                <t t-set="total_qty" t-value="total_qty + l['quantity']"/>
+                                <t t-set="total_balance" t-value="total_balance + l['balance']"/>
+
+                                <td class="text-center"><span t-esc="date_tmp.strftime('%B %Y')"/></td>
+                                <td class="text-center"><span t-esc="l['group_name']"/></td>
+                                <td><span t-esc="l['product_name']"/></td>
+                                <td><span t-esc="l['product_category']"/></td>
+                                <td><span t-esc="l['partner']"/></td>
+                                <td class="text-center"><span t-esc="l['quantity']" t-options='{"widget": "float", "precision": 0}'/></td>
+                                <td class="text-right"><span t-esc="l['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </tr>
+                            <tr>
+                                <td class="tbody-total text-right" colspan="5">Total</td>
+                                <td class="tbody-total text-center">
+                                    <span t-esc="total_qty" t-options='{"widget": "float", "precision": 0}'/>
+                                </td>
+                                <td class="tbody-total text-right">
+                                    <span t-esc="total_balance" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <tr><td colspan="7">No records found.</td></tr>
+                        </t>
+                    </tbody>
+                </table>-->
+            </div>
+        </div>
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="sales_report">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.sales_report_document"/>
+        </t>
+    </template>
+
+    <template id="bbis_sales_report_comp">
+        <div style="page-break-before: always;"/>
+
+        <t t-set="column_count" t-value="int(date_range)"/>
+        <t t-set="col_multiplier" t-value="1"/>
+        <t t-if="include_tax" t-set="col_multiplier" t-value="col_multiplier + 1"/>
+        <t t-if="include_sales_qty" t-set="col_multiplier" t-value="col_multiplier + 1"/>
+        <t t-set="column_count" t-value="int(date_range) * col_multiplier"/>
+
+        <table class="bbis-accounting-report-table1" t-att-style="table1_width">
+            <tr>
+                <th rowspan="3">Particular</th>
+                <th t-att-colspan="column_count" class="text-uppercase">
+                    <h2 style="margin:0; font-size:15pt"><strong><t t-esc="sched_title"/></strong></h2>
+                </th>
+                <th t-if="include_sales_qty" rowspan="3">Total <br/>Qty</th>
+                <th rowspan="3">Total <br/>Balance</th>
+                <th t-if="include_tax" rowspan="3">Total <br/>Tax</th>
+            </tr>
+            <t t-set="start_range" t-value="data['start_range']"/>
+            <t t-if="date != 'custom'" t-set="start_range" t-value="start_range + 1"/>
+            <t t-set="end_range" t-value="data['end_range']"/>
+            <tr>
+                <th t-att-colspan="col_multiplier" class="sub-header" t-foreach="range(start_range, end_range)" t-as="month" style="white-space:nowrap">
+                    <t t-set="month_int" t-value="month"/>
+                    <t t-set="month_name" t-value="datetime.date(1900, month_int, 1).strftime('%b')"/>
+                    <span t-esc="month_name"/>
+                    <span t-esc="year.strftime('%Y')"/>
+                </th>
+            </tr>
+
+            <tr>
+                <t class="sub-header" t-foreach="range(date_range)" t-as="month">
+                    <th t-if="include_sales_qty" class="sub-header">Qty</th>
+                    <th class="sub-header">Balance</th>
+                    <th t-if="include_tax" class="sub-header">Tax</th>
+                </t>
+            </tr>
+
+            <tbody>
+                <t t-if="len(sched_data['keys']) > 0">
+                    <t t-foreach="sched_data['keys']" t-as="k">
+                        <tr>
+                            <td t-att-colspan="column_count + 4" class="tbody-header1"><strong t-esc="k"/></td>
+                        </tr>
+                        <tr t-foreach="sched_data['list'][k]" t-as="cat">
+                            <t t-set="total_category" t-value="0.00"/>
+                            <t t-set="total_category_tax" t-value="0.00"/>
+                            <t t-set="total_qty" t-value="0"/>
+                            <td>
+                                <span t-if="cat" t-esc="cat"/>
+                                <span t-else="" t-esc="'Undefined'"/>
+                            </td>
+                            <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                <td t-if="include_sales_qty" class="text-center">
+                                    <span t-esc="sched_data['list'][k][cat][ctr]['quantity']" t-options='{"widget": "float", "precision": 0}'/>
+                                    <t t-set="total_qty" t-value="total_qty + sched_data['list'][k][cat][ctr]['quantity']"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="sched_data['list'][k][cat][ctr]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                    <t t-set="total_category" t-value="total_category + sched_data['list'][k][cat][ctr]['balance']"/>
+                                </td>
+
+                                <td t-if="include_tax" class="text-right">
+                                    <span t-esc="sched_data['list'][k][cat][ctr]['tax']" t-options='{"widget": "float", "precision": 2}'/>
+                                    <t t-set="total_category_tax" t-value="total_category_tax + sched_data['list'][k][cat][ctr]['tax']"/>
+                                </td>
+
+                            </t>
+                            <td class="text-center" t-if="include_sales_qty"><span t-esc="total_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                            <td class="text-right"><span t-esc="total_category" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-right" t-if="include_tax"><span t-esc="total_category_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total <span t-esc="k"/></strong></td>
+                            <t t-set="total_group_sales" t-value="0.00"/>
+                            <t t-set="total_group_tax" t-value="0.00"/>
+                            <t t-set="total_group_qty" t-value="0"/>
+                            <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                <td class="text-center" t-if="include_sales_qty">
+                                    <strong t-esc="sched_data['total'][k][ctr]['quantity']" t-options='{"widget": "float", "precision": 0}'/>
+                                    <t t-set="total_group_qty" t-value="total_group_qty + sched_data['total'][k][ctr]['quantity']"/>
+                                </td>
+                                <td class="text-right">
+                                    <strong t-esc="sched_data['total'][k][ctr]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                    <t t-set="total_group_sales" t-value="total_group_sales + sched_data['total'][k][ctr]['balance']"/>
+                                </td>
+
+                                <td class="text-right" t-if="include_tax">
+                                    <strong t-esc="sched_data['total'][k][ctr]['tax']" t-options='{"widget": "float", "precision": 2}'/>
+                                    <t t-set="total_group_tax" t-value="total_group_tax + sched_data['total'][k][ctr]['tax']"/>
+                                </td>
+
+                            </t>
+                            <td class="text-center" t-if="include_sales_qty"><strong t-esc="total_group_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                            <td class="text-right"><strong t-esc="total_group_sales" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-right" t-if="include_tax"><strong t-esc="total_group_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td class="tbody-total"><strong>Total <t t-esc="sched_total_title"/></strong></td>
+                        <t t-set="total_sched_data" t-value="0.00"/>
+                        <t t-set="total_tax" t-value="0.00"/>
+                        <t t-set="total_sched_qty" t-value="0"/>
+                        <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                            <td class="tbody-total text-center" t-if="include_sales_qty">
+                                <strong t-esc="sched_data['total']['account'][ctr]['quantity']" t-options='{"widget": "float", "precision": 0}'/>
+                                <t t-set="total_sched_qty" t-value="total_sched_qty + sched_data['total']['account'][ctr]['quantity']"/>
+                            </td>
+                            <td class="tbody-total text-right">
+                                <strong t-esc="sched_data['total']['account'][ctr]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                <t t-set="total_sched_data" t-value="total_sched_data + sched_data['total']['account'][ctr]['balance']"/>
+                            </td>
+                            <td class="tbody-total text-right" t-if="include_tax">
+                                <strong t-esc="sched_data['total']['account'][ctr]['tax']" t-options='{"widget": "float", "precision": 2}'/>
+                                <t t-set="total_tax" t-value="total_tax + sched_data['total']['account'][ctr]['tax']"/>
+                            </td>
+                        </t>
+                        <td class="tbody-total text-center" t-if="include_sales_qty"><strong t-esc="total_sched_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                        <td class="tbody-total text-right"><strong t-esc="total_sched_data" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td class="tbody-total text-right" t-if="include_tax"><strong t-esc="total_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                    </tr>
+                </t>
+                <t t-else="">
+                    <tr><td t-att-colspan="column_count + 4" class="text-center">No records found</td></tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+    <!-- End: Report Template -->
+
+</odoo>

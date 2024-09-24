@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[@name='hr_settings']/group/group[1]" position="after">
+                        <group string="Incentives">
+                            <field name="overtime"/>
+                        </group>
+                    </xpath>
+                </data>
+
+            </field>
+    </record>
+
+    <record id="view_hr_payslip_form_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.view.form.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll_community.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='name']" position="after">
+                        <field name="no_of_days" invisible="1"/>
+                    </xpath>
+                </data>
+            </field>
+    </record>
+
+</odoo>

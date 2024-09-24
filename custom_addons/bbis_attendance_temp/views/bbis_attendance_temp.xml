@@ -1,0 +1,69 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="bbis_attendance_temp_list">
+            <field name="name">bbis_attendance_temp.list</field>
+            <field name="model">bbis.attendance.temp</field>
+            <field name="arch" type="xml">
+                <tree decoration-muted="remarks == 'Day Off'" decoration-success="remarks == ''">
+                    <field name="name"/>
+                    <!--<field name="date_time" readonly="1"/>-->
+                    <field name="check_in"/>
+                    <field name="check_out"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+
+    <record model="ir.ui.view" id="bbis_attendance_temp_form">
+        <field name="name">bbis_attendance_temp.form</field>
+        <field name="model">bbis.attendance.temp</field>
+        <field name="arch" type="xml">
+            <form string="BBIS Attendances Form">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="branch"/>
+                        <field name="check_in" required="1"/>
+                        <field name="check_out" required="1"/>
+                        <field name="month" invisible="1"/>
+                        <field name="year" invisible="1"/>
+                        <field name="remarks"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--search view for the patient-->
+    <record id="bbis_attendance_temp_search" model="ir.ui.view">
+        <field name="name">bbis.attendance.temp.search</field>
+        <field name="model">bbis.attendance.temp</field>
+        <field name="arch" type="xml">
+            <search string="Search Patients">
+                <field name="name"/>
+                <filter string="No Check Out" name="check_out" domain="[('check_out', '=', False)]"/>
+                <filter string="With Remarks" name="with_remarks" domain="[('remarks', '!=', '')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="employee" context="{'group_by':'name'}"/>
+                    <filter string="Month" name="month" context="{'group_by':'check_in'}"/>
+                    <filter string="Remarks" name="remarks" context="{'group_by':'remarks'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="bbis_attendance_temp.upload_attendance">
+        <field name="name">BBIS Attendances Data</field>
+        <field name="res_model">bbis.attendance.temp</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_employee': 1}</field>
+    </record>
+
+    <menuitem name="Custom Requirements" id="bbis_attendance_custom_menu" parent="hr_attendance.menu_hr_attendance_manage_attendances"
+              groups="hr_attendance.group_hr_attendance" sequence="25"/>
+
+    <menuitem name="Temporary Attendances" id="bbis_attendance_temp" parent="bbis_attendance_temp.bbis_attendance_custom_menu"
+              action="bbis_attendance_temp.upload_attendance" groups="hr_attendance.group_hr_attendance" sequence="30"/>
+  </data>
+</odoo>

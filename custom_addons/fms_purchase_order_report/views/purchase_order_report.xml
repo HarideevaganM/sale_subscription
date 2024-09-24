@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+	<data>
+        <record id="report_currency_name_inherit" model="ir.ui.view">
+            <field name="name">report.currency.name.inherit</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='currency_subunit_label']" position="after">
+                    <field name="report_currency_name"/>
+                </xpath>
+            </field>
+          </record>
+
+
+    <report id="report_fms_purchase_order"
+        model="purchase.order"
+        string="Purchase Order Report"
+        report_type="qweb-pdf"
+        menu="False"
+        file="fms_purchase_order_report.purchasereport"
+        name="fms_purchase_order_report.purchasereport"/>
+
+
+    <template id = "purchasereport">
+        <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="margin-left:15px;">
+                        <t t-call="web.basic_layout">
+							<t t-if="o and 'company_id' in o">
+								<t t-set="company" t-value="o.company_id.sudo()"/>
+							</t>
+							<t t-if="not o or not 'company_id' in o">
+								<t t-set="company" t-value="res_company"/>
+							</t>
+                            <style>
+                                .box {
+                                      display: flex;
+                                      align-items: end;
+                                      justify-content: center;
+                                    }
+                            </style>
+                           <!-- <style>
+                                .table thead > tr > th, .table > tbody > tr > td {font-family:Liberation Serif;
+                                        cellspacing:10px;
+                                    }
+
+                                tr {page-break-inside: avoid;}
+
+                                thead { display: table-header-group; }
+                                td, th { padding: 1px;}
+
+                            </style>-->
+
+                            <div class="header">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td style="padding-left:40%" width="50%">
+                                            <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % to_text(res_company.logo)" class="pull-left" width="180px"/>
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </div>
+                             <table style="font-family:Liberation Serif;">
+								<tr width="100%">
+									<td width="50%;font-size:18;">
+										<b>Supplier :</b> <br/>
+										<t style="padding-top:2px" t-if="o.partner_id.name">
+											<b><span t-field="o.partner_id.name"/></b>,<br/>
+										</t>
+										<t t-if="o.partner_id.street">
+											 <span  t-field="o.partner_id.street"/>,
+										</t>
+										<t t-if="o.partner_id.street2">
+											 <span  t-field="o.partner_id.street2"/>,
+										</t>
+										<t t-if="o.partner_id.city">
+											 <span t-field="o.partner_id.city"/>,
+										</t>
+										<t t-if="o.partner_id.zip">
+											  <span t-field="o.partner_id.zip"/>,<br></br>
+										</t>
+										<t t-if="o.partner_id.country_id">
+                                            <span t-field="o.partner_id.country_id.name"/>. <br/>
+										</t>
+										<t t-if="o.partner_id.phone">
+											 <b>Tel/Fax : </b><span t-field="o.partner_id.phone"/> |
+										</t>
+                                        <t t-if="o.partner_id.mobile">
+											 <b>Mobile: </b><span t-field="o.partner_id.mobile"/><br/>
+										</t>
+										<t t-if="o.partner_id.currency_id.name">
+											 <b>Currency: </b> <span t-field="o.currency_id.report_currency_name"/><br></br>
+										</t>
+                                    </td>
+                                    <td style="text-align:right;padding-left:200px">
+										 <b style="font-size:23px;color:#1f497d">PURCHASE ORDER</b>
+                                    </td>
+
+								</tr>
+
+							</table>
+                                    <br></br>
+                                    <tr>
+                                        <t t-if="o.partner_id.email">
+											<b style="color:#1f497d;padding-top:5px">Email : </b><a href="https://mail.google.com"><span t-field="o.partner_id.email"/></a>
+										</t>
+                                    </tr>
+                                    <table class="table table-bordered" style="border-collapse:separate; border:2px ridge silver; width:98%; cellspacing:0px; !important;font-family:Liberation Serif;" cellpadding="1">
+                                       <thead style="height: 10px;font-size:16px; background-color:silver">
+                                           <th>PO DATE</th>
+                                           <th>PO REF</th>
+                                           <th>SUPPLIER CODE</th>
+                                           <th>QUOTE REF </th>
+                                            <th>REQUESTED BY</th>
+                                            <th>DEPARTMENT</th>
+                                       </thead>
+                                        <tbody>
+                                           <td>
+                                               <span t-field="o.date_order" t-field-options='{"format": "dd/MM/yyyy"}'></span>
+                                           </td>
+                                            <td>
+                                                <span t-field="o.name"/>
+                                            </td>
+                                            <td>
+<!--                                                 <span t-field="o.partner_id.customer_id.name"/>-->
+                                                 <span t-field="o.partner_id.name"/>
+                                            </td>
+                                            <td>
+                                                 <span t-field="o.partner_ref"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="user.name"></span>
+                                            </td>
+                                            <td>
+                                                <span t-esc="department"/>
+                                            </td>
+                                        </tbody>
+                                    </table>
+
+                                    <p>
+                                        We kindly like to ask you to deliver the following items to the location specified at the bottom.
+                                    </p>
+
+                                        <table class="table table-bordered" style="border-collapse:separate; border:2px ridge silver; width:98%;font-family:Liberation Serif;">
+                                           <thead style="height: 10px;font-size: 16px; background-color:silver">
+                                               <th>S.No</th>
+                                               <th>PART #</th>
+                                               <th>GOODS DESCRIPTION</th>
+                                               <th>QTY </th>
+                                                <th>UOM</th>
+                                                <th>UNIT PRICE</th>
+                                               <th>TOTAL AMOUNT</th>
+                                           </thead>
+                                            <tbody>
+                                                <t t-set="counter" t-value="1" />
+                                                <tr t-foreach="o.order_line" t-as="l">
+                                                    <td>
+                                                        <span style="text-align:center;" t-esc="counter"/><t t-set="counter" t-value="counter+1"/>
+                                                    </td>
+                                                    <td><span style="text-align:center;"  t-field="l.product_id.default_code"/></td>
+                                                    <td><span style="text-align:center;"  t-esc="l.name[l.name.find('] ')+1:]"/></td>
+                                                    <td class="text-right">
+                                                        <span t-field="l.product_qty" t-options='{"widget": "integer"}'/>
+                                                    </td>
+                                                    <td>
+                                                        <span style="text-align:center;"  t-field="l.product_uom"  groups="product.group_uom"/>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                    </td>
+                                                    <td class="text-right" id="subtotal">
+                                                        <span t-field="l.price_subtotal" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            </table>
+                                            <div>
+                                                <div>
+                                                    <table class="table table-bordered; border-collapse:separate" style="font-family:Liberation Serif;width:98%;">
+                                                        <tr>
+                                                            <td width="70%" style="border:none"></td>
+                                                            <td width="10%" style="border:2px ridge silver"> SUBTOTAL</td>
+                                                            <td width="15%" class="text-right" style="border:2px ridge silver">
+                                                                <span t-field="o.amount_untaxed"
+                                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="70%" style="border:none"></td>
+                                                            <td  width="10%" style="border:2px ridge silver">TAXES</td>
+                                                            <td  width="15%" class="text-right" style="border:2px ridge silver">
+                                                                <span t-field="o.amount_tax"
+                                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width = "70%" style="border:none">
+                                                                <span style="font-size:14px;">
+                                                                    <b>IN WORDS:</b> - <span t-esc="convert_num_to_word(o)"></span>Only
+                                                                </span>
+                                                            </td>
+                                                            <td width = "10%" style="border:2px ridge silver; background-color:silver">
+                                                                <b>TOTAL</b>
+                                                            </td>
+                                                            <td  width="15%" class="text-right" style="border:2px ridge silver; background-color:silver">
+                                                                <b><span t-field="o.amount_total"
+                                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                                </b>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                            <div>
+                                <table style="font-family:Liberation Serif;font-size:16px;">
+                                    <tr>
+                                        <td style="width=50%;"><b>Terms &amp; Conditions:</b></td>
+                                    </tr><tr>
+                                        <td style="width=50%;"><b>Warranty :</b>
+                                        <span t-field="o.warranty"/>	</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width=50%;"><b>Payment Terms:</b>
+                                            <span t-field="o.payment_term_id"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br></br>
+
+                                <table>
+                                    <tr style="padding-top:20px;">
+                                     <td style="width=50%;"><b>DELIVERY ADDRESS:</b><br/>
+                                        <t t-foreach="res_company.partner_id.child_ids" t-as="data" >
+                                            <t t-if = "data.type=='delivery'">
+                                                <t t-if = "data.name">
+                                                    <span  t-field="data.name"/>,<br></br>
+                                                </t>
+                                                <t t-if = "data.street">
+                                                    <span t-field="data.street"/>,<br></br>
+                                                </t>
+                                                <t t-if = "data.street2">
+                                                    <span t-field="data.street2"/>,<br/>
+                                                </t>
+                                                <t t-if = "data.city">
+                                                    <span t-field="data.city"/>,<br/>
+                                                </t>
+                                                <t t-if = "data.state_id">
+                                                    <span t-field="data.state_id.name"/> -
+                                                </t>
+                                                <t t-if = "data.zip">
+                                                    <span t-field="data.zip"/>,<br/>
+                                                </t>
+                                                <t t-if = "data.country_id">
+                                                    <span t-field="data.country_id.name"/>.
+                                                </t>
+                                            </t>
+                                        </t>
+                                        </td>
+                                        <td style="width=50%;padding-left:160px"><b>INSTRUCTIONS:</b><br/>
+                                          <span t-field="o.instructions"></span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <br></br>
+                            <br></br>
+                            <div class="box">
+                                <table width="100%"  style="font-size: 16px;font-family:Liberation Serif;">
+                                    <tr>
+                                        <td style="width=50%;font-size: 16px;font-weight:bold;padding-left:10px">M.Pasha</td>
+                                        <td style="width=50%;font-size: 16px;font-weight:bold;padding-left:55%">V.G.Rajashekar</td>
+                                    </tr>
+<!--
+                                    <tr><td><br/></td></tr>
+-->
+                                    <tr><td><br/></td></tr>
+                                    <tr><td><br/></td></tr>
+                                        <tr>
+                                            <td style="width=50%;font-size: 16px;font-weight:bold;padding-left:10px;">FINANCE MANAGER</td>
+                                            <td style="width=50%;font-size: 16px;font-weight:bold;padding-left:55%;">GENERAL MANAGER</td>
+                                        </tr>
+                                </table>
+                            </div>
+								</t>
+	                        </div>                        
+                     <div class="footer">
+					   <t t-if="o and 'company_id' in o">
+								<t t-set="company" t-value="o.company_id.sudo()"/>
+							</t>
+                        <table style="font-family:Liberation Serif;font-size:16px;">
+                            <tr>
+                                <hr style="border-width:1px; border-color:grey"></hr>
+                            </tr>
+                            <tr>
+                                <td style="color:#024963;text-align:center;font-size:16px;">
+                                    <span t-field="company.street"></span>,
+                                    <span t-field="company.street2"></span>,
+                                    <span t-field="company.city"></span>,
+                                    <span t-field="company.country_id.name"></span>
+                                     <span>| </span> Tel:<span t-field="company.phone"></span>
+                                    <span>| </span> Fax:<span t-field="company.fax_new"></span>
+                                    <span>| </span>
+                                    <span t-field="company.email"></span>
+                                    <span>| </span>
+                                    <t t-if="company.website">
+                                        <span t-raw="company.website.replace('https://','')"></span>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+        </t>
+        </template>
+	</data>
+</odoo>

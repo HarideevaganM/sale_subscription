@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!--group for support ticket closing mail users-->
+        <record id="group_csm_ticket_close_mail_users" model="res.groups">
+            <field name="name">CSM Ticket Closing Mail Users</field>
+        </record>
+
+    </data>
+</odoo>

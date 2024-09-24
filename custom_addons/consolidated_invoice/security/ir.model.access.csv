@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_consolidated_invoice,consolidated.invoice,model_consolidated_invoice,account.group_account_invoice,1,1,1,0
+access_consolidated_invoice_line,consolidated.invoice.line,model_consolidated_invoice_line,account.group_account_invoice,1,1,1,0

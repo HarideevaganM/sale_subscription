@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+
+        <record id="report_bank_advice_id" model="ir.actions.report">
+            <field name="name">Bank Advice Report</field>
+            <field name="model">bank.advice.report</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bank_advice_report.bank_advice_report_form_id</field>
+            <field name="report_file">bank_advice_report.bank_advice_report_form_id</field>
+    <!--		<field name="print_report_name">(object.state in ('draft', 'sent') and 'Quotation - %s' % (object.name)) or 'Order - %s' % (object.name)</field>-->
+            <field name="binding_model_id" ref="bank_advice_report.model_bank_advice_report"/>
+            <field name="binding_type">report</field>
+        </record>
+
+         <!--<report id="report_bank_advice_id"
+                model="bank.advice.report"
+                string="Bank Advice Report"
+                report_type="qweb-pdf"
+                file="bank_advice_report.bank_advice_report_form_id"
+                name="bank_advice_report.bank_advice_report_form_id"
+                menu="False"/>-->
+    </data>
+</odoo>

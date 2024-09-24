@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+	<data>
+<!--    <report id="report_fms_quotation"-->
+<!--        model="sale.order"-->
+<!--        string="Proposal for Quotation"-->
+<!--        report_type="qweb-pdf"-->
+<!--        file="fms_quotation_report.quotation_report"-->
+<!--        name="fms_quotation_report.quotation_report"/>-->
+
+    <template id = "quotation_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="order">
+					<t t-call="web.basic_layout">
+							<div class="page" t-attf-style="background-image:url('/fms_quotation_report/static/img/fleet6.png'); background-position:center; background-repeat:no-repeat;background-size:cover;">
+								<div class="header">
+									<table style="width:100%;">
+										<tr>
+											<td style="text-align:center;width:25%;" >
+												<img t-if="order.company_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(order.company_id.logo)"  width="150px"/>
+												<span><br></br></span>
+											</td>
+											<td style="border-left: 1px solid black;border-right: 1px solid black;width:50%;text-align:center;font-size:12px;color:#100358;" class="pull-left">
+												Proposal &amp; Commercial Offer for<br><p style="color:#000000"><span t-field="order.partner_id"></span>,<span t-field="order.partner_id.city"></span>,<span t-field="order.partner_id.country_id"></span></p></br>Technical &amp; Commercial Offer
+											</td>
+											<t t-if="order.partner_id.image_1920">
+												<td style="text-align:center;width:25%;">
+													<img t-if="order.partner_id.image_1920" t-att-src="'data:image/png;base64,%s' % to_text(order.partner_id.image)" width="150px"/>
+												</td>
+											</t>
+											<t t-else="">
+												<td style="text-align:center;width:25%;">
+												</td>
+											</t>
+										</tr>
+									</table>
+								</div>
+								<table width="100%">
+									<div>
+										<h2 style="text-align:center;color:#f9fbff;padding-top:100px;font-size:25px"><b>Proposal for</b></h2>
+										<div><h2 style="text-align:center;color:#f9fbff;font-size:25px"><b><span t-field="order.title"></span></b></h2></div>
+										<div><h2 style="text-align:center;padding-top:100px;color:#f9fbff;font-size:25px"><b>For</b><br/></h2></div>
+										<div><h2 style="text-align:center;color:#f9fbff;font-size:25px"><b><span t-field="order.partner_id.name"></span></b></h2></div>
+										<div><h2 style="text-align:center;color:#f9fbff;font-size:25px"><b><span t-field="order.partner_id.state_id.name"></span>,<span t-field="order.partner_id.city"></span><span t-field="order.partner_id.country_id.name"></span></b></h2></div>
+										<div><h2 style="text-align:center;color:#f9fbff;font-size:18px"><b>Attention:<t t-foreach="order.res_contact_id" t-as="l"><span t-field="order.title_name"/>.<span t-field="l.display_name"/></t></b></h2></div>
+										<div><h2 style="text-align:center;padding-top:450px;color:#f9fbff;font-size:20px"><b>Date:<span t-field="order.date_order"  t-field-options='{"format": "dd/MM/yyyy"}'></span></b><br/></h2></div>
+										<div><h2 style="text-align:center;color:#f9fbff;font-size:20px"><b>Ref #:<span t-field="order.contract_reference"></span></b><br/></h2></div>
+										<div></div>
+										<div></div>
+									</div>
+								</table>
+							</div>
+							<p style="page-break-after:always"></p>		
+							<div class="page" style="margin-left:15px;">
+									<table width="100%" class="table table-bordered" style="font-style:Times New Roman">
+										<tr>
+											<strong>		
+												<p style="font-size:18px" class="text-uppercase">
+														FINANCIAL PROPOSAL -
+														 <span t-esc="int(order.contract_period)/12"></span> YEAR CONTRACT<br/></p>
+												<t t-foreach="order.order_line" t-as="line">
+													<t t-if="line.product_id.type !='service'">	
+														<p style="font-size:16px">IVMS: <t t-esc="line.product_id.name"></t><br/></p>
+													</t>
+												</t>
+											</strong>
+										</tr>
+										<thead style="background-color:#100358;">
+											<th style="text-align:center; color:#f9fbff;font-size:18px;font-style:Times New Roman"><b>S.NO</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px;font-style:Times New Roman"><b>Description</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px;font-style:Times New Roman"><b>Qty</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px;font-style:Times New Roman"><b>Unit Rate</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px;font-style:Times New Roman"><b>Total</b></th>
+										</thead>
+										<t t-if="order.sale_type=='lease' or order.sale_type=='rental'">
+											<tr>
+												<t t-set="qty_total" t-value="[]"/>
+												<t t-set="price_total" t-value="[]"/>
+												<t t-set="total" t-value="[]"/>
+												<t t-set="counter" t-value="1"/>
+												<tr t-foreach="order.order_line" t-as="line">
+													<td style="text-align:center;font-size:16px"><span t-esc="counter"></span><t t-set="counter" t-value="counter+1"/></td>
+													<td style="text-align:left;font-size:16px"><b><span t-field="line.product_id"/></b><br><span t-field="line.name"/></br></td>
+													<td style="text-align:center;font-size:16px"><span t-field="line.product_uom_qty"/><t t-if="line.product_id.type=='product'"><t t-set="qty_total" t-value="qty_total+[line.product_uom_qty]"/></t></td>
+													<td style="text-align:right;font-size:16px"><span t-esc="(line.price_unit/(int(order.contract_period)/12))" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/><p>/Vehicle/Year</p><br/><span t-esc="(line.price_unit/(int(order.contract_period)))" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/><p>/Vehicle/Month</p></td>
+													<td style="text-align:right;font-size:16px"><span t-field="line.price_subtotal"/><t t-set="total" t-value="total+[line.price_subtotal]" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/></td>
+												</tr>
+												<tr>
+													<td></td>
+													<td style="text-align:right;font-size:16px"><b>Total</b></td>
+													<td style="text-align:center;font-size:16px"><span t-esc="int(sum(qty_total))"/></td>
+													<td></td>
+													<td style="text-align:right;font-size:16px"><span t-esc="(sum(total))" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/></td>
+												</tr>
+											</tr>
+										</t>
+										<t t-else="">
+											<tr>
+												<t t-set="qty_total" t-value="[]"/>
+												<t t-set="price_total" t-value="[]"/>
+												<t t-set="total" t-value="[]"/>
+												<t t-set="counter" t-value="1"/>
+												<tr t-foreach="order.order_line" t-as="line">
+													<td style="text-align:center;font-size:16px"><span t-esc="counter"></span><t t-set="counter" t-value="counter+1"/></td>
+													<td style="text-align:left;font-size:16px"><b><span t-field="line.product_id"/></b><br><span t-field="line.name"/></br></td>
+													<td style="text-align:center;font-size:16px"><span t-field="line.product_uom_qty"/><t t-if="line.product_id.type=='product'"><t t-set="qty_total" t-value="qty_total+[line.product_uom_qty]"/></t></td>
+													<td style="text-align:right;font-size:16px"><span t-field="line.price_unit"/><t t-set="(price_total)" t-value="price_total+[line.price_unit]" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/></td>
+													<td style="text-align:right;font-size:16px"><span t-field="line.price_subtotal"/><t t-set="(total)" t-value="total+[line.price_subtotal]" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/></td>
+												</tr>
+												<tr>
+													<td></td>
+													<td style="text-align:right;font-size:16px"><b>Total</b></td>
+													<td style="text-align:center;font-size:16px"><span t-esc="int(sum(qty_total))"/></td>
+													<td></td>
+													<td style="text-align:right;font-size:16px"><span t-esc="(order.amount_total)" t-options='{"widget": "monetary", "display_currency": order.currency_id}'/></td>
+												</tr>
+											</tr>
+										</t>
+									</table>
+							<t t-if="order.addons_accessories_line">
+								<table width="100%" class="table table-bordered">
+										<tr>
+											<b style="font-size:18px">IVMS Accessories:</b>
+										</tr>
+										<thead style="border: 1px #f9fbff;background-color:#100358;font-size:16px">
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>S.NO</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Description</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Qty</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Unit Rate</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Total</b></th>
+										</thead>
+										<tr style="border: 1px solid black;">
+											<t t-set="counter" t-value="1"/>
+											<tr t-foreach="order.addons_accessories_line" t-as="addon_line">
+												<td style="text-align:center;font-size:16px;"><span t-esc="counter"></span><t t-set="counter" t-value="counter+1"/></td>
+												<td style="text-align:left;font-size:16px;"><span t-field="addon_line.product_id"></span><br><span t-field="addon_line.name"/></br></td>
+												<td style="text-align:center;font-size:16px;"><span t-field="addon_line.product_uom_qty"></span></td>
+												<td style="text-align:right;font-size:16px;"><span t-field="addon_line.price_unit" t-options='{"widget": "monetary", "display_currency": order.currency_id}'></span></td>
+												<td style="text-align:right;font-size:16px;"><span t-field="addon_line.price_subtotal" t-options='{"widget": "monetary", "display_currency": order.currency_id}'></span></td>
+											</tr>
+										</tr>
+										<br/>
+								</table>
+							</t>
+							<t t-if="order.addons_service_line">
+								<table width="100%" class="table table-bordered">
+										<tr>
+											<b style="font-size:18px">IVMS Service:</b>
+										</tr>
+										<thead style="border: 1px #f9fbff;background-color:#100358;font-size:16px;">
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>S.NO</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Description</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Qty</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Unit Rate</b></th>
+											<th style="text-align:center; color:#f9fbff;font-size:18px"><b>Total</b></th>
+										</thead>
+										<tr>
+											<t t-set="counter" t-value="1"/>
+											<tr t-foreach="order.addons_service_line" t-as="service_line">
+												<td style="text-align:center;font-size:16px"><span t-esc="counter"></span><t t-set="counter" t-value="counter+1"/></td>
+												<td style="text-align:left;font-size:16px"><span t-field="service_line.product_id.name"></span><br><span t-field="service_line.name"/></br></td>
+												<td style="text-align:center;font-size:16px;"><span t-field="service_line.product_uom_qty"></span></td>
+												<td style="text-align:right;font-size:16px"><span t-field="service_line.price_unit" t-options='{"widget": "monetary", "display_currency": order.currency_id}'></span></td>
+												<td style="text-align:right;font-size:16px;"><span t-field="service_line.price_subtotal" t-options='{"widget": "monetary", "display_currency": order.currency_id}'></span></td>
+											</tr>
+											<br/>
+										</tr>
+								</table>
+							</t>
+							<!-- Vehicle info -->
+							<p style="page-break-before:always;"> </p>
+                            <t t-if="order.vehicle_number_ids">
+                                <table class="table table-bordered">
+                                	<tr>
+										<h1>Vehicle Details:</h1>
+									</tr>
+                                    <thead style="font-size:14px;width:100%;">
+                                        <th><center>Client Name</center></th>
+                                        <th><center>Device Serial</center></th>
+                                        <th><center>Device Name</center></th>
+                                        <th><center>Reg.No.</center></th>
+                                        <th><center>Vehicle Name</center></th>
+                                        <th><center>Chassis No</center></th>
+                                        <!-- <th><center>Validity Date</center></th> -->
+                                    </thead>
+                                    <tbody>
+	                                    <tr t-foreach="order.vehicle_number_ids" t-as="a">
+	                                        <td style="padding:10px;"><span t-esc="a.partner_id.name"/></td>
+	                                        <td style="padding:10px;"><span t-esc="a.serial_no_id.name"/></td>
+	                                        <td style="padding:10px;"><span t-esc="a.device_id.name"/></td>
+	                                        <td style="padding:10px;"><span t-esc="a.vehicle_id.vehicle_name"/></td>
+	                                        <td style="padding:10px;"><span t-esc="a.vehicle_id.name"/></td>
+	                                        <td style="padding:10px;"><span t-esc='a.vehicle_id.chassis_no'/></td>
+	                                        <!-- <td style="padding:10px;">
+	                                        	<span t-esc="a.start_date"/> - <span t-esc="a.end_date"/> 
+	                                       </td> -->
+	                                    </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+							<table width="100%" style="page-break-before: always;">
+								<t t-if="order.report_payment_terms_line or order.contract_period_report_line
+							 or order.report_warranty_line or order.report_service_support
+							 or order.delivery_installation_schedule or order.report_validity">
+									<tr>
+										<td style="text-align:center;font-size:18px" width="25%"><b>OTHER TERMS</b></td>
+									</tr>
+									<t t-if="order.report_payment_terms_line">
+										<tr>
+											<td style="font-size:18px"><b>Payment Terms:</b></td>
+											<tr t-foreach="order.report_payment_terms_line" t-as="payment">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="payment.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.contract_period_report_line">
+										<tr>
+											<td style="font-size:18px"><b>Contract Period:</b></td>
+											<tr t-foreach="order.contract_period_report_line" t-as="contract">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="contract.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.report_warranty_line">
+										<tr>
+											<td style="font-size:18px"><b>Warranty:</b></td>
+											<tr t-foreach="order.report_warranty_line" t-as="warranty">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="warranty.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.report_service_support ">
+										<tr>
+											<td style="font-size:18px"><b>Service and Support:</b></td>
+											<tr t-foreach="order.report_service_support" t-as="service">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="service.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.delivery_installation_schedule ">
+										<tr>
+											<td style="font-size:18px"><b>Delivery and Installation Schedule:</b></td>
+											<tr t-foreach="order.delivery_installation_schedule" t-as="delivery">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="delivery.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.report_validity ">
+										<tr>
+											<td style="font-size:18px"><b>Validity:</b></td>
+											<tr t-foreach="order.report_validity" t-as="validity">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="validity.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+									<t t-if="order.other_information_line ">
+										<tr>
+											<td style="font-size:18px"><b>Others:</b></td>
+											<tr t-foreach="order.other_information_line" t-as="others">
+												<td style="padding-left:50px;padding-bottom:12px;font-size:16px;text-align:justify"><li><span style="padding-left:1%;" t-field="others.name"></span></li></td>
+											</tr>
+										</tr>
+									</t>
+								</t>	
+							</table>
+							<table>
+							<tr width="100%">
+									<td style="padding-top:20px;font-size:18px">Please feel free to contact us for any further clarifications,
+									</td>
+								</tr>
+								<tr height="50%">
+									<td  style="padding-top:20px;font-size:18px">Thank you and Best regards<br></br>
+									On Behalf of <b><span style="color:#100358;font-size:18px" t-field="order.company_id.name"></span></b></td>
+								</tr>
+								<tr t-foreach="get_user(order)" t-as="user">
+									<td style="padding-top:30px;font-size:16px">
+										<b><span style="text-align:left;color:#100358;" t-field="order.sign_quotation.name"></span></b><br></br>
+										<b><span style="text-align:left;color:#100358;" t-field="user.partner_id.company_id.name"></span></b><br></br>
+										<span t-field="order.sign_quotation.phone"></span><br></br>
+										<span t-field="order.sign_quotation.mobile"></span><br></br><br></br>
+										<b><span t-field="order.sign_quotation.email"></span></b><br></br>
+									</td>
+									<td style="text-align:right;color:#100358;padding-top:40px;font-size:16px"><b>Client Acceptance</b></td>
+								</tr>
+							</table>
+						</div>
+                	</t>
+           		 </t>
+          	 </t>
+        </template>
+	</data>
+</odoo>

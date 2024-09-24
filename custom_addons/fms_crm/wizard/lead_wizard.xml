@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	<data>
+	<!--# Lead Type Captureing in pipeline  wizard	-->
+	<record id="wizard_crm_new_inherit_id" model="ir.ui.view">
+					<field name="name">crm</field>
+					<field name="model">crm.lead</field>
+					<field name="inherit_id" ref = "crm.view_create_opportunity_simplified"/>
+					<field name="arch" type="xml">
+						<xpath  expr="//field[@name='partner_id']" position="after">
+							<field name="lead_type"/>							
+						</xpath>
+						<xpath expr="//form/sheet/group/group/div/field[@name='planned_revenue']" position="attributes">
+							<attribute name='invisible'>1</attribute>
+						</xpath>
+						<xpath expr="//field[@name='priority']" position="attributes">
+							<attribute name="invisible">1</attribute>
+						</xpath>
+
+					</field>
+	</record>
+	
+
+	</data>
+</odoo>
+

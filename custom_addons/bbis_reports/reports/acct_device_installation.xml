@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Setup -->
+    <report id="bbis_reports_device_installations"
+        model="account.move.line"
+        string="Device Installations Report"
+        report_type="qweb-pdf"
+        file="bbis_reports.device_installations"
+        name="bbis_reports.device_installations"
+        paperformat="bbis_reports.bbis_accounting_rpt_paper_format"
+        print_report_name="Device Installations" menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Excel report print -->
+    <report
+            id="device_installation_report_xlsx"
+            model="account.move.line"
+            string="Device Installation Report"
+            report_type="xlsx"
+            name="bbis_reports.device_installation_report_xlsx"
+            file="Device Installation Report"
+            attachment_use="True"
+            menu = "False"
+        />
+    <!-- End of report tag -->
+
+    <!-- Report Template -->
+    <template id="device_installations_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:100px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+                <div class="bbis-company-details">
+                    <h1 class="text-uppercase" style="margin:0; font-size:22pt"><strong>Device Installations Report</strong></h1>
+                    <div>
+                        <span t-if="move_state == 'posted'" t-esc="'All Posted Entries'"/>
+                        <span t-else="" t-esc="'All Entries'"/>
+                        <br/>
+                        <span t-if="date == 'this_year'" t-esc="'This Year'"/>
+                        <span t-elif="date == 'last_year'" t-esc="'Last Year'"/>
+                        <span t-else="">
+                            <t t-esc="start_date.strftime('%B %Y')"/> -
+                            <t t-esc="end_date.strftime('%B %Y')"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <t t-set="start_range" t-value="data['start_range']"/>
+                <t t-if="date != 'custom'" t-set="start_range" t-value="start_range + 1"/>
+                <t t-set="end_range" t-value="data['end_range']"/>
+
+                <t t-set="table1_width" t-value="'width: auto;'"/>
+                <t t-if="date_range > 5" t-set="table1_width" t-value="'width: 100%;'"/>
+
+                <t t-call="bbis_reports.bbis_device_installations_comp">
+                    <t t-set="sched_title">Device Installations</t>
+                    <t t-set="sched_total_title">Devices</t>
+                    <t t-set="sched_data" t-value="data"/>
+                </t>
+            </div>
+        </div>
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="device_installations">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.device_installations_document"/>
+        </t>
+    </template>
+
+    <template id="bbis_device_installations_comp">
+        <div style="page-break-before: always;"/>
+
+        <t t-set="column_count" t-value="int(date_range)"/>
+        <t t-set="col_multiplier" t-value="1"/>
+        <t t-set="column_count" t-value="int(date_range) * col_multiplier"/>
+
+        <table class="bbis-accounting-report-table1 row-striped" t-att-style="table1_width">
+            <thead>
+                <tr>
+                    <th rowspan="3">Particular</th>
+                    <th t-att-colspan="column_count" class="text-uppercase">
+                        <h2 style="margin:0; font-size:15pt"><strong><t t-esc="sched_title"/></strong></h2>
+                    </th>
+                    <th rowspan="3">Total <br/>Quantity</th>
+                </tr>
+                <t t-set="start_range" t-value="data['start_range']"/>
+                <t t-if="date != 'custom'" t-set="start_range" t-value="start_range + 1"/>
+                <t t-set="end_range" t-value="data['end_range']"/>
+                <tr>
+                    <th t-att-colspan="col_multiplier" class="sub-header" t-foreach="range(start_range, end_range)" t-as="month" style="white-space:nowrap">
+                        <t t-set="month_int" t-value="month"/>
+                        <t t-set="month_name" t-value="datetime.date(1900, month_int, 1).strftime('%b')"/>
+                        <span t-esc="month_name"/>
+                        <span t-esc="year.strftime('%Y')"/>
+                    </th>
+                </tr>
+
+                <tr>
+                    <t class="sub-header" t-foreach="range(date_range)" t-as="month">
+                        <th class="sub-header">Quantity</th>
+                    </t>
+                </tr>
+            </thead>
+
+            <tbody>
+                <t t-if="len(sched_data['keys']) > 0">
+                    <t t-foreach="sched_data['keys']" t-as="k">
+                        <tr>
+                            <td t-att-colspan="column_count + 4" class="tbody-header1"><strong t-esc="k"/></td>
+                        </tr>
+
+                        <tr t-if="k in sched_data['list']" t-foreach="get_partner_list(sched_data['list'][k])" t-as="partner">
+                            <td><span t-esc="partner"/></td>
+                            <t t-set="total_qty" t-value="0"/>
+                            <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                <td class="text-center">
+                                    <span t-esc="sum(sched_data['list'][k][partner][ctr]['quantity'])" t-options='{"widget": "float", "precision": 0}'/>
+                                    <t t-set="total_qty" t-value="total_qty + sum(sched_data['list'][k][partner][ctr]['quantity'])"/>
+                                </td>
+                            </t>
+                            <td class="text-center"><span t-esc="total_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total <span t-esc="k"/></strong></td>
+                            <t t-set="total_prod_qty" t-value="0"/>
+                            <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                <td class="text-center">
+                                    <strong t-esc="sum(sched_data['total'][k][ctr]['quantity'])" t-options='{"widget": "float", "precision": 0}'/>
+                                    <t t-set="total_prod_qty" t-value="total_prod_qty + sum(sched_data['total'][k][ctr]['quantity'])"/>
+                                </td>
+                            </t>
+                            <td class="text-center"><strong t-esc="total_prod_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td class="tbody-total"><strong>Total <t t-esc="sched_total_title"/></strong></td>
+                        <t t-set="total_sched_qty" t-value="0"/>
+                        <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                            <td class="tbody-total text-center">
+                                <strong t-esc="sum(sched_data['total']['account'][ctr]['quantity'])" t-options='{"widget": "float", "precision": 0}'/>
+                                <t t-set="total_sched_qty" t-value="total_sched_qty + sum(sched_data['total']['account'][ctr]['quantity'])"/>
+                            </td>
+                        </t>
+                        <td class="tbody-total text-center"><strong t-esc="total_sched_qty" t-options='{"widget": "float", "precision": 0}'/></td>
+                    </tr>
+                </t>
+                <t t-else="">
+                    <tr><td t-att-colspan="column_count + 4" class="text-center">No records found</td></tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+    <!-- End: Template -->
+</odoo>

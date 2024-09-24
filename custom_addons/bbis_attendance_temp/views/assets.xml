@@ -1,0 +1,10 @@
+<odoo>
+    <data>
+        <template id="list_view_render_button" inherit_id="web.assets_backend">
+            <xpath expr="script[last()]" position="after">
+                <script src="/bbis_attendance_temp/static/src/js/list_view_action_call.js" type="text/javascript"/>
+            </xpath>
+        </template>
+    </data>
+
+</odoo>

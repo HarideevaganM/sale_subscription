@@ -1,0 +1,229 @@
+<odoo>
+    <data>
+        <record id="bbis_sale_order_inherit" model="ir.ui.view">
+            <field name="name">bbis.sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Add Vehicle Details to Terms and Conditions -->
+                <field name="minimum_billing_quantity" position="after">
+                    <field name="tc_vehicle_details"/>
+                </field>
+
+                <!-- Add Notebook Page for Inclusive Order Lines -->
+                <xpath expr="//form/sheet/notebook/page[4]" position="after">
+                    <page string="Inclusive Order Lines">
+                        <field name="inclusive_order_line" attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                            <tree string="Inclusive Order Lines">
+                                <field name="name"/>
+                                <field name="order_line_ids"/>
+                                <!--
+                                <field name="quantity" attrs="{'column_invisible': [('parent.sale_type', 'not in', ('cash','purchase'))]}"/>
+                                <field name="group_quantity" attrs="{'column_invisible': [('parent.sale_type', 'in', ('cash','purchase'))]}"/>
+                                -->
+                                <field name="quantity" attrs="{'column_invisible': [('parent.sale_type', '=', 'pilot')]}"/>
+                                <field name="group_quantity" attrs="{'column_invisible': [('parent.sale_type', '!=', 'pilot')]}"/>
+                                <field name="price_unit"/>
+                                <field name="discount"/>
+                                <field name="price_tax"/>
+                                <field name="price_subtotal"/>
+                                <field name="contract_period" invisible="1"/>
+                            </tree>
+                        </field>
+
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="inclusive_order_line_total">
+                            <field name="amount_untaxed_inclusive" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="amount_tax_inclusive" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                <label for="amount_total_inclusive"/>
+                            </div>
+                            <field name="amount_total_inclusive" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </group>
+
+                    </page>
+                </xpath>
+
+                <!-- Add new group Report Page Break -->
+                <xpath expr="//group[@name='technical']" position="after">
+                    <group name="report_page_break" string="Report Page Break">
+                        <field name="renewal_charges_pb"/>
+                        <field name="optional_items_pb"/>
+                        <field name="terms_pb"/>
+                        <field name="vehicles_pb"/>
+                    </group>
+                </xpath>
+
+                <!-- Remove default send by email at draft stage -->
+                <xpath expr="//form/header/button[@name='action_quotation_send'][1]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- Remove default send by email at sent, sale stage -->
+                <xpath expr="//form/header/button[@name='action_quotation_send'][4]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- Add new send quotation button with bbis format at draft state -->
+                <xpath expr="//form/header/button[@name='action_quotation_send'][1]" position="after">
+                    <button name="action_send_bbis_quotation" string="Send BBIS Quotation" type="object" states="draft" class="btn-primary"/>
+                </xpath>
+
+                <!-- Add new send quotation button with bbis format at sent, sale stag-->
+                <xpath expr="//form/header/button[@name='request_cancel']" position="before">
+                    <button name="action_send_bbis_quotation" string="Send BBIS Quotation" type="object" states="sent,sale"/>
+                </xpath>
+
+                <!-- Make PO # and PO Date required -->
+                <xpath expr="//field[@name='purchase_order_no']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('sale_type', 'not in', ('purchase','lease','rental','pilot','service', 'support')), ('state', 'not in', ('draft', 'submit','done','sale'))],'readonly':[('state','in',('done','sale'))]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='purchase_order_date']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('sale_type', 'not in', ('purchase','lease','rental','pilot','service', 'support')), ('state', 'not in', ('draft', 'submit', 'done', 'sale'))], 'readonly':[('state','in',('done','sale'))]}
+                    </attribute>
+                </xpath>
+
+                <!-- Add Discount percentage to Addons Service -->
+                <xpath expr="//field[@name='addons_service_line']/tree/field[@name='discount_line']" position="after">
+                    <field name="discount"/>
+                </xpath>
+
+                <!-- Add invoice status manual update -->
+                <xpath expr="//notebook/page[7]/group/group/field[@name='invoice_status']" position="replace">
+                    <label for="invoice_status"/>
+                    <div name="invoice_status">
+                        <div class="o_row">
+                            <field name="invoice_status"/>
+                            <button string="Update Status" states="sale,done" groups="account.group_account_manager,base.group_erp_manager" type="object" name="update_invoice_status" class="oe_link oe_read_only" colspan="2"/>
+                        </div>
+                    </div>
+                </xpath>
+
+                <!-- Adding customer class below the customer name in SO-->
+                <xpath expr="//field[@name='partner_id']" position= 'after'>
+                    <field name="customer_class"/>
+                     <field name="approve_customer_x" invisible="1"/>
+                </xpath>
+
+                <!-- Add Customer X Class approve button -->
+                <xpath expr="//button[@name='action_quotation_send']" position="after">
+                    <button name="action_approve_customer_x" string="Approve Customer X" type="object"
+                            attrs="{'invisible': ['|', ('customer_class', '!=', 'class_x'), ('approve_customer_x', '=', True)]}"
+                            groups="account.group_account_manager"/>
+                </xpath>
+
+                <!-- Add new group PO Info -->
+                <xpath expr="//group[@name='report_page_break']" position="after">
+                    <group name="report_page_break" string="PO Info" groups="account.group_account_manager">
+                        <field name="purchase_order_no" groups="account.group_account_manager"/>
+                        <field name="purchase_order_date" groups="account.group_account_manager"/>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- Hide the cancel button from users. only need to show the cancel button for managers or advisors. -->
+        <!-- Users can only able to send request for the cancellation. -->
+        <record model="ir.ui.view" id="bbis_sale_order_form_inherit_id_inherit">
+            <field name="name">bbis.sale.order.form.inherit.id.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="fms_so_cancel.sale_order_form_inherit_id"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='865']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_manager,	account.group_account_manager, bbis_reports.group_so_cancel_users</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Hide the cancel approve button from users. only need to show the cancel approve button for managers or advisors. -->
+        <!-- Users can only able to send request for the cancellation. -->
+        <record model="ir.ui.view" id="bbis_sale_order_requirements_inherit">
+            <field name="name">bbis.sale.order.requirements.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="bbis_requirements.bbis_sale_order_form_view_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='approve_cancel_request']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_manager,	account.group_account_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- Add search filter for Sale Order -->
+        <record model="ir.ui.view" id="bbis_sale_order_search_view">
+            <field name="name">bbis.sale.order.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <field name="purchase_order_no" string="PO Number"/>
+                </field>
+                <field name="name" position="replace">
+                    <field name="name" string="Sales Quotation/Order" filter_domain="['|','|','|',('name','ilike',self),('quote_name','ilike',self),('client_order_ref','ilike',self),('partner_id','child_of',self)]"/>
+                </field>
+            </field>
+        </record>
+
+
+        <!-- Add new tree view for sales order cancel dashboard -->
+        <record id="bbis_sales_order_cancel_list_view" model="ir.ui.view">
+            <field name="name">sale.order.cancel.tree.view</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Cancelled Sales Orders">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name" string="Order Number"/>
+                    <field name="confirmation_date" string="Confirmation Date"/>
+                    <field name="partner_id"/>
+                    <field name="tree_qty" />
+                    <field name="delivered_qty" />
+                    <field name="installed_device_count" />
+                    <field name="invoiced_qty" />
+                    <field name="subscription_qty" />
+                    <field name="user_id"/>
+                    <field name="sale_type" />
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="invoice_status" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Add new menu action for sales order cancel dashboard -->
+        <record id="action_bbis_sales_order_cancel" model="ir.actions.act_window">
+            <field name="name">Cancelled Sales Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_id" ref="bbis_sales_order_cancel_list_view"/>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="domain">[('state', '=', 'cancel')]</field>
+        </record>
+
+
+        <!-- Add new menu for sales order cancel dashboard -->
+        <menuitem id="bbis_menu_sale_order_cancel"
+            name="Cancelled Sales Orders"
+            action="action_bbis_sales_order_cancel"
+            parent="sale.menu_sale_report"
+            groups="sales_team.group_sale_manager,account.group_account_manager"
+            sequence="6"/>
+
+        <record id="sale.menu_sale_report" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4,ref('sales_team.group_sale_salesman'))]"/>
+        </record>
+
+        <record id="sale.report_sales_team" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4,ref('sales_team.group_sale_manager')), (4,ref('account.group_account_manager'))]"/>
+        </record>
+        <record id="sale.report_all_channels_sales" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4,ref('sales_team.group_sale_manager')), (4,ref('account.group_account_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format -->
+    <record id="bbis_job_card_paper_format" model="report.paperformat">
+        <field name="name">European A4 low margin</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">45</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_job_card"
+        model="job.card"
+        string="Job Card (MOCKUP)"
+        report_type="qweb-pdf"
+        file="bbis_reports.job_card"
+        name="bbis_reports.job_card"
+        paperformat="bbis_reports.bbis_job_card_paper_format"
+        print_report_name="'Job Card ' + object.job_card_type"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="job_card_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:130px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+
+                <div class="bbis-company-details">
+                    <div t-esc="company.street"/>
+                    <div>
+                        <t t-if="company.street2"><span t-esc="company.street2"/>,</t>
+                        <t t-if="company.city"><span t-esc="company.city"/></t>
+                        <t t-if="company.state_id">, <span t-esc="company.state_id.name"/>,</t>
+                        <t t-if="company.zip"><span t-esc="company.zip"/></t>
+
+                    </div>
+                    <div t-if="company.country_id" t-esc="company.country_id.name"/>
+                    <div>
+                        Tel : <span t-esc="company.phone"/>
+                        Fax : <span t-esc="company.fax_new"/>
+                    </div>
+                    <div> Email : <span t-esc="company.email"/></div>
+                    <div>Website : <span t-esc="company.website"/></div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page" style="font-size:12pt">
+                <h1 class="text-center text-uppercase" style="margin:0 0 30px 0; font-size:22pt"><strong>Job Card</strong></h1>
+                <!-- Job Order Header Details -->
+                <div class="bbis-job-card-body-header clear-fix">
+                    <table style="display:inline-block">
+                        <tr>
+                            <td>Date</td><td class="job-card-colon">:</td>
+                            <td>
+                                <span t-esc="datetime.datetime.now().strftime('%d/%m/%Y')"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Client/Company</td><td class="job-card-colon">:</td><td><span t-field="doc.company_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Location</td><td class="job-card-colon">:</td><td><span t-field="doc.installation_location_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Sale Order</td><td class="job-card-colon">:</td><td><span t-field="doc.sale_order_id"/></td>
+                        </tr>
+                    </table>
+                    <table style="float:right">
+                        <tr>
+                            <td>Job No.</td><td class="job-card-colon">:</td><td><span t-field="doc.name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Job Type</td><td class="job-card-colon">:</td><td><span t-field="doc.job_card_type"/></td>
+                        </tr>
+                        <tr>
+                            <td>Job Order</td><td class="job-card-colon">:</td><td><span t-field="doc.task_id"/></td>
+                        </tr>
+                        <tr>
+                            <td>Device Status</td><td class="job-card-colon">:</td><td><span t-field="doc.device_status"/></td>
+                        </tr>
+                    </table>
+                </div><!-- End: Job Order Header Details -->
+
+                <!-- Job Order Vehicle Details -->
+                <table class="bbis-job-card-vehicle-table-single">
+                    <t t-if="doc.job_card_type=='sale'">
+                        <tr><th class="text-center job-card-header-single">Vehicle Description</th><td><span t-field="doc.vehicle_description"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Vehicle Reg No.</th><td><span t-field="doc.vehicle_number"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Model/Year</th><td><span t-field="doc.model"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">VIN(chassis) No.</th><td><span t-field="doc.chassis_no"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Device Type</th><td><span t-field="doc.device_id.name"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Device Serial No.</th><td><span t-field="doc.device_serial_number_new_id"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">GSM No.</th><td><span t-field="doc.gsm_number"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">GSM IMEI No.</th><td><span t-field="doc.gsm_imei_no"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Satellite Modem IMEI</th><td><span t-field="doc.imei_no"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Speed Input</th><td><span t-field="doc.speed_input"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Seat Belt</th><td><span t-field="doc.seat_belt"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Panic Button</th><td><span t-field="doc.panic_button"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">RPM</th><td><span t-field="doc.rpm"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Can Bus</th><td><span t-field="doc.can_bus"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Problem</th><td><span t-field="doc.problem"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Rectification</th><td><span t-field="doc.rectification"/></td></tr>
+                        <tr><th class="text-center job-card-header-single">Remarks</th><td><span t-field="doc.remarks"/></td></tr>
+                    </t>
+                </table>
+                <!-- End: Job Order Vehicle Details -->
+
+                <!-- Job Order Footer Details -->
+                <table class="job-order-footer-details">
+                    <tr>
+                        <td>
+                            <span>Job done by: </span><span t-field="doc.engineer_id"/><br/>
+                            <span>Installation Date: </span><span t-field="doc.installation_date" t-field-options='{"format": "dd/MM/yyyy"}'/><br/>
+                            <t t-foreach="doc.card_line" t-as="card">
+                                <t t-if="card.state == 'installed'">
+                                    <span>Time Start and Finished: </span><span t-field="card.job_start_time"></span> to <span t-field="card.job_end_time"></span>
+                                </t>
+                            </t>
+                            <br/><br/><br/>
+                            <span>I agree that all work has been performed to my satisfaction.</span>
+                        </td>
+                        <td>
+                            <span>Checked/Noted by: </span><span t-field="doc.supervisor_id.name"/><br/>
+                            <span>Activation Date: </span><span t-field="doc.activation_date"  t-field-options='{"format": "dd/MM/yyyy"}'/>
+                        </td>
+                    </tr>
+                </table>
+                <table class="job-card-client-signature">
+                    <tr>
+                        <td>
+                            <strong>Client Signature:</strong>
+                        </td>
+                        <td>
+                            <strong>Date:</strong>
+                        </td>
+                    </tr>
+                </table>
+                <!-- End: Job Order Footer Details -->
+            </div>
+        </div>
+        <div class="footer">
+            <div style="background:#000000; height:1px; margin-bottom:5px"/>
+            <ul class="list-inline bbis-footer-social-link-ul-inst-cert text-center">
+                <li>
+                    <img src="/bbis_reports/static/src/img/address.jpg" alt="Address" />
+                    <span>Tamouh Tower, 22-C1, Marina Square, Al Reem Island, Abu Dhabi, UAE - P.O. Box 39366</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/phone.jpg" alt="Phone" />
+                    <span>+971 2 643 6640</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/fax.jpg" alt="Fax" />
+                    <span>+971 2 643 6642</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/email.jpg" alt="Email" />
+                    <span>blackbox@fms-tech.com</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/web.jpg" alt="Email" />
+                    <span>www.fms-tech.com</span>
+                </li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="job_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="bbis_reports.job_card_document" t-lang="doc.company_id.lang"/>
+            </t>
+        </t>
+    </template><!-- End: Report Template -->
+
+</odoo>

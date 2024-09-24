@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <data>
+        <record id="bbis_stock_move_line_operations_tree" model="ir.ui.view">
+            <field name="name">bbis.stock.move.line.operations.tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+            <field name="arch" type="xml">
+                <field name="lot_id" position="attributes">
+                    <attribute name="domain">[('product_id', '=', parent.product_id),('quant_ids.location_id','=',parent.location_id)]</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

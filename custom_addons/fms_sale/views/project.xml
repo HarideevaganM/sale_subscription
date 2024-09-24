@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Tree view of PROJECT-->
+    <record id="sale_project_form_id" model="ir.ui.view">
+        <field name="name">project.inherited.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="partner_id" position="after">
+                <field name="sale_type"/>
+            </field>
+        </field>
+    </record>
+    
+<!-- ACTION FOR PROJECT-->
+
+    <record id="sale_project_action_id" model="ir.actions.act_window">
+    <field name="name">Project</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">project.project</field>
+<!--    <field name="view_type">form</field>-->
+    <field name="view_mode">tree,form</field>
+    </record>
+   
+<!-- FIELDS ADDED IN TASK(JOB ORDER)-->
+
+    <record id="project_task_inherit_id" model="ir.ui.view">
+        <field name="name">project.task.inherited.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="open_job_card_view"
+                    class="oe_stat_button"
+                    icon="fa-money"
+                    type="object"  >
+                    <field name="job_card_count" widget="statinfo" string ="Job Card"/>
+                </button>
+                <button name="open_material_requisition_views"
+                    class="oe_stat_button"
+                    type="object" icon="fa-navicon">
+                    <field name="count_requisition" widget="statinfo" string="Allocate Stock"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <!--Installation Region and Location field is added in Job order-->    
+
+                <field name="partner_id"/>
+                <field name="installation_region_ids"  widget="many2many_tags" placeholder="Region..."/>
+                <field name="installation_location_ids"  widget="many2many_tags" placeholder="Location..."/>
+                <field name="installation_country_id"  placeholder="Country" class="oe_no_button" options='{"no_open": True, "no_create": True}' />
+                 <field name="support_id" invisible="1"/>
+                <field name="work_order" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">   
+                <attribute name="invisible">1</attribute>
+            </xpath> 
+             <!--Extra info is to be hidden-->    
+            <xpath expr="//form/sheet/notebook/page[@name='extra_info']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath> 
+            <!--Material Planning tab is to be hidden-->    
+            <xpath expr="//form/sheet/notebook/page[@name='job_cost_task_material']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!--Consumed material tab is to be hidden-->      
+            <xpath expr="//form/sheet/notebook/page[@name='job_cost_task_consume_material']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath>    
+           <!-- <xpath expr="//field[@name='sale_line_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath> -->
+            <xpath expr="//field[@name='date_deadline']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath>    
+            <xpath expr="//field[@name='job_number']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <button name="action_assign_to_me" position="after">
+                <button name="create_job_card" type="object" string="Assign Jobs" groups="project.group_project_manager"/>
+            </button>
+            <button name="view_stock_moves" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <button name="view_notes" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <button name="show_instruction" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <button name="task_to_jobcost_action" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <!--<button name="toggle_active" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>-->
+            <field name="user_id" position="attributes">
+                <attribute name="string">Project Manager</attribute>
+            </field>
+            <button name="%(odoo_job_costing_management.action_proejct_subtask_user_wizard)d" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+        </field>
+    </record>
+
+<!-- ACTION NAME CHANGED FOR PROJECT'S TASK     -->
+    <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+       <field name="name">Job Orders</field>
+    </record>
+<!-- PROJECT'S TASK Kanban view inherited    -->
+    <record id="project_task_kanban_inherited" model="ir.ui.view">
+        <field name="name">project.task.kanban.view</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="arch" type="xml">
+            <kanban position="attributes">
+                <attribute name="group_create">false</attribute>
+            </kanban>
+        </field>
+    </record>
+
+    
+<!-- JOB CARD VIEW -->
+   
+    <record id="job_order_tree" model="ir.ui.view">
+        <field name="name">job.card.tree</field>
+        <field name="model">job.card</field>
+        <field name="arch" type="xml">
+        <tree string="Job Orders" decoration-success="state=='done'" decoration-danger="state=='open'" 
+        decoration-info="state=='submitted'">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="device_id"/>
+                <field name="device_serial_number_new_id"/>
+                <field name="engineer_id"/>
+                <field name="vehicle_number"/>
+                <field name="job_card_type"/>
+                <field name="state"/>
+        </tree>
+        </field>
+    </record>
+
+    <record id="job_order_form" model="ir.ui.view">
+        <field name="name">job.card.form</field>
+        <field name="model">job.card</field>
+        <field name="arch" type="xml">
+        <form string="Job Orders">
+            <header>
+                <button name="installation_certificate" type="object" 
+                    string="Installation Certificate" 
+                    attrs="{'invisible':['|',('state','not in',('submitted','installed','done')),
+                    ('repair_job_type','in',('defective_device_replacement','defective_component_replacement','calibartion_testing','removal','removal_returned'))]}"
+                />
+                <button name="subscription_create" type="object" 
+                    string="Create Subscription" attrs="{'invisible':['|',('state','!=','done'),('job_card_type','=','support')]}" groups="account.group_account_manager"
+                />
+                <button name="create_dc" type="object" 
+                    string="Create Delivery Note" 
+                    attrs="{'invisible':['|','|','|','|',('state','not in',('submitted','done')),('service_job_type','in',('re_installation','testing')),
+                    ('repair_job_type','in',('re_installation','calibartion_testing')),
+                    ('job_card_type', '=','support'),
+                    ('sale_type','not in',('lease','rental'))]}" groups="stock.group_stock_manager"
+                />
+                <button name="location_move_component" type="object" string="Move Component" class="oe_highlight" attrs="{'invisible': ['|','|',('job_card_type', '!=','support'),('repair_job_type', '!=','defective_component_replacement'),('state','!=','done')]}"/>
+                <button name="removal_repair" type="object" string="Remove" class="oe_highlight" attrs="{'invisible': ['|','|',('job_card_type', '!=','support'),('repair_job_type', 'not in',['removal','removal_returned']),('state','!=','done')]}"/>
+                <button name="move_to_customer_location" type="object" string="Move Stock" class="oe_highlight" attrs="{'invisible': ['|','|','|',('job_card_type', '!=','support'),('repair_job_type', '!=','defective_device_replacement'),('state','!=','done'),('delivery_count','!=',0)]}" />
+                <button name="location_stock_defect" type="object" string="Move Defective Stock" class="oe_highlight" attrs="{'invisible': ['|','|','|',('job_card_type', '!=','support'),('repair_job_type', '!=','defective_device_replacement'),('state','!=','done'),('delivery_count','!=',1)]}" />
+                <button name="to_configured" type="object" 
+                    string="Configured" attrs="{'invisible':['|',('state','!=','open'),('repair_job_type', 'in', ('defective_component_replacement','calibartion_testing','removal','removal_returned'))]}"  class="oe_highlight"
+                />
+                <button name="to_installed" type="object" 
+                    string="Installed" attrs="{'invisible':[('state','not in',['configured'])]}"  class="oe_highlight"
+                />
+                <button name="submit_job_card" type="object" 
+                    string="Submit" attrs="{'invisible':['&amp;',('state','!=','installed'),('repair_job_type', 'not in', ('defective_component_replacement','calibartion_testing','removal','removal_returned'))]}"  class="oe_highlight"
+                />
+<!--
+                <button name="approve_job_card" type="object" 
+                    string="Approve" attrs="{'invisible':[('state','in',['open','approved','done'])]}"
+                />
+-->
+                <button name="close_job_card" type="object" 
+                    string="Done" attrs="{'invisible':[('state','!=','submitted')]}" class="oe_highlight"
+                />                
+                <field name="state"
+                       class="oe_highlight" 
+                       widget="statusbar"
+                       statusbar_visible="open,done"
+                       statusbar_colors='{"open":"red"}'/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button"
+                        icon="fa-book"
+                        name="open_certificate_view"
+                        type="object" attrs="{'invisible':[('count_certificate','=',0)]}">
+                        <field name="count_certificate" widget="statinfo" />
+                    </button>
+                    <button class="oe_stat_button"
+                        icon="fa-book"
+                        name="open_subscription_view"
+                        type="object" attrs="{'invisible':[('count_subscription','=',0)]}">
+                        <field name="count_subscription" widget="statinfo" />
+                    </button>
+                    <button class="oe_stat_button"
+                        icon="fa-truck"
+                        name="open_dc_view"
+                        type="object" attrs="{'invisible':[('count_dc','=',0)]}">
+                        <field name="count_dc" widget="statinfo" />
+                    </button>
+                     <button class="oe_stat_button"
+                        icon="fa-truck"
+                        name="action_delivery_view"
+                        type="object" attrs="{'invisible':[('delivery_count','=',0)]}">
+                        <field name="delivery_count" widget="statinfo" />
+                    </button>
+                </div> 
+                 
+                <group >
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id" options="{'no_create': True, 'no_create_edit':True}" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="installation_category" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="job_card_type"  attrs="{'readonly':['|', ('state','=','done'), ('sale_order_id', '!=', False)]}"/>
+                        <field name="service_job_type" widget="radio" options="{'vertical': true}" attrs="{'invisible': ['|',('job_card_type', 'in', ['sale','support']),('job_card_type', '=',False)],'readonly':[('state','=','done')]}"/>
+                        <field name="repair_job_type" widget="radio" options="{'vertical': true}" attrs="{'invisible': ['|',('job_card_type', 'in', ['sale','additional_service']),('job_card_type', '=',False)],'readonly':[('state','=','done')]}"/>
+                        <field name="task_id" options="{'no_create': True, 'no_create_edit':True}" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="device_serial_number_new_id" options="{'no_create': True, 'no_create_edit':True}"
+                               attrs="{'invisible': [('service_job_type', 'in',['testing','removal','removal_returned'])],'readonly':[('state','=','done')]}"/>
+                        <field name="device_serial_number_old_id" invisible="1"/>
+<!--                        options="{'no_create': True, 'no_create_edit': True}" attrs="{'invisible': [('job_card_type', 'in', ('additional_service', 'sale'))], 'readonly':[('state','=','done')]}"/>-->
+                        <field name="sale_order_id" options="{'no_create': True, 'no_create_edit':True}" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="sale_type" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="device_id" options="{'no_create': True, 'no_create_edit':True}" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="device_description"/>
+                        <field name="is_reseller" invisible="1"/>
+                    </group>
+                    <group string="Vehicle details">
+                         <field name="vehicle_number" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="vehicle_number_old" attrs="{'invisible': [('repair_job_type', '!=','re_installation')],'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="chassis_no" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="chassis_number_old" attrs="{'invisible': [('repair_job_type', '!=','re_installation')],'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="imei_no" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="imei_no_old" attrs="{'invisible': [('job_card_type', 'in', ['sale','additional_service'])],'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_number" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_number_old" attrs="{'invisible': [('job_card_type', 'in', ['sale','additional_service'])],'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_imei_no" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_imei_no_old" attrs="{'invisible': [('job_card_type', '=', 'sale')],'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="vehicle_description" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="model" attrs="{'readonly':[('state','=','done')]}"/>
+                    </group>
+                    <group string="Old Vehicle details" invisible="1">
+                        <field name="vehicle_number_old" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="chassis_number_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="imei_no_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_number_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="gsm_imei_no_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="vehicle_description_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                        <field name="model_old" attrs="{'readonly':[('state','=','done')]}" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="device_status" attrs="{'readonly':[('state','=','done')]}"/>                    
+                        <field name="new_no" attrs="{'invisible': [('job_card_type', 'in', ['sale','support'])],'readonly':[('state','=','done')]}"/>
+                        <field name="firm_ware" attrs="{'invisible': ['|',('job_card_type', '!=', 'support'),('service_job_type', '!=', 'testing')],'readonly':[('state','=','done')]}"/>
+                        <field name="firm_ware_old" attrs="{'invisible': [('job_card_type', '!=', 'support')],'readonly':[('state','=','done')]}"/>
+                        <field name="bs_version" attrs="{'invisible': ['|',('service_job_type', '!=', 'testing'),('job_card_type', '!=', 'support')],'readonly':[('state','=','done')]}"/>
+                        <field name="bs_version_old" attrs="{'invisible': [('job_card_type', '!=', 'support')],'readonly':[('state','=','done')]}"/>
+                        <field name="invoice" attrs="{'invisible': [('job_card_type', '=', 'sale')],'readonly':[('state','=','done')]}"/>
+                        <field name="installation_date" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="activation_date" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="unistallation_date" attrs="{'invisible': ['|',('service_job_type', 'not in',['removal','removal_returned']),('repair_job_type', 'not in',['removal','removal_returned'])],'readonly':[('state','=','done')]}"/>
+                        <field name="deactivation_date" attrs="{'invisible': ['|',('service_job_type', 'not in',['removal','removal_returned']),('repair_job_type', 'not in',['removal','removal_returned'])],'readonly':[('state','=','done')]}"/>
+                        <field name="scheduled_date" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="installation_region_id" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="installation_location_id" attrs="{'readonly':[('state','=','done')]}"/>
+                        <field name="support_id" attrs="{'readonly':[('state','=','done')],'invisible':[('job_card_type','=','sale')]}"/>            
+                    </group>        
+                </group>
+                <notebook>
+                    <page string="Components" attrs="{'invisible': [('repair_job_type', '!=','defective_component_replacement')]}">
+                        <field name="component_line">
+                            <tree string="Component" editable="bottom">
+                                <field name="job_id" invisible="1"/>
+                                <field name="select_type"/>
+                                <field name="product_id"/>
+                                <field name="name" />
+                                <field name="quantity" />
+                                <field name="uom_id" />
+                                 <field name="price_unit" widget="monetary"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Other Informations">
+                        <group>
+                            <group>
+                                <field name="problem"/>
+                                <field name="rectification"/>
+                                <field name="remarks"/>
+                                <field name="engineer_id"/>
+                                <field name="supervisor_id"/>
+                            </group>
+                        </group>    
+                    </page>
+                    <page string="Installation Block">
+                        <group>
+                            <group>
+                                <field name="speed_input" widget="radio" options="{'horizontal': true}"/>
+                                <field name="socket"  attrs="{'invisible': ['|',('speed_input', '!=', 'vss'),('speed_input', '=',False)]}"/>
+                                <field name="pin" attrs="{'invisible': ['|',('speed_input', '!=', 'vss'),('speed_input', '=',False)]}"/>
+                                <field name="color" attrs="{'invisible': ['|',('speed_input', '!=','vss'),('speed_input', '=',False)]}"/>
+                                <field name="pulse" attrs="{'invisible': ['|',('speed_input', '!=','vss'),('speed_input', '=',False)]}"/>
+                                <field name="can"  widget="radio" attrs="{'invisible': ['|',('speed_input', '!=', 'gps'),('speed_input', '=',False)]}"/>
+                                <field name="socket_canh" attrs="{'invisible': ['|',('can', '!=', 'can_h'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="pin_canh" attrs="{'invisible': ['|',('can', '!=', 'can_h'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="color_canh" attrs="{'invisible': ['|',('can', '!=', 'can_h'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="socket_canl" attrs="{'invisible': ['|',('can', '!=', 'can_l'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="pin_canl" attrs="{'invisible': ['|',('can', '!=', 'can_l'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="color_canl" attrs="{'invisible': ['|',('can', '!=', 'can_l'),('speed_input', 'not in',('gps'))]}"/>
+                                <field name="seat_belt" widget="radio" options="{'horizontal': true}"/>
+                                <field name="socket_driver" attrs="{'invisible': ['|',('seat_belt', '!=','yes'),('seat_belt', '=',False)]}"/>
+                                <field name="pin_driver" attrs="{'invisible': ['|',('seat_belt', '!=','yes'),('seat_belt', '=',False)]}"/>
+                                <field name="color_driver" attrs="{'invisible': ['|',('seat_belt', '!=','yes'),('seat_belt', '=',False)]}"/>
+                                <field name="voltage_driver" attrs="{'invisible': ['|',('seat_belt', '!=','yes'),('seat_belt', '=',False)]}"/>
+                                <field name="connection_type" widget="radio" options="{'horizontal': true}"  attrs="{'invisible': ['|',('seat_belt', '!=','yes'),('seat_belt', '=',False)]}"/>
+                                <field name="panic_button" widget="radio" options="{'horizontal': true}"/>  
+                                <field name="fuse_box" widget="radio" options="{'horizontal': true}"/>
+                                <field name="vehicle_voltage" widget="radio" options="{'horizontal': true}"/>
+                                <field name="operator"  widget="radio" options="{'horizontal': true}"/>
+                                <field name="portal" widget="radio" options="{'horizontal': true}"/>                             
+                            </group>  
+                            <group>
+                                <field name="rpm" widget="radio" options="{'horizontal': true}"/>
+                                <field name="socket_rpm" attrs="{'invisible': ['|',('rpm', '!=','yes'),('rpm', '=',False)]}"/>
+                                <field name="pin_rpm" attrs="{'invisible': ['|',('rpm', '!=','yes'),('rpm', '=',False)]}"/>
+                                <field name="color_rpm" attrs="{'invisible': ['|',('rpm', '!=','yes'),('rpm', '=',False)]}"/>
+                                <field name="pulse_rpm" attrs="{'invisible': ['|',('rpm', '!=','yes'),('rpm', '=',False)]}"/>
+                                <field name="sat" widget="radio" options="{'horizontal': true}"/>
+                                <field name="voice" widget="radio" options="{'horizontal': true}"/>
+                                <field name="eagle_eye" invisible="1"/>
+<!--                                widget="radio" options="{'horizontal': true}"/>-->
+                                <field name="dfms" widget="radio" options="{'horizontal': true}"/>
+                                <field name="fuel" widget="radio" options="{'horizontal': true}"/>                                
+                            </group>                                 
+                        </group>    
+                    </page>
+                    <page string="Checklist Block">
+                        <field name="checklist_ids"  readonly="1" >
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="state" invisible="1"/>
+                                <button name="action_yes" type="object" icon="fa-check text-success" string="Checked" attrs="{'invisible': [('is_required', 'in', ('done','no'))]}"/>
+                                <button name="action_no" type="object" icon="fa-times-circle text-danger" string="Not Checked" attrs="{'invisible': [('is_required', 'in', ('done','no'))]}"/>
+                                <field name="is_required"/>                                
+                                <field name="remark"/>                                
+                            </tree>
+                        </field>
+                    </page>             
+                    <page string="Job Information">
+                        <field name="card_line" widget="one2many_list">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="job_start_time" widget="float_time"/>
+                                <field name="job_end_time" widget="float_time"/>
+                                <field name="date_accomplished" attrs="{'invisible': [('state', '=','open')]}"/>
+                                <field name="state"/>
+                            </tree>    
+                        </field>    
+                    </page>
+                </notebook> 
+            </sheet>
+        </form>
+        </field>
+    </record>
+
+    <record id="job_card_search_view" model="ir.ui.view">
+        <field name="name">job.card.search.view</field>
+        <field name="model">job.card</field>
+        <field name="arch" type="xml">
+            <search string="Job Card">
+                <field name="engineer_id"/>
+                <field name="vehicle_number"/>
+                <field name="vehicle_number_old"/>
+                <filter name="engineer" string="Engineer"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="job_order_action" model="ir.actions.act_window">
+        <field name="name">Job Card</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">job.card</field>
+<!--        <field name="view_type">form</field>-->
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_engineer':1}</field>
+    </record>
+     
+     <menuitem id="job_card_menu_id"
+            name="Job Card"
+            parent="odoo_job_costing_management.menu_job_cost_orders"
+            action="job_order_action"
+            sequence="5"/> 
+            
+    <record id="material_purchase_requisition_form_view_inherit" model="ir.ui.view">
+        <field name="name">material.purchase.requisition.form</field>
+        <field name="model">material.purchase.requisition</field>
+        <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+        <field name="arch" type="xml">  
+             <!--Materials / BOQ Cost is to be hidden--> 
+            <xpath expr="//form/sheet/notebook/page[@name='job_cost_stock_material_boq']" position="attributes">  
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>         
+    </record> 
+    
+     <record id="edit_project_inherit" model="ir.ui.view">
+        <field name="name">project.project.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <!--Construction Site Detail is to be hidden-->
+            <xpath expr="//form/sheet/notebook/page[@name='construction_sites']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- FIELDS ADDED IN PROJECT-->
+
+        <xpath expr="//field[@name='label_tasks']" position="after">
+            <group>
+                <field name="partner_id"/>
+                <field name="job_number" invisible="1"/>
+                <field name="sale_type"/>
+                <field name="ticket_id"/>
+                <field name="show_contract" invisible="1" />
+            </group>
+        </xpath>
+
+        <!-- TASK NAME IS CHANGED AS JOB ORDERS IN PROJECT FORM-->
+
+            <xpath expr="//field[@name='date_start']" position="before">
+                <field string="Job Orders" name="task_count" widget="statinfo" />
+            </xpath>
+
+        </field>
+    </record>
+    
+     <!--Changes in Job Instruction tab in Job Order-->  
+
+     <record id="job_order_instruction_form_inherit1" model="ir.ui.view">
+        <field name="name">project.task.form.view</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="job_order_card_instruction.job_order_instruction_form"/>
+        <field name="arch" type="xml"> 
+            <field name="quality_checklist_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <!--<field name="sale_line_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>-->
+            <field name="instruction_date" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="quality_checklist_ids" position="after">
+                <field name="no_of_device"/>
+                <field name="no_of_device_per_day"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="installation_location_id"/>
+            </field>            
+           <field name="user_id" position="attributes">
+                <attribute name="string">Engineer</attribute>
+            </field>
+        </field>         
+    </record>  
+    
+    <record id="view_checklist_item_form" model="ir.ui.view">
+            <field name="name">check.list.item.form.view</field>
+            <field name="model">checklist.item</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" default_focus="1" placeholder="Name"/>
+                            </h1>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_checklist_item_tree" model="ir.ui.view">
+            <field name="name">check.list.item.tree.view</field>
+            <field name="model">checklist.item</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_project_checklist_item" model="ir.actions.act_window">
+            <field name="name">Checklist</field>
+            <field name="res_model">checklist.item</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_project_checklist_item" name="Checklist Items" action="action_project_checklist_item"
+                  parent="odoo_job_costing_management.menu_job_cost_configuration"/>
+            
+ </odoo>    

@@ -1,0 +1,165 @@
+<odoo>
+    <data>
+        <record id="fms_hr_employee_view_form2_inherit" model="ir.ui.view">
+            <field name="name">payroll.hr.employee.view.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_contract.hr_hr_employee_view_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_open_contract_history']" position="attributes">
+                    <attribute name="groups">fms_access_group.group_profile_hr_director</attribute>
+                </xpath>
+                <xpath expr="//field[@name='contract_id']" position="attributes">
+                    <attribute name="groups">fms_access_group.group_profile_hr_director</attribute>
+                </xpath>
+            </field>
+        </record>
+
+<!--        <record id="fms_hr_employee_view_form_inherit" model="ir.ui.view">-->
+<!--            <field name="name">payroll.hr.employee.view.form.inherit</field>-->
+<!--            <field name="model">hr.employee</field>-->
+<!--            <field name="inherit_id" ref="hr_payroll_community.payroll_hr_employee_view_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//button[@name='%(hr_payroll_community.act_hr_employee_payslip_list)d'][1]" position="attributes">-->
+<!--                    <attribute name="groups">fms_access_group.group_profile_hr_director</attribute>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
+<!--        <record id="sale_order_form_fms_inherit_id" model="ir.ui.view">-->
+<!--            <field name="name">sale.order.inherit</field>-->
+<!--            <field name="model">sale.order</field>-->
+<!--            <field name="inherit_id" ref="fms_extended.sale_order_form_fms_inherit_id"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <button name="action_draft" position="attributes">-->
+<!--                    <attribute name="groups">sales_team.group_sale_manager</attribute>-->
+<!--                </button>-->
+<!--                <button name="action_confirm" position="attributes">-->
+<!--                    <attribute name="groups">account.group_account_manager,fms_access_group.group_profile_sale_manager-->
+<!--                    </attribute>-->
+<!--                </button>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="purchase_order_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="fms_sale.purchase_order_inherit"/>
+            <field name="arch" type="xml">
+                <button name="manager_approval" position="attributes">
+                    <attribute name="groups">purchase.group_purchase_manager</attribute>
+                </button>
+            </field>
+        </record>
+
+        <record id="job_order_form_inherit" model="ir.ui.view">
+            <field name="name">job.card.form.inherit</field>
+            <field name="model">job.card</field>
+            <field name="inherit_id" ref="fms_sale.job_order_form"/>
+            <field name="arch" type="xml">
+                <button name="subscription_create" position="attributes">
+                    <attribute name="groups">
+                        account.group_account_manager,sales_team.group_sale_salesman_all_leads
+                    </attribute>
+                </button>
+            </field>
+        </record>
+
+        <!--<act_window
+                id="account.action_all_partner_invoices"
+                name="All Invoices"
+                res_model="account.move"
+                groups="account.group_account_invoice"
+                domain="[('partner_id', 'child_of', active_id)]"
+                src_model="res.partner"/>-->
+
+        <record id="sale.action_view_sale_advance_payment_inv" model="ir.actions.act_window">
+            <field name="binding_model_id" eval="False"/>
+        </record>
+
+        <!--<record id="sale_subscription_access_group_inherit" model="ir.ui.view">
+            <field name="name">sale.subscription.access.group.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_subscription.sale_subscription_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='set_open']" position="attributes">
+                    <attribute name="groups">sales_team.group_sale_salesman_all_leads</attribute>
+                </xpath>
+            </field>
+        </record>-->
+
+        <record id="sale_order_view_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <button name="%(sale.action_view_sale_advance_payment_inv)d" position="attributes">
+                    <attribute name="groups">account.group_account_invoice</attribute>
+                </button>
+            </field>
+        </record>
+
+        <!--<act_window
+                id="consolidated_invoice.action_consolidated_invoice"
+                name="Generate Consolidated Invoice"
+                res_model="consolidated.invoice"
+                src_model="account.move"
+                target="new"
+                view_mode="form"
+                groups="account.group_account_invoice"
+                key2="client_action_multi"/>-->
+
+        <record id="view_fms_customer_support_profile_form" model="ir.ui.view">
+            <field name="name">view.customer.support.form.profile.inherit</field>
+            <field name="model">fms.customer.support</field>
+            <field name="inherit_id" ref="fms_customer_support.fms_customer_support_form_view"/>
+            <field name="arch" type="xml">
+                <button name="button_confirm" position="attributes">
+                    <attribute name="groups">website_support.support_manager</attribute>
+                </button>
+                <button name="button_cancel" position="attributes">
+                    <attribute name="groups">website_support.support_manager</attribute>
+                </button>
+                <button name="create_quotation" position="attributes">
+                    <attribute name="groups">website_support.support_manager</attribute>
+                </button>
+            </field>
+        </record>
+        <record id="repair.action_repair_order_tree" model="ir.actions.act_window">
+            <field name="context">{'default_user_id':uid,'search_default_user_id':uid}</field>
+            <!--            <field name="domain">[('user_id', '=', uid)]</field>-->
+        </record>
+        <record id="repair_device_mantainace_group_inherit" model="ir.ui.view">
+            <field name="name">repair.order.device.subscription.group.inherit</field>
+            <field name="model">repair.order</field>
+            <field name="inherit_id" ref="fms_customer_support.repair_device_mantainace_sub_inherit"/>
+            <field name="arch" type="xml">
+                <button name="action_close_subscription" position="attributes">
+                    <attribute name="groups">fms_access_group.group_profile_csm_director</attribute>
+                </button>
+                <button name="action_open_subscription" position="attributes">
+                    <attribute name="groups">fms_access_group.group_profile_csm_director</attribute>
+                </button>
+            </field>
+        </record>
+
+        <record id="fms_hrms.offer_letter_action" model="ir.actions.report">
+            <field name="name">Offer Letter</field>
+            <field name="model">hr.employee</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">fms_hrms.offer_letter</field>
+            <field name="report_file">fms_hrms.offer_letter</field>
+    <!--        <field name="print_report_name">'Delivery Order' if object.picking_type_id.name == 'Delivery Orders' else 'GRN Report'</field>-->
+<!--            <field name="binding_model_id" ref="project.model_project_project"/>-->
+<!--            <field name="binding_type">report</field>-->
+        </record>
+
+        <!--<report
+                id="fms_hrms.offer_letter_action"
+                model="hr.employee"
+                string="Offer Letter"
+&lt;!&ndash;                groups="fms_access_group.group_profile_hr_director"&ndash;&gt;
+                report_type="qweb-pdf"
+                name="fms_hrms.offer_letter"
+                file="fms_hrms.offer_letter"
+        />-->
+    </data>
+</odoo>

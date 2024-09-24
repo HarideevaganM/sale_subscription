@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_job_card_code_inherit" model="ir.ui.view">
+        <field name="name">view.job.card.code.inherit</field>
+        <field name="model">job.card</field>
+        <field name="inherit_id" ref="fms_sale.job_order_form"/>
+        <field name="arch" type="xml">
+            <field name="device_id" position="after">
+                <field name="device_code"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

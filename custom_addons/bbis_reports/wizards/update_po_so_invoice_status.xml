@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bbis_update_po_so_invoice_status_form" model="ir.ui.view">
+            <field name="name">BBIS Update PO/SO Invoice Status Form</field>
+            <field name="model">bbis.update.po.so.invoice.status</field>
+            <field name="arch" type="xml">
+                <form string="Update Invoice Status">
+                    <group>
+                        <field name="sale_order_id" attrs="{'invisible': [('model_type', '=', 'purchase')]}"/>
+                        <field name="so_invoice_status" attrs="{'invisible': [('model_type', '=', 'purchase')], 'required': [('model_type', '=', 'sale')]}"/>
+                        <field name="purchase_order_id" attrs="{'invisible': [('model_type', '=', 'sale')]}"/>
+                        <field name="po_invoice_status" attrs="{'invisible': [('model_type', '=', 'sale')], 'required': [('model_type', '=', 'purchase')]}"/>
+                        <field name="model_type" invisible="1"/>
+                        <field name="reason"/>
+                    </group>
+                    <footer>
+                        <button name="update_invoice_status" string="Update Status" type="object" class="btn-primary"/>
+                        <button string="Close" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

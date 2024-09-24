@@ -1,0 +1,63 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="website_support_ticket_view_form_inherit">
+            <field name="name">website.support.ticket.form.inherit</field>
+            <field name="model">website.support.ticket</field>
+            <field name="inherit_id" ref="website_support.website_support_ticket_view_form"/>
+            <field name="arch" type="xml">
+                <field name="state_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="category_id" position="attributes">
+                    <attribute name="options">{'no_create_edit': True}</attribute>
+                </field>
+                <field name="sub_category_id" position="attributes">
+                    <attribute name="options">{'no_create_edit': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+         <record model="ir.ui.view" id="website_support_extend_form">
+            <field name="name">website.support.ticket.categories.form</field>
+            <field name="model">website.support.ticket.category</field>
+            <field name="inherit_id" ref="website_support.website_support_ticket_category_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" poisition="after">
+                    <field name="code"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="website_support_inherit_view" model="ir.ui.view">
+            <field name="name">website</field>
+            <field name="model">website.support.ticket</field>
+            <field name="inherit_id" ref="fms_repair.website_support_inherit_view"/>
+            <field name="arch" type="xml">
+                <button name="create_job_card" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('states', 'not in',
+                        ['confirmed','under_repair']),('cat_code','!=','TECH')]}
+                    </attribute>
+                </button>
+
+                <button name="create_job_card" position="after">
+                    <button type="object" name="set_to_under_repair" string="In Progress" attrs="{'invisible' :['|',('states', '!=', 'confirmed' ),('cat_code','=','TECH')]}" class="oe_highlight"/>
+                </button>
+
+                <field name="support_id" position="after">
+                    <field name="cat_code" invisible="1"/>
+                </field>
+                <field name="vehicle_id" position="attributes">
+                    <attribute name="attrs">{'required':[('cat_code','=', 'TECH'),('states','!=', 'draft')]}</attribute>
+                </field>
+                <!--<field name="close_comment" position="attributes">
+                    <attribute name="attrs">{'invisible':[('states','not in', ('cancel','done'))]}</attribute>
+                </field>-->
+                <field name="close_time" position="attributes">
+                    <attribute name="attrs">{'invisible':[('states','not in', ('cancel','done'))]}</attribute>
+                </field>
+
+            </field>
+        </record>
+    </data>
+</odoo>

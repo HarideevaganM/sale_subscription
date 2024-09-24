@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!-- LEASE AND RENTAL CONTRACT-->
+	
+	<record id="lease_contract_view_id" model="ir.ui.view">
+        <field name="name">contract.order.view</field>
+        <field name="model">contract.order</field>
+        <field name="arch" type="xml">
+        <tree string="Lease Contract">
+                <field name="partner_id"/>
+                <field name="contract_start_date"/>
+                <field name="contract_end_date"/>
+                <field name="sale_type"/>
+                 </tree>
+        </field>
+    </record>
+
+	<record id="lease_contract_form_id" model="ir.ui.view">
+        <field name="name">contract.order.form</field>
+        <field name="model">contract.order</field>
+        <field name="arch" type="xml">
+        <form string="Contract">
+			<header>
+				<field name="state" widget="statusbar" statusbar_visible="to_renew,renewed"/>
+            </header>
+			<sheet>       
+				<group>
+					<group>
+						<field name="name"/>
+						<field name="installation_date"/>
+						<field name="contract_start_date" required = "1"/>
+						<field name="contract_end_date" required = "1"/>
+						<field name="partner_id"/>
+						<field name="Contract_po_reference" readonly="1"/>
+						<field name="direct_partner_type"/>
+					</group>    
+					<group>    
+						 <label for="installation_street" string="Installation Address"/>
+                                <div>
+                                    <field name="installation_street" required = "1" placeholder="Street..."/>
+                                    <field name="installation_street2" required = "1" placeholder="Street..."/>
+                                    <div class="address_format">
+                                        <field name="installation_city" placeholder="City" style="width: 40%%" required = "1"/>
+                                        <field name="installation_state_id" required = "1" class="oe_no_button" placeholder="State" style="width: 37%%" options='{"no_open": True}'/>
+                                        <field name="installation_zip" required = "1" placeholder="ZIP" style="width: 20%%" />
+                                    </div>
+                                    <field name="installation_country_id" required = "1" placeholder="Country" class="oe_no_button" options='{"no_open": True, "no_create": True}' />
+                                </div>
+						<field name="billing_cycle_type"/>
+						<field name="billing_date"/>
+						<field name="credit_period"/>
+						<field name="check_renewal_type" required = "1"/>
+						<field name="sale_type"/>
+						<field name="product_ownership_period" attrs="{'invisible':[('sale_type','=','rental')]}" />
+						<field name="division_billing"/>
+					</group> 
+				</group> 
+				<notebook>
+					<page string="Product Details">
+						<field name="device_details_line" widget="One2many_list">
+
+							<tree string ="Product Details" editable="bottom">
+								<field name="product_id"/>
+								<field name="contract_id" invisible="1"/>
+								<field name="name"/>
+								<field name="product_uom_qty"/>
+								<field name="product_uom"/>
+								<field name="price_unit"/>
+								<field name="price_subtotal"/>
+							</tree>
+
+						</field>
+					</page>
+				</notebook>
+            </sheet>
+        </form>
+        </field>
+    </record>
+    
+    <record id="contract_order_action" model="ir.actions.act_window">
+    <field name="name">Contract</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">contract.order</field>
+<!--    <field name="view_type">form</field>-->
+    <field name="view_mode">tree,form</field>
+    </record>
+    
+ </odoo>    

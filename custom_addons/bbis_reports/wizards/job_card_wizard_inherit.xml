@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="bbis_generate_subscription_wizard_inherit" model="ir.ui.view">
+        <field name="name">bbis.generate.subscription.wizard.form.inherit</field>
+        <field name="model">generate.subscription.wizard</field>
+        <field name="inherit_id" ref="fms_sale.generate_subscription_wizard"/>
+        <field name="arch" type="xml">
+            <form string="Generate Sub Renewal Quote">
+                <xpath expr="//form/group/group" position="before">
+                    <group>
+                        <group>
+                            <field name="file" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                        </group>
+                    </group>
+
+                </xpath>
+            </form>
+        </field>
+    </record>
+
+</odoo>

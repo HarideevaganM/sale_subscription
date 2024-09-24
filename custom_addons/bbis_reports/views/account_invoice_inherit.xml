@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="bbis_account_invoice_inherit" model="ir.ui.view">
+            <field name="name">bbis.account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="fms_sale.account_invoice_form_inherit"/>
+            <field name="arch" type="xml">
+                <field name="inclusive_invoice_line" position="replace">
+                    <field name="inclusive_invoice_line" attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                        <tree string="Inclusive Invoice Lines" >
+                            <field name="name"/>
+                            <field name="invoice_line_ids"/>
+                            <field name="quantity" attrs="{'column_invisible': [('parent.sale_type', '=', 'pilot')]}"/>
+                            <field name="group_quantity" attrs="{'column_invisible': [('parent.sale_type', '!=', 'pilot')]}"/>
+                            <!--
+                            <field name="quantity" attrs="{'column_invisible': [('parent.sale_type', 'not in', ('cash','purchase'))]}"/>
+                            <field name="group_quantity" attrs="{'column_invisible': [('parent.sale_type', 'in', ('cash','purchase'))]}"/>
+                            -->
+                            <field name="price_unit"/>
+                            <field name="discount"/>
+                            <field name="price_tax"/>
+                            <field name="price_subtotal"/>
+                        </tree>
+                    </field>
+                </field>
+                <field name="amount_untaxed1" position="after">
+                    <field name="amount_tax1"/>
+                </field>
+
+                <!-- Add new group Report Page Break and Delivery Options -->
+                <xpath expr="//page[@name='other_info']/field[@name='tax_line_ids']" position="before">
+                    <group>
+                        <group name="report_page_break" string="Report Page Break">
+                            <field name="amounts_pb"/>
+                            <field name="remarks_pb"/>
+                            <field name="vehicles_pb"/>
+                        </group>
+                        <group name="delivery_details" string="Delivery Details">
+                            <field name="invoice_sent_via"/>
+                            <field name="invoice_sent_date"/>
+                            <field name="invoice_sent_location"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group></group>
+                        <group name="delivery_details" string="Delivery Details(2)">
+                            <field name="invoice_sent_via_2"/>
+                            <field name="invoice_sent_date_2"/>
+                            <field name="invoice_sent_location_2"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="bbis_invoice_default_form_inherit">
+            <field name="name">bbis.invoice.default.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.move_form"/>
+            <field name="arch" type="xml">
+
+                <!-- Add Bank Account -->
+                <field name="journal_id" position="after">
+                    <field name="account_journal_id" options="{'no_open': True, 'no_create': True}"/>
+                    <field name="has_no_taxes" invisible="1"/>
+                    <!--
+                    <field name="has_outstanding"/>
+                    -->
+                </field>
+
+                <!-- Show validate button having all line items with VAT entered -->
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('has_no_taxes','=', True)]}</attribute>
+                </xpath>
+
+                <!-- Show validate button if one of line items has no VAT entered -->
+                <xpath expr="//button[@name='action_invoice_open']" position="after">
+                    <button name="action_invoice_open" type="object" states="draft" string="Validate"
+                            confirm="There is no VAT selected in one or more invoice lines, would you like to proceed?"
+                            class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"
+                            attrs="{'invisible': ['|',('has_no_taxes','=', False)]}"/>
+                </xpath>
+
+                <!-- add Job Card Date -->
+                <field name="job_invoice_ref" position="after">
+                    <field name="job_card_date"/>
+                </field>
+
+                <!-- change the job card field type into many to many field.-->
+
+                <field name="job_id" position="attributes">
+                    <attribute name="widget">many2many_tags</attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <!--Adding discount fix column in account invoice for purchase invoice.-->
+        <record id="invoice_line_inherit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.move_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                    <field name="discount_fix"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

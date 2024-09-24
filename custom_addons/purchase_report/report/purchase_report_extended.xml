@@ -1,0 +1,165 @@
+<odoo>
+    <data>
+        <template id="report_purchase_order_document">
+            <t t-call="purchase_report.purchase_external_layout">
+                <t t-set="o" t-value="o.with_context(lang=lang)" />
+                <div class="page">
+                    <div class="row">
+                        <div class="col-xs-6 pull-left">
+                            <img t-if="res_company.logo" t-att-src="'data:image/png;base64,%s' % to_text(res_company.logo)" class="pull-left" width="150px"/><br/>
+                        </div>
+                        <div class="col-xs-4 pull-right">
+                            <span class="text-left" t-esc="o.company_id.street"/> <span class="text-left" t-esc="o.company_id.street2"/><br/>
+                            <span class="text-left" t-esc="o.company_id.city"/> <span class="text-left" t-esc="o.company_id.zip"/><br/>
+                            <span class="text-left" t-esc="o.company_id.state_id.name"/> <span class="text-left" t-esc="o.company_id.country_id.name"/><br/>
+                            <span class="text-left">Phone: </span> <span class="text-left" t-esc="o.company_id.phone"/><br/>
+                            <span class="text-left">Email: </span> <span class="text-left" t-esc="o.company_id.email"/><br/><br/>
+                        </div>
+                    </div><br/>
+                    <div class="row">
+                        <div class="text-center">
+                            <h2 class="oe_left_title" style="font-weight: 900!important;">PURCHASE ORDER</h2>
+                        </div>
+                    </div><br/>
+                    <div class="row">
+                        <div class="col-xs-6 pull-left">
+                            P.O. NUMBER: <span t-esc='o.name'/><br/>
+                            P.O. DATE: <span t-field="o.date_order" t-field-options='{"format": "dd/MM/yyyy"}'/><br/>
+                            Requested By: <span t-esc='user.name'/><br/>
+                            Shipped Via: <span t-esc='o.shipped_vai'/><br/><br/>
+                            <span>
+                                Note: PO Number must appear on all related<br/>
+                                correspondence, shipping papers,and invoices<br/>
+                            </span>
+                        </div>
+                        <div class="col-xs-6 pull-right">
+                            <div t-if="o.partner_id">
+                                <sapn style="font-weight:900">SUPPLIER : </sapn>
+                                <div t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone", "email"], "no_marker": True, "phone_icons": True}'/>
+                            </div>
+                        </div>
+                    </div><br/>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center"><strong>QTY</strong></th>
+                                <th class="text-center"><strong>UNIT</strong></th>
+                                <th class="text-center"><strong>CODE</strong></th>
+                                <th class="text-center"><strong>DESCRIPTION</strong></th>
+                                <th class="text-center"><strong>UNIT PRICE</strong></th>
+                                <th class="text-center"><strong>TOTAL</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.order_line" t-as="line">
+                                <td class="text-center">
+                                    <span t-esc="int(line.product_qty)"/>
+                                </td>
+                                <td class="text-center"><span t-if="line.product_uom" t-field="line.product_uom.name"/></td>
+                                <td class="text-center">
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="line.price_unit"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-xs-5 pull-right">
+                            <table class="table">
+                                <tr>
+                                    <td style="border:none !important; width:53%" class="text-right">SUBTOTAL</td>
+                                    <td class="text-right" style="border:1px solid #dddddd;width:47%">
+                                        <span t-field="o.amount_untaxed"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border:none !important;c width:53%" class="text-right">VAT</td>
+                                    <td class="text-right" style="border:1px solid #dddddd;width:47%">
+                                        <span t-field="o.amount_tax"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border:none !important; width:53%" class="text-right">SHIPPING &#38; HANDLING</td>
+                                    <td class="text-right" style="border:1px solid #dddddd;width:47%">
+                                        <span t-field="o.other"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  style="border:none !important; width:53%" class="text-right">OTHER</td>
+                                    <td class="text-right" style="border:1px solid #dddddd;width:47%">
+                                        <span t-field="o.shoping"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border:none !important;width:53%;font-weight:900" class="text-right">TOTAL</td>
+                                    <td class="text-right" style="border:1px solid #dddddd;width:47%;font-weight:900;">
+                                        <span t-field="o.amount_total"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 text-right" style="margin-right:5px; padding-right:5px;">1.</div>
+                        <div class="col-xs-5" style="margin-left:0px; padding-left:0px;">
+                            Enter this order in accordance with the prices, terms,
+                            delivery method, and specifications listed above.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 text-right" style="margin-right:5px; padding-right:5px;">2.</div>
+                        <div class="col-xs-5" style="margin-left:0px; padding-left:0px;">
+                           Please notify us immediately if you are unable to ship ass pecified.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 text-right" style="margin-right:5px; padding-right:5px;">3.</div>
+                        <div class="col-xs-5" style="margin-left:0px; padding-left:0px;">
+                            BBIS has the right to impose penalty on late deliveries &#38;
+                            rejected items.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 text-right" style="margin-right:5px; padding-right:5px;">4.</div>
+                        <div class="col-xs-5" style="margin-left:0px; padding-left:0px;">
+                           Delivery Note should be sent at the same time the
+                           goods are delivered.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6"></div>
+                        <div class="col-xs-6 text-center" style="border-bottom:1px solid black;"><p t-esc="request.env.user.name"/></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6"></div>
+                        <div class="col-xs-6 text-center">Authorized by</div>
+                    </div>
+                </div>
+                <!-- <div class="text-center" style="margin-top:260px;">
+                    <p>Should you have any enquiries concerning this PO, please call Operation department at + 971 2 555 4991</p>
+                </div> -->
+            </t>
+        </template>
+
+        <template id="report_purchaseorder_extended">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="purchase_report.report_purchase_order_document" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

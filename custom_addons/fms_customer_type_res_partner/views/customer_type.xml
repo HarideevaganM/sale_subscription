@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+   <record id="customer_master_inherit" model="ir.ui.view">
+		<field name="name">partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref = "base.view_partner_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="/form/sheet/group/group/field[@name='function']" position="before">
+				<field name="customer" invisible="1"/>
+				<field name="customer_types" attrs="{'required':[('customer','=',True)]}"/>
+				<field name="industry_id1"/>
+			</xpath>
+		</field>
+		</record>
+    </data>
+</odoo>

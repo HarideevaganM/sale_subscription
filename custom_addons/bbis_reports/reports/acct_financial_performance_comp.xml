@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format -->
+    <record id="bbis_accounting_rpt_port_paper_format" model="report.paperformat">
+        <field name="name">European A4 low margin</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">12</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_financial_performance_comp"
+        model="account.move.line"
+        string="Comparative Financial Performance"
+        report_type="qweb-pdf"
+        file="bbis_reports.financial_performance_comp"
+        name="bbis_reports.financial_performance_comp"
+        paperformat="bbis_reports.bbis_accounting_rpt_port_paper_format"
+        print_report_name="Comparative Financial Performance" menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="financial_performance_comp_document">
+        <div class="header">
+            <img class="bbis-company-logo" style="height:100px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+            <div class="bbis-company-details">
+                <h1 class="text-uppercase" style="margin:0; font-size:20pt"><strong>Comparative Financial Performance</strong></h1>
+                <div>
+                    <span t-if="move_state == 'posted'" t-esc="'All Posted Entries'"/>
+                    <span t-else="" t-esc="'All Entries'"/>
+                    <br/>
+                    <span t-if="date == 'this_year'" t-esc="'This Year'"/>
+                    <span t-elif="date == 'last_year'" t-esc="'Last Year'"/>
+                    <span t-else="">
+                        <t t-esc="start_date.strftime('%B %Y')"/> -
+                        <t t-esc="end_date.strftime('%B %Y')"/>
+                    </span>
+                </div>
+            </div>
+        </div>
+         <div class="article o_report_layout_standard">
+            <div class="page">
+                <table class="bbis-accounting-report-table1" style="width:100%">
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <h2 style="margin:0; font-size:15pt"><strong>Income Statement</strong></h2>
+                        </td>
+                    </tr>
+                    <t t-set="cur_month_name" t-value="datetime.date(1900, cur_month, 1).strftime('%B')"/>
+                    <tr>
+                        <td> </td>
+                        <td colspan="4" class="text-center">
+                            <strong>For the Month of <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></strong>
+                        </td>
+                        <td colspan="4" class="text-center">
+                            <strong>Year to Date <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">Particular</th>
+                        <th colspan="2">Comparative Analysis</th>
+                        <th rowspan="2">Change in<br/>AED</th>
+                        <th rowspan="2">Change in<br/>Percentile</th>
+                        <th colspan="2">Comparative Analysis</th>
+                        <th rowspan="2">Change in<br/>AED</th>
+                        <th rowspan="2">Change in<br/>Percentile</th>
+                    </tr>
+                    <tr>
+
+                        <th class="sub-header"><span t-esc="cur_month_name"/> <span t-esc="cur_year"/></th>
+                        <th class="sub-header"><span t-esc="cur_month_name"/> <span t-esc="prev_year"/></th>
+                        <th class="sub-header">YTD <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></th>
+                        <th class="sub-header">YTD <span t-esc="cur_month_name"/> <span t-esc="prev_year"/></th>
+                    </tr>
+                    <tbody>
+                        <tr>
+                            <td class="tbody-header">Sales</td>
+                            <td class="text-right">
+                                <span t-esc="cur_month_data[cur_year]['sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="prev_month_data[prev_year]['sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="month_diff['sales']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="month_diff['sales']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data[cur_year]['sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data_prev[prev_year]['sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="year_diff['sales']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="year_diff['sales']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-header">Less: Cost of Sales</td>
+                            <td class="text-right">
+                                <span t-esc="cur_month_data[cur_year]['cost_of_sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="prev_month_data[prev_year]['cost_of_sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="month_diff['cost_of_sales']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="month_diff['cost_of_sales']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%</td>
+                            <td class="text-right">
+                                <span t-esc="data[cur_year]['cost_of_sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data_prev[prev_year]['cost_of_sales']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="year_diff['cost_of_sales']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="year_diff['cost_of_sales']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-header tbody-subtotal">Gross Profit</td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="cur_month_data[cur_year]['gross']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="prev_month_data[prev_year]['gross']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="month_diff['gross']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-subtotal">
+                                <span t-esc="month_diff['gross']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="data[cur_year]['gross']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="data_prev[prev_year]['gross']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="year_diff['gross']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-subtotal">
+                                <span t-esc="year_diff['gross']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-header">Less: Operating Expenses</td>
+                            <td class="text-right">
+                                <span t-esc="cur_month_data[cur_year]['expenses']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="prev_month_data[prev_year]['expenses']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="month_diff['expenses']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="month_diff['expenses']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data[cur_year]['expenses']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data_prev[prev_year]['expenses']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="year_diff['expenses']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="year_diff['expenses']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <!-- <tr t-if="cur_month_data[cur_year]['depreciation'] or prev_month_data[prev_year]['depreciation']">-->
+                        <tr>
+                            <td class="tbody-header">Less: Depreciation</td>
+                            <td class="text-right">
+                                <span t-esc="cur_month_data[cur_year]['depreciation']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="prev_month_data[prev_year]['depreciation']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="month_diff['depreciation']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="month_diff['depreciation']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data[cur_year]['depreciation']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data_prev[prev_year]['depreciation']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="year_diff['depreciation']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="year_diff['depreciation']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-subtotal">Net Profit</td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="cur_month_data[cur_year]['net_profit']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="prev_month_data[prev_year]['net_profit']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="month_diff['net_profit']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-subtotal">
+                                <span t-esc="month_diff['net_profit']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="data[cur_year]['net_profit']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="data_prev[prev_year]['net_profit']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-subtotal">
+                                <span t-esc="year_diff['net_profit']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-subtotal">
+                                <span t-esc="year_diff['net_profit']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-header">Add : Other Income</td>
+                            <td class="text-right">
+                                <span t-esc="cur_month_data[cur_year]['other_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="prev_month_data[prev_year]['other_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="month_diff['other_income']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="month_diff['other_income']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data[cur_year]['other_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="data_prev[prev_year]['other_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right">
+                                <span t-esc="year_diff['other_income']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="year_diff['other_income']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tbody-total">Total Comprehensive Income</td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="cur_month_data[cur_year]['total_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="prev_month_data[prev_year]['total_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="month_diff['total_income']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-total">
+                                <span t-esc="month_diff['total_income']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="data[cur_year]['total_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="data_prev[prev_year]['total_income']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-right tbody-total">
+                                <span t-esc="year_diff['total_income']['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center tbody-total">
+                                <span t-esc="year_diff['total_income']['percentile']" t-options='{"widget": "float", "precision": 0}'/>%
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <t t-call="bbis_reports.bbis_financial_perfomance_scheds">
+                    <t t-set="sched_title">Sched I - Sales</t>
+                    <t t-set="sched_total_title">Sales</t>
+                    <t t-set="current_year_data" t-value="cur_year_sales"/>
+                    <t t-set="previous_year_data" t-value="prev_year_sales"/>
+                    <t t-set="current_month_data" t-value="cur_month_sales"/>
+                    <t t-set="previous_month_data" t-value="prev_month_sales"/>
+                    <t t-set="year_diff" t-value="year_diff_sales"/>
+                </t>
+
+                <t t-call="bbis_reports.bbis_financial_perfomance_scheds">
+                    <t t-set="sched_title">Sched II - Cost of Sales</t>
+                    <t t-set="sched_total_title">Cost of Sales</t>
+                    <t t-set="current_year_data" t-value="cur_year_cost_sales"/>
+                    <t t-set="previous_year_data" t-value="prev_year_cost_sales"/>
+                    <t t-set="current_month_data" t-value="cur_month_cost_sales"/>
+                    <t t-set="previous_month_data" t-value="prev_month_cost_sales"/>
+                    <t t-set="year_diff" t-value="year_diff_cost_sales"/>
+                </t>
+
+                <t t-call="bbis_reports.bbis_financial_perfomance_scheds">
+                    <t t-set="sched_title">Sched III - Operating Expenses</t>
+                    <t t-set="sched_total_title">Operating Expenses</t>
+                    <t t-set="current_year_data" t-value="cur_year_expenses"/>
+                    <t t-set="previous_year_data" t-value="prev_year_expenses"/>
+                    <t t-set="current_month_data" t-value="cur_month_expenses"/>
+                    <t t-set="previous_month_data" t-value="prev_month_expenses"/>
+                    <t t-set="year_diff" t-value="year_diff_expenses"/>
+                </t>
+
+            </div>
+         </div>
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="financial_performance_comp">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.financial_performance_comp_document"/>
+        </t>
+    </template><!-- End: Report Template -->
+</odoo>

@@ -1,0 +1,62 @@
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_asset_model_tree">
+            <field name="name">Asset Branch</field>
+            <field name="model">asset.model</field>
+            <field name="arch" type="xml">
+                <tree string="All Model">
+                    <field name="name"/>
+                    <field name="asset_category"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Check Box to make Vehicle a Product Starts-->
+         <record id="view_asset_model_form" model="ir.ui.view">
+            <field name="name">Asset Model</field>
+            <field name="model">asset.model</field>
+            <field name="arch" type="xml">
+                <form string="Asset Branch">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="asset_category"/>
+                            <field name="reordering_rule"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+         </record>
+        <!-- Check Box to make Vehicle a Product End-->
+
+
+        <record model="ir.actions.act_window" id="asset_model_action">
+            <field name="name">Asset Model</field>
+            <field name="res_model">asset.model</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="ir_cron_scheduler_account_asset_model" model="ir.cron" forcecreate="True">
+            <field name="name">Asset Model scheduler</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="state">code</field>
+            <field eval="False" name="doall"/>
+            <field name="model_id" ref="model_asset_model"/>
+            <field name="code">model.process_scheduler()</field>
+            <field name="interval_number">2</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+        </record>
+
+
+        <menuitem id="menu_asset_model" name="Asset Model" parent="IT_configuration_menu_root" action="asset_model_action" sequence="40"/>
+
+
+
+    </data>
+</odoo>

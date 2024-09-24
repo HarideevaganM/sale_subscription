@@ -1,0 +1,10 @@
+<odoo>
+    <data>
+        <record id="subscription_closure_sequence" model="ir.sequence">
+            <field name="name">Closure of Subscription</field>
+            <field name="code">subscription.close</field>
+            <field name="prefix">SUBC/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

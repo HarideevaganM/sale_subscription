@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bbis_accounting_reports_pdf" model="ir.ui.view">
+            <field name="name">Print BBIS Accouting Reports PDF</field>
+            <field name="model">account_ml.bbis_reports</field>
+            <field name="arch" type="xml">
+            <form string="Print BBIS Accounting Reports">
+                <group>
+                    <group>
+                        <field name="account_reports"/>
+                        <field name="date_filter" attrs="{'invisible':[('account_reports','in',['soa', 'aged_receivable', 'aged_payable'])]}"/>
+                        <field name="client" attrs="{'invisible':[('account_reports', 'not in', ['soa', 'ledger'])], 'required':[('account_reports','in',('soa','ledger'))]}" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="account_type" attrs="{'invisible':[('account_reports','not in',('soa', 'ledger'))]}"/>
+                        <field name="aged_receivable_date" attrs="{'invisible':[('account_reports','not in',['aged_receivable', 'aged_payable'])]}"/>
+                        <field name="account" attrs="{'invisible':[('account_reports', 'not in', ['ledger_account'])], 'required':[('account_reports','in',('ledger_account'))]}" options="{'no_open': True, 'no_create': True}"/>
+                    </group>
+
+                    <group>
+                        <field name="target_move" attrs="{'invisible':[('account_reports','in',['soa', 'ledger'])]}"/>
+                        <field name="comparison" attrs="{'invisible':[('account_reports','!=','financial_performance')]}"/>
+                        <field name="include_sales_qty" attrs="{'invisible':[('account_reports','!=','sales')]}"/>
+                        <field name="include_tax" attrs="{'invisible':[('account_reports','!=','sales')]}"/>
+                        <field name="include_cr" attrs="{'invisible':[('account_reports','not in', ['receipts','receivables'])]}"/>
+                        <field name="include_db" attrs="{'invisible':[('account_reports','not in', ['receipts','receivables'])]}"/>
+                        <field name="bank" attrs="{'invisible':[('account_reports', 'not in', ['soa', 'ledger'])]}" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="soa_start_date" attrs="{'invisible':[('account_reports', 'not in', ['soa'])]}"/>
+                        <field name="page_break_notes" attrs="{'invisible':[('account_reports', 'not in', ['soa'])]}"/>
+                    </group>
+
+                </group>
+                <group string="Custom Date" attrs="{'invisible':['|',('date_filter','!=','custom'), ('account_reports','in', ['aged_receivable', 'aged_payable'])]}">
+                    <group><field name="start_date"/></group>
+                    <group><field name="end_date"/></group>
+                </group>
+                <group>
+                    <group><field name="subsequent_pay_date" attrs="{'invisible':[('account_reports', 'not in', ['aged_receivable'])]}"/></group>
+                </group>
+                <footer>
+                    <button name="print_reports" string="Print Report" type="object" class="btn-primary"
+                            attrs="{'invisible':[('account_reports', 'in', ['ledger','ledger_account'])]}"/>
+                    <button string="Export to Excel" name="print_xlsx_report" type="object" class="btn-primary"
+                            attrs="{'invisible':[('account_reports', 'not in', ['soa', 'ledger', 'device_installations', 'aged_receivable','ledger_account'])]}"/>
+                    <button string="Close" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_print_bbis_account_rpt_pdf" model="ir.actions.act_window">
+            <field name="name">Download Reports - PDF</field>
+            <field name="res_model">account_ml.bbis_reports</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="bbis_accounting_reports_pdf"/>
+        </record>
+
+        <menuitem action="action_print_bbis_account_rpt_pdf" id="menu_action_print_bbis_account_rpt_pdf" parent="bbis_reports.bbis_account_reports_legal_statements_menu" sequence="19" groups="account.group_account_manager"/>
+    </data>
+</odoo>

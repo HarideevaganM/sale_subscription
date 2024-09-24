@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="job_instruction_type_display_form" model="ir.ui.view">
+            <field name="name">job.instruction.form.view</field>
+            <field name="model">job.instruction</field>
+            <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="print_job_instruction" type="object" string="Print"/>
+                    <button string="Start" name="start_state" states="draft" type="object" class="oe_highlight" groups="base.group_user"/>
+                    <button string="Finish" name="finish_state" states="start,post" class="oe_highlight" type="object"/>
+                    <button string="Pause" name="pause_state" states="start" type="object"/>
+                    <button string="Cancel" name="cancel_state" states="draft,done" type="object"/>
+                    <button string="Reset To Draft" name="reset_state" states="cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,start,post,done" colspan="2"/>
+                </header>
+                <sheet>
+                 <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                 <group>
+                    <group>
+                        <field name="instruction_type" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                        <field name="quality_checklist_ids" widget="many2many_tags" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                    </group>
+                    <group>
+                        <field name="instruction_date" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                        <field name="user_id" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                        <field name="supervisor_id" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                        <field name="job_id" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                    </group>
+                 </group>
+                 <notebook>
+                    <page name="description" string="Description">
+                        <group>
+                                <field name="description" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}" nolabel="1"/>
+                        </group>
+                    </page>
+                    <page name="image" string="Instruction Photos">
+                        <group>
+                            <group>
+                                <field name="image_1" class="oe_avatar" widget="image" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                                <field name="image_3" class="oe_avatar" widget="image" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                                <field name="image_5" class="oe_avatar" widget="image" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                            </group>
+                            <group>
+                                <field name="image_2" class="oe_avatar" widget="image" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                                <field name="image_4"  class="oe_avatar" widget="image" attrs="{'readonly': [['state', 'in', ['cancel', 'done']]]}"/>
+                            </group>
+                        </group>
+                    </page>
+                 </notebook>
+             </sheet>
+             <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+            </field>
+        </record>
+
+        <record id="job_instruction_type_display_tree" model="ir.ui.view">
+            <field name="name">job.instruction.tree</field>
+            <field name="model">job.instruction</field>
+            <field name="arch" type="xml">
+                 <tree>
+                    <field name="name"/>
+                     <field name="instruction_type"/>
+                     <field name="instruction_date"/>
+                      <field name="user_id"/>
+                      <field name="supervisor_id"/>
+                      <field name="job_id"/>
+                      <field name="state"/>
+                 </tree>
+            </field>
+        </record>
+        
+        <record id="job_instruction_type_search_display" model="ir.ui.view">
+            <field name="name">job.instruction search</field>
+            <field name="model">job.instruction</field>
+            <field name="arch" type="xml">
+                <search string="Job Instruction search">
+                    <field name="name" string=""/>
+                    <field name="instruction_type"/>
+                    <field name="instruction_date"/>
+                    <field name="user_id"/>
+                    <field name="supervisor_id"/>
+                    <field name="job_id"/>
+                    <field name="state"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Instruction Type" name="instruction_type" context="{'group_by':'instruction_type'}"/>
+                        <filter string="Instruction Date" name="instruction_date" context="{'group_by':'instruction_date'}"/>
+                        <filter string="Responsible User" name="user_id" context="{'group_by':'user_id'}"/>
+                        <filter string="Supervisor" name="supervisor" context="{'group_by':'supervisor_id'}"/>
+                        <filter string="State" name="state" context="{'group_by':'state'}"/>
+                        <filter string="Job" name="job" context="{'group_by':'job_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+       
+        <record model="ir.actions.act_window" id="action_job_instruction_display">
+            <field name="name">Job Instructions</field>
+            <field name="res_model">job.instruction</field>
+            <field name="view_mode">tree,form</field>
+            <!--          <field name="view_type">form</field>-->
+        </record>
+
+        <menuitem id="menu_job_instruction" name="Job Instructions" 
+                  parent="odoo_job_costing_management.menu_job_cost_orders" 
+                  action="action_job_instruction_display"/>
+        
+    </data>
+</odoo>

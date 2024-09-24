@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<data>
+    <record id="hr_work_outside_employee" model="ir.rule">
+        <field name="name">hr.work.outside.employee</field>
+        <field name="model_id" ref="bbis_hr.model_hr_work_outside"/>
+        <field name="domain_force">[('employee_id.user_id','=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user')),]"/>
+    </record>
+
+    <record id="hr_work_outside_manager" model="ir.rule">
+        <field name="name">hr.work.outside.manager</field>
+        <field name="model_id" ref="bbis_hr.model_hr_work_outside"/>
+        <field name="groups" eval="[(4, ref('hr.group_hr_user')),]"/>
+    </record>
+
+<!--    Work From Home-->
+    <record id="hr_work_from_home_employee" model="ir.rule">
+        <field name="name">hr.work.from.home.employee</field>
+        <field name="model_id" ref="bbis_hr.model_hr_work_home"/>
+        <field name="domain_force">[('employee_id.user_id','=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user')),]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="hr_work_from_home_manager" model="ir.rule">
+        <field name="name">hr.work.from.home.manager</field>
+        <field name="model_id" ref="bbis_hr.model_hr_work_home"/>
+        <field name="domain_force">[('employee_id.parent_id.user_id','=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('hr_holidays.group_hr_holidays_user'))]"/>
+    </record>
+
+    <record id="hr_work_from_home_hr" model="ir.rule">
+        <field name="name">hr.work.from.home.hr</field>
+        <field name="model_id" ref="bbis_hr.model_hr_work_home"/>
+        <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+    </record>
+
+</data>
+</odoo>

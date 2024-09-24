@@ -1,0 +1,51 @@
+<odoo>
+    <data>
+        <!-- Define the wizard view -->
+        <record id="fms_crm_extended__wizard_view" model="ir.ui.view">
+            <field name="name">fms.crm.pipline.wizard.form</field>
+            <field name="model">fms.crm.pipline.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="team_id"/>
+                                <field name="assign_type" widget="radio"/>
+                            </group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="member_ids" widget="many2many_tags" invisible="1"/>
+                                <field name="assign_user_id" attrs="{'invisible': [('assign_type', '=', 'assign_sale_manag')]}" domain="[('id', 'in', member_ids)]" options="{'no_create': 0}"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('assign_type', '=', 'assign_sale_manag')]}">
+                            <field name="opportunity_ids" nolabel="1" mode="tree">
+                                <tree editable="bottom" options="{'no_create': 0}">
+                                    <field name="name"/>
+                                    <field name="contact_name"/>
+                                    <field name="email_from"/>
+                                    <field name="phone"/>
+                                    <field name="user_id"/>
+                                    <field name="team_id"/>
+                                    <field name="wizard_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <footer>
+                            <button name="assign_team" type="object" string="Assign" class="btn-primary"/>
+                            <button string="Cancel" class="btn-default" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Define the action window -->
+        <record id="fms_crm_extended_action" model="ir.actions.act_window">
+            <field name="name">Assign Opportunities To Users</field>
+            <field name="res_model">fms.crm.pipline.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

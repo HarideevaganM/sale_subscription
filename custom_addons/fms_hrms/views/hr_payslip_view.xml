@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		<record model="ir.ui.view" id="hr_payslip_inherit_view">
+            <field name="name">hr.payslip.inherit</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll_community.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+					<field name="lop_days"/>
+					<field name="total_no_of_days"/>
+					<field name="date"/>
+				</xpath>
+				<field name="quantity" position='attributes'>
+                    <attribute name='invisible'>True</attribute>
+                </field>
+				<field name="rate" position='attributes'>
+                    <attribute name='invisible'>True</attribute>
+                </field>
+                <xpath expr="//field[@name='input_line_ids']" position="after">
+                <separator string="Loans"/>
+                <group>
+                    <group>
+                       <button name="get_loan" class="oe_highlight" string="Update Loans" type="object" groups="hr_payroll_community.group_hr_payroll_manager"/>
+                    </group> 
+                    <field name="loan_ids" nolabel="1">
+                        <tree string="Loans" editable="bottom">
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="paid" groups="hr_payroll_community.group_hr_payroll_manager"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="total_paid"/>
+                    </group>
+                </group>
+            </xpath>                
+            </field>
+        </record>
+
+        <record id="contract_form_inherit1_view" model="ir.ui.view">
+            <field name="name">contract.form.inherit1.view</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+			<xpath expr="//notebook/page[@name='information']" position="inside">
+                <group string="Arrear">
+                    <field name="salary_arrear"/>
+                    <field name="is_arrear"/>
+<!--
+                    <field name="gross"/>
+-->
+                </group>
+            </xpath>
+			 <xpath expr="//notebook/page[@name='information']" position="after">
+				  <page string="Loan Details">
+                        <group>
+                            <field name="loan_amount"/>
+                            <field name="installment"/>
+                            <field name="payment_date"/>
+                        </group>
+                            <field name="loan_lines">
+                                <tree string="Installments" editable="bottom">
+                                    <field name="date" readonly="1"/>
+                                    <field name="amount" readonly="1"/>
+                                    <field name="paid" readonly="1"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" colspan="2" >
+                                <field name="total_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="total_paid_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="balance_amount" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <button type="object" name="compute_installment" string="Compute Installment"  colspan="2"
+                            class="oe_highlight"
+                            icon="fa-clock-o"/>
+                            <div class="oe_clear"/>
+					</page>                     
+                </xpath>	
+			</field>
+        </record>
+
+        <record id="salary_revision_form" model="ir.ui.view">
+        <field name="name">Salary Revision</field>
+        <field name="model">salary.revision</field>
+        <field name="arch" type="xml">
+            <form string="Salary Revision">
+                    <group col='4'>
+                         <field name="wage"/>
+                         <field name="stucture_id"/>
+                         <field name="contract_id" invisible='1'/>
+                    </group>
+                    <group>
+                        <group string="Allowance">
+                            <field name="mobile_allowance"/>
+                            <field name="fuel_allowance"/>
+                            <field name="allowance1"/>
+                            <field name="allowance2"/>
+                            <field name="allowance3"/>
+                            <field name="allowance4"/>
+                        </group>
+                        <group string="Deduction">
+                            <field name="deduction1"/>
+                            <field name="deduction2"/>
+                            <field name="deduction3"/>
+                            <field name="deduction4"/>
+                            <field name="deduction5"/>
+                            <field name="deduction6"/>
+                            <field name="deduction7"/>
+                        </group>
+                    </group>
+                <footer>
+                    <button name="update_salary" string="Update" type="object" default_focus="1" class="oe_highlight"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+	 <record id="action_salary_revision" model="ir.actions.act_window">
+            <field name="name">Salary revision</field>
+            <field name="res_model">salary.revision</field>
+<!--            <field name="src_model">salary.revision</field>-->
+            <field name="type">ir.actions.act_window</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+<!--       -->
+<!--       <act_window name="Salary Revision"-->
+<!--                res_model="salary.revision"-->
+<!--                src_model="hr.contract"-->
+<!--                view_mode="form"-->
+<!--                multi="True"-->
+<!--                target="new"-->
+<!--                key2="client_print_multi"-->
+<!--                id="action_salary_revision"-->
+<!--                />-->
+               
+		<record id="action_salary_arrear" model="ir.actions.act_window">
+			<field name="name">Employee Arrear</field>
+			<field name="res_model">salary.arrear</field>
+<!--			<field name="view_type">form</field>-->
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click here to Calculate arrear for Employees.
+				</p>
+			</field>
+		</record>
+
+	    <menuitem id="menu_human_resources_emp_arrears" name="Employee Arrear" action="action_salary_arrear" parent="hr.menu_hr_root" sequence="98"/>
+        
+        <record id="hr_emp_arrear" model="ir.ui.view">
+	        <field name="name">hr.form.emp.all</field>
+            <field name="model">salary.arrear</field>
+            <field name="arch" type="xml">
+		        <form string="Employee Arrear">
+					 <header>
+					     <button name="compute_arrears" string="Arrear Calculation" type="object" states='draft' class="btn-primary"/>
+					     <button name="update_arrears" string="Update Arrears" type="object" states='arrear_cal' class="btn-primary"/>
+						 <field name="state" widget="statusbar" statusbar_visible="draft,arrear_cal,done"/>
+					 </header>
+					 <sheet>
+						 <group col='4'>
+							 <field name="from_date" />
+							 <field name="to_date" />
+							 <field name="company_id" widget="selection" invisible='1'/>
+							 <field name="filedata" filename="filename"/>
+                             <field name="filename" invisible="1"/>
+						 </group>
+						 <notebook>
+							 <page string='Employee Details'>
+								 <field name="employee_line_ids">
+									 <tree editable="bottom">
+										 <field name="employee_id"/>
+										 <field name="contract_id"/>
+										 <field name="arrears"/>
+										 <field name="arrear_id" invisible='1'/>
+									 </tree>
+								 </field>
+							 </page>
+						 </notebook>
+					 </sheet>
+			    </form>
+		    </field>
+	    </record>
+
+        <record id="hr_emp_arrear_trees" model="ir.ui.view">
+	        <field name="name">hr.arrear.emp.all</field>
+            <field name="model">salary.arrear</field>
+            <field name="arch" type="xml">
+			     <tree string="Employee Arrear">
+			 	    <field name="company_id"/>
+                    <field name="from_date" />
+					<field name="to_date" />
+                </tree>
+            </field>
+        </record>
+                         
+	</data>
+</odoo>

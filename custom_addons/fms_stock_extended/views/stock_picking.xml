@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_picking_inherit_bbis_form_view" model="ir.ui.view">
+        <field name="name">stock.picking.bbis.form.view.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='location_id']" position="after">
+                <field name="courier"/>
+                <field name="code"/>
+                <field name="awb_no"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_lot_mrp_form_bbis_imported" model="ir.ui.view">
+        <field name="name">stock.lot.bbis.inherit</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='main_group']" position="after">
+                <group string="Other Serial Infomation">
+                    <group>
+                        <field name="start_date"/>
+                        <field name="iemi_number"/>
+                    </group>
+                    <group>
+                        <field name="end_date"/>
+                        <field name="firmware_no"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_production_lot_extra_bbis_info_tree" model="ir.ui.view">
+        <field name="name">stock.production.extra.info.lot.tree</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='create_date']" position="after">
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="iemi_number"/>
+                <field name="firmware_no"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_production_view_move_line_form" model="ir.ui.view">
+        <field name="name">view.production.view.move.line.form</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_move_line_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_name']" position="after">
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="iemi_number"/>
+                <field name="firmware_no"/>
+                <field name="production_ref"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

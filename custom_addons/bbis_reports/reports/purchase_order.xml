@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Setup -->
+    <report id="bbis_reports_purchase_order"
+        model="purchase.order"
+        string="Purchase Order"
+        report_type="qweb-pdf"
+        file="bbis_reports.purchase_order"
+        name="bbis_reports.purchase_order"
+        paperformat="bbis_reports.bbis_report_paper_format"
+        print_report_name="(object.name)"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="purchase_order_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:130px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+
+                <div class="bbis-company-details">
+                    <div t-esc="company.street"/>
+                    <div>
+                        <t t-if="company.street2"><span t-esc="company.street2"/>,</t>
+                        <t t-if="company.city"><span t-esc="company.city"/></t>
+                        <t t-if="company.state_id">, <span t-esc="company.state_id.name"/>,</t>
+                        <t t-if="company.zip"><span t-esc="company.zip"/></t>
+
+                    </div>
+                    <div t-if="company.country_id" t-esc="company.country_id.name"/>
+                    <div>
+                        Tel : <span t-esc="company.phone"/>
+                        Fax : <span t-esc="company.fax_new"/>
+                    </div>
+                    <div> Email : <span t-esc="company.email"/></div>
+                    <div>Website : <span t-esc="company.website"/></div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <div class="bbis-report-header">
+                    <h1 class="text-center text-uppercase" style="margin:40px 0; font-size:25pt"><strong>Purchase Order</strong></h1>
+
+                    <table class="bbis-report-header-table" style="width:100%;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top">
+                                <table style="width:100%">
+                                    <tr>
+                                        <td>P.O. Number: <span t-field="o.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>P.O. Date: <span t-field="o.date_order" t-field-options='{"format": "dd/MM/yyyy"}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Requested By:  Mr. Marwan Al Charbaji <!--<span t-field="user.name"/>--></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipped Via: <span t-field="o.shipped_vai"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Payment Terms: <span t-field="o.payment_term_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Warranty: <span t-field="o.warenty"/></td>
+                                    </tr>
+                                    <tr><td style="height:20px"> </td></tr>
+                                    <tr>
+                                        <td>Note: <span>PO Number must appear on all related <br/>correspondence, shipping papers,and invoices</span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="width:50%; padding-right:30px">
+                                <table style="width:100%; vertical-align:top">
+                                    <tr>
+                                        <td>
+                                            <p style="margin:0" class="text-uppercase"><strong>Supplier:</strong></p>
+                                            <p style="margin:0"><span t-esc="o.partner_id.name"/></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <t t-if="o.partner_id.street"><span t-esc="o.partner_id.street"/><br/></t>
+
+                                            <t t-if="o.partner_id.street2"><span t-esc="o.partner_id.street2"/>,</t>
+                                            <t t-if="o.partner_id.city and o.partner_id.city.strip()"><span t-esc="o.partner_id.city"/>,</t>
+                                            <t t-if="o.partner_id.state_id">, <span t-esc="o.partner_id.state_id.name"/>,</t>
+                                            <t t-if="o.partner_id.zip and o.partner_id.zip.strip()"><span t-esc="o.partner_id.zip"/>,</t>
+                                            <span t-if="o.partner_id.country_id" t-esc="o.partner_id.country_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr><td>TRN: <span t-field="o.partner_id.vat"/></td></tr>
+                                    <!-- Adding vendor phone number-->
+                                    <tr>
+                                        <td>
+                                            <t t-if="o.partner_id.mobile">Mobile No: <span t-esc="o.partner_id.mobile"/></t>
+                                            <t t-elif="o.partner_id.phone">Tel No: <span t-esc="o.partner_id.phone"/></t>
+                                        </td>
+                                    </tr>
+
+                                    <tr><td height="15px"> </td></tr>
+                                    <tr>
+                                        <td>Contact Person: <span t-field="o.contact_person.name"/></td>
+                                    </tr>
+                                    <tr>
+                                            <!-- Change the email to contact person email if contact person have email.-->
+                                            <td>Email:
+                                                <t t-if="o.contact_person.email">
+                                                    <span t-esc="o.contact_person.email"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="o.partner_id.email"/>
+                                                </t>
+                                            </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!-- Change the mobile no to contact person mobile number.-->
+                                            <t t-if="o.contact_person.mobile">Mobile No: <span t-esc="o.contact_person.mobile"/></t>
+                                            <t t-elif="o.contact_person.phone">Tel No: <span t-esc="o.contact_person.phone"/></t>
+                                            <t t-else="">Tel No: </t>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.partner_ref"><td height="15px"> </td></tr>
+                                    <tr t-if="o.partner_ref"><td>Quote Ref: <span t-esc="o.partner_ref"/></td></tr>
+
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Purchase order lines -->
+
+                <table class="bbis-tax-invoice-table" style="width:100%; margin-top:30px">
+                    <tr>
+
+                        <th class="text-center text-uppercase" style="width:100px">Code</th>
+                        <th class="text-center text-uppercase" style="width:auto">Description</th>
+                        <th class="text-center text-uppercase" style="width:50px">QTY</th>
+                        <th class="text-center text-uppercase" style="width:80px">Unit</th>
+                        <th class="text-center text-uppercase" style="width:80px">Unit Price</th>
+                        <t t-if="single_total_discount">
+                            <th class="text-center text-uppercase" style="width:80px">Discount</th>
+                        </t>
+                        <th class="text-center text-uppercase" style="width:100px">Amount Exc. VAT</th>
+                        <th class="text-center text-uppercase" style="width:80px">VAt - 5%</th>
+                        <th class="text-center text-uppercase" style="width:80px">Total</th>
+                    </tr>
+
+                    <t t-set="total_discount" t-value="0.0" />
+                    <t t-set="sub_total" t-value="0.0" />
+
+                    <t t-foreach="o.order_line" t-as="l">
+                        <tr>
+
+                            <td class="text-left" style="width:100px; vertical-align:middle; white-space: nowrap;"><span t-field="l.product_id.default_code"/></td>
+                            <td class="text-left" style="vertical-align:middle"><span t-esc="l.name[l.name.find('] ')+1:]"/></td>
+                            <td class="text-center" style="vertical-align:middle"><span t-esc="int(l.product_qty)"/></td>
+                            <td class="text-center" style="vertical-align:middle"><span t-if="l.product_uom" t-field="l.product_uom.name"/></td>
+                            <td class="text-right" style="vertical-align:middle"><span t-field="l.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <t t-if="single_total_discount">
+                                <td class="text-right" style="vertical-align:middle"><span t-field="l.discount_fix" t-options='{"widget": "float", "precision": 2}'/></td>
+                            </t>
+                            <td class="text-right" style="vertical-align:middle"><span t-field="l.price_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-right" style="vertical-align:middle"><span t-field="l.price_tax" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-right" style="vertical-align:middle"><span t-field="l.price_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                        </tr>
+                        <t t-set="total_discount" t-value="total_discount + (l.discount_fix * l.product_qty)"/>
+                        <t t-set="sub_total" t-value="sub_total + (l.price_unit * l.product_qty)"/>
+                    </t>
+                </table>
+                <table class="bbis-purchase-order-computation">
+                    <tr>
+                        <td style="width:65%"> </td>
+                        <td style="width:35%">
+                            <table class="po-total-computations" style="width:100%">
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Subtotal:</strong>
+                                    </td>
+                                    <td class="text-right have-border" style="width:150px; border-top:none">
+                                        <span t-esc="sub_total"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <t t-if="single_total_discount">
+                                    <tr>
+                                        <td class="text-right">
+                                            <strong>Discount:</strong>
+                                        </td>
+                                        <td class="text-right have-border" style="width:150px; border-top:none">
+                                            <span t-esc="total_discount"
+                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-if="single_total_discount">
+                                    <tr>
+                                        <td class="text-right">
+                                            <strong>Amount Exc. VAT:</strong>
+                                        </td>
+                                        <td class="text-right have-border" style="width:150px; border-top:none">
+                                            <span t-esc="o.amount_untaxed"
+                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>VAT:</strong>
+                                    </td>
+                                    <td class="text-right have-border">
+                                        <span t-field="o.amount_tax"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Shipping &#38; Handling:</strong>
+                                    </td>
+                                    <td class="text-right have-border">
+                                        <span t-field="o.other"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">
+                                        <strong>Total:</strong>
+                                    </td>
+                                    <td class="text-right have-border">
+                                        <strong>
+                                            <span t-field="o.amount_total"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <table style="width:100%; margin-top:50px; font-size:11pt">
+                    <tr>
+                        <td style="line-height:1.4; width:60%;">
+                            <ol style="margin-left:20px;">
+                                <li>Enter this order in accordance with the prices, terms, delivery method, and specifications listed above.</li>
+                                <li>Please notify us immediately if you are unable to ship as specified.</li>
+                                <li>BBIS has the right to impose penalty on late deliveries &#38; rejected items.</li>
+                                <li>Delivery Note should be sent at the same time the goods are delivered.</li>
+                            </ol>
+                        </td>
+                        <td style="vertical-align:bottom; text-align:center" class="bbis-inst-cert-signatory">
+                            <img class="bbis-purchase-order-sign" src="/bbis_reports/static/src/img/marwan-signature.png" alt="Signature" height="130px"/>
+                            <strong>Mr. Marwan Al Charbaji</strong><br/>
+                            <div style="border-top:1px solid black; display:block; padding-top:5px; margin-top:5px">
+                                Authorized by
+                            </div>
+
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="margin-top: 20px;">
+                    <p>Company's VAT TRN: <span t-field="o.company_id.vat"/></p>
+                </div>
+            </div>
+        </div>
+        <div class="footer bbis-tax-invoice-footer text-center">
+            <div style="border-top: 1px solid black;" />
+            <p style="font-size:10pt; margin:5px 0 0 0">Should you have any enquiries concerning this PO, please call Operation department at + 971 2 555 4991</p>
+            <div>
+                <strong>Thank you for your business!</strong>
+            </div>
+        </div>
+    </template>
+
+    <template id="purchase_order">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="bbis_reports.purchase_order_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template><!-- End: Report Template -->
+</odoo>

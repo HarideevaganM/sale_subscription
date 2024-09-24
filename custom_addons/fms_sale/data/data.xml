@@ -1,0 +1,15 @@
+<odoo>
+
+<!--    <record id="sale_subscription_stage_in_pending" model="sale.subscription.stage">-->
+<!--        <field name="name">Quotation</field>-->
+<!--        <field name="category">pending</field>-->
+<!--        <field name="sequence">30</field>-->
+<!--    </record>-->
+
+<!--    <record id="sale_subscription_stage_in_cancel" model="sale.subscription.stage">-->
+<!--        <field name="name">Cancelled</field>-->
+<!--        <field name="category">cancel</field>-->
+<!--        <field name="sequence">50</field>-->
+<!--    </record>-->
+
+</odoo>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="bbis_vehicle_search_view">
+            <field name="name">bbis.vehicle.master.search</field>
+            <field name="model">vehicle.master</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="device_serial_number_id"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="fms_sale.vehicle_master_action_id" model="ir.actions.act_window">
+            <field name="context">{'form_view_ref': 'fms_sale.vehicle_master_form_id'}</field>
+        </record>
+
+        <record id="bbis_job_card_vehicle_form" model="ir.ui.view">
+            <field name="name">bbis.job.card.vehicle.form</field>
+            <field name="model">vehicle.master</field>
+            <field name="sequence">100</field>
+            <field name="arch" type="xml">
+                <form string="Vehicle Master">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="vehicle_name"/>
+                                <field name="device_id"/>
+                                <field name="device_serial_number_id"
+                                       domain="[('product_id','=',device_id),('quant_ids.location_id.name','=', 'Stock')]"
+                                       context="{'search_default_wh_stock': 1}"/>
+                                <field name="chassis_no"/>
+                                <field name="satellite_imei_no"/>
+                                <field name="gsm_no"/>
+                                <field name="gsm_imei_no"/>
+                            </group>
+                            <group>
+                                <field name="device_duplicate" invisible="1"/>
+                                <field name="serial_no" invisible="1"/>
+                                <field name="installation_location_id" readonly="1"/>
+                                <field name="installation_date" readonly="1"/>
+                                <field name="activation_date" readonly="1"/>
+                                <field name="partner_id" options="{'no_create': true}"/>
+                                <field name="reseller_id" options="{'no_create': true}" domain="[('subscription_customer','=', 'reseller_customer')]"/>
+                                <field name="model"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="activity_ids" widget="mail_activity" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Inherit the vehicle master for adding the log note.-->
+        <record id="bbis_vehicle_master_form_id_inherited" model="ir.ui.view">
+            <field name="name">bbis.vehicle.master.form.id.inherited</field>
+            <field name="model">vehicle.master</field>
+            <field name="inherit_id" ref="fms_sale.vehicle_master_form_id"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="activity_ids" widget="mail_activity" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit the vehicle master for hiding the edit button for all users.-->
+        <record id="bbis_vehicle_master_inherit_edit_hide" model="ir.ui.view">
+            <field name="name">bbis.vehicle.master.edit.hide</field>
+            <field name="model">vehicle.master</field>
+            <field name="inherit_id" ref="fms_sale.vehicle_master_form_id"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit the vehicle master for visible the edit button for Joyce.-->
+        <record id="bbis_vehicle_master_inherit_edit_show" model="ir.ui.view">
+            <field name="name">bbis.vehicle.master.edit.show</field>
+            <field name="model">vehicle.master</field>
+            <field name="inherit_id" ref="fms_sale.vehicle_master_form_id"/>
+            <field name="groups_id" eval="[(6, 0, [ref('fms_access_group.group_profile_accounting_manager')])]" />
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

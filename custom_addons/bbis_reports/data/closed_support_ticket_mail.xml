@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="bbis_reports.ticket_closing_mail">
+            <div style="font-family:Arial; font-size: 14px;">
+                <p>
+                    Dear Team,
+                </p>
+
+                <p>This is to inform you that the below-mentioned support ticket has been closed.</p>
+
+                Subject : <b t-esc="object.ticket_id.subject"/><br/>
+                Ticket Number : <b t-esc="object.ticket_id.ticket_number"/><br/>
+                Service Sub Type : <t t-esc="dict(object.ticket_id._fields['service_sub_type'].selection).get(object.ticket_id.service_sub_type)"/><br/>
+                Billing Method : <t t-esc="dict(object.ticket_id._fields['billing_method'].selection).get(object.ticket_id.billing_method)"/><br/>
+                Customer : <t t-esc="object.ticket_id.partner_id.name"/><br/>
+                Vehicle Name : <t t-esc="object.ticket_id.vehicle_id.name"/><br/>
+                Device : <t t-esc="object.ticket_id.device_duplicate.name"/><br/>
+                New Serial No : <t t-esc="object.ticket_id.serial_no.name"/><br/>
+                Old Serial No : <t t-esc="object.ticket_id.repair_id.lot_id.name"/><br/>
+                Description: <t t-raw="object.ticket_id.description.strip()"/>
+
+                <br/>
+                <p>
+                    <a t-attf-href="{{base_url}}/web#id={{object.id}}&amp;view_type=form&amp;model=website.support.ticket"
+                    style="background-color: #2c286c; margin-top: 0px; border: 10px solid #2c286c; text-decoration: none; color: #fff; font-size: 14px;">
+                    View Details</a>
+                </p>
+
+                <br/><br/>
+                <p>Thank You,</p>
+                <p style="margin:0; color:#F05A29"><b>Black Box Integrated Systems LLC</b></p>
+                <p style="color: #808080; margin:0;"><small>This is a system generated mail. No need of sending replies.</small></p>
+            </div>
+        </template>
+    </data>
+</odoo>

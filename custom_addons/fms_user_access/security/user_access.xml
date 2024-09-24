@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="crm.crm_menu_report" groups="sales_team.group_sale_manager"></menuitem>
+    <menuitem id="odoo_job_costing_management.job_cost_sub_contractors" groups="project.group_project_manager"></menuitem>
+    <menuitem id="odoo_job_costing_management.menu_materials" groups="project.group_project_manager"></menuitem>
+    <menuitem id="fms_hrms.menu_my_salary_advance_approved" groups="hr.group_hr_manager,hr.group_hr_user"></menuitem>
+    <menuitem id="fms_hrms.hr_insurance_main_menu" groups="hr.group_hr_manager,hr.group_hr_user"></menuitem>
+</odoo>

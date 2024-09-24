@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="paperformat_cheque_pay" model="report.paperformat">
+            <field name="name">European A4 low margin for DC</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">17</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">12</field>
+            <field name="dpi">90</field>
+        </record>
+
+
+        <!--<record id="fnet_bell_account.report_payment_cheque" model="ir.actions.report.xml">
+          <field name="paperformat_id" ref="fnet_bell_account.paperformat_cheque_pay" />
+        </record>-->
+
+
+        <template id="report_cheque_pay">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <!--
+                                    <t t-call="fnet_bell_account.external_layout">
+                    -->
+                    <div class="page">
+
+                        <t t-set="r" t-value="o.company_id"/>
+
+                        <div class="row">
+                            <!--
+                                                            <div class="col-xs-6 text-center"><b style="border-top:1px solid black;border-bottom:1px solid black;padding-right:20px;padding-left:20px;">A/c Payee</b></div>
+                            -->
+                            <div style="padding-top:2px;padding-left:300px;">
+                                <b style="width:67%;border-top:1px solid black;border-bottom:1px solid black;padding-right:20px;padding-left:20px;font-size:14px;">
+                                    A/c Payee
+                                </b>
+                                <b>
+                                    <span style="padding-left:80px;letter-spacing: 12px;font-size:14px;width:33%;"
+                                          t-field="o.date" t-field-options='{"format": "ddMMyyyy"}'/>
+                                </b>
+                            </div>
+
+                        </div>
+                        <br/>
+
+                        <div class="row">
+                            <div style="width:100%;">
+                                <b>
+                                    <span style="padding-left:10px;" t-field="o.partner_id.name"/>
+                                </b>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div style="width:100%;text-align:left;margin-top:-4px;padding-left:80px;padding-top:20px;height:75px;font-size:14px;">
+                                <b>
+                                    <span t-esc="amount_total_words(o.amount)"/>
+                                </b>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div style="width:100%;text-align:right;line-height: 70%;padding-right:80px;font-size:18px;">
+                                <b>**
+                                    <t t-esc="'{0:,.2f}'.format(o.amount)"/>
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size: 12px;">
+                            <div style="width:100%;text-align:right;padding-right:80px;margin-top:4px;">for
+                                <span style="letter-spacing: -1px;" t-field="r.name"/>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <br/>
+
+                        <div class="row" style="font-size:14px;margin-top:4px;">
+                            <div style="width:100%;text-align:right;padding-right:220px;">Director</div>
+                        </div>
+
+                    </div>
+                </t>
+                <!--
+                            </t>
+                -->
+            </t>
+        </template>
+
+        <record id="report_payment_cheque" model="ir.actions.report">
+            <field name="name">Cheque Payment</field>
+            <field name="model">account.payment</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">journal_reports.report_cheque_pay</field>
+            <field name="report_file">journal_reports.report_cheque_pay</field>
+        <!--            <field name="print_report_name">'Delivery Note - %s - %s' % (object.partner_id.name or '', object.name)</field>-->
+        <!--            <field name="paperformat_id" ref="gfms_reports.gfms_sales_rpt_paper_format"/>-->
+        </record>
+
+        <!--<report
+                string="Cheque Payment"
+                id="report_payment_cheque"
+                model="account.payment"
+                report_type="qweb-pdf"
+                name="journal_reports.report_cheque_pay"
+                file="journal_reports.report_cheque_pay"
+                paperformat="paperformat_cheque_pay"
+        />
+
+
+        <record id="paperformat_cheque_journal" model="report.paperformat">
+            <field name="name">European A4 low margin for DC</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">17</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">10</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">12</field>
+            <field name="dpi">90</field>
+        </record>
+
+
+        <!-- <record id="fnet_bell_account.report_cheque_journal" model="ir.actions.report.xml">
+           <field name="paperformat_id" ref="fnet_bell_account.paperformat_cheque_journal" />
+         </record> -->
+
+
+        <template id="report_journal_cheque">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+
+                        <t t-set="r" t-value="o.company_id"/>
+
+                        <div class="row">
+
+                            <div style="padding-top:2px;padding-left:300px;">
+                                <b style="width:67%;border-top:1px solid black;border-bottom:1px solid black;padding-right:20px;padding-left:20px;font-size:14px;">
+                                    A/c Payee
+                                </b>
+                                <b>
+                                    <span style="padding-left:80px;letter-spacing: 12px;font-size:14px;width:33%;"
+                                          t-field="o.date" t-field-options='{"format": "ddMMyyyy"}'/>
+                                </b>
+                            </div>
+
+                        </div>
+                        <br/>
+
+                        <div class="row">
+                            <div style="width:100%;">
+                                <b>
+<!--                                    <span style="padding-left:60px;margin-top:-10px" t-field="o.to_address"/>-->
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div style="width:100%;text-align:left;margin-top:5px;padding-left:100px;height:75px;font-size:13px;">
+                                <b>
+                                    <span t-esc="amount_total_words(amount_credit(o))"/>
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div style="width:100%;text-align:right;line-height: 70%;padding-right:80px;font-size:18px;">
+                                <b>**
+                                    <t t-esc="'{0:,.2f}'.format(amount_credit(o))"/>
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size: 12px;">
+                            <div style="width:100%;text-align:right;padding-right:80px;margin-top:5px;">for
+                                <span style="letter-spacing: -1px;" t-field="r.name"/>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <br/>
+
+                        <div class="row" style="font-size:14px;margin-top:-10px;">
+                            <div style="width:100%;text-align:right;padding-right:180px;">Director</div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report
+                string="Cheque Payment"
+                id="report_cheque_journal"
+                model="account.move"
+                report_type="qweb-pdf"
+                name="journal_reports.report_journal_cheque"
+                file="journal_reports.report_journal_cheque"
+                paperformat="paperformat_cheque_journal"
+        />
+
+
+    </data>
+</openerp>

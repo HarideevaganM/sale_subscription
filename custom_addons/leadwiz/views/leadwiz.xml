@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	<data>
+	<!--# Lead Type Captureing in pipeline  wizard	-->
+	<record id="wizard_new_inherit" model="ir.ui.view">
+					<field name="name">crm</field>
+					<field name="model">crm.lead</field>
+					<field name="inherit_id" ref = "crm.view_create_opportunity_simplified"/>
+					<field name="arch" type="xml">
+				<xpath  expr="/form/sheet/group/group/field[@name='partner_id']" position="after">
+					<field name="lead_type"/>
+				</xpath>
+
+					</field>
+	</record>
+    <!--Lead Type Capturing In Form View-->
+     <record id="crm_form_inherit_view" model="ir.ui.view">
+					<field name="name">crm</field>
+					<field name="model">crm.lead</field>
+					<field name="inherit_id" ref = "crm.crm_case_form_view_oppor"/>
+					<field name="arch" type="xml">
+                        <xpath expr="/form/sheet/group/group/field[@name='date_deadline']" position="after">
+                             <field name="lead_type"/>
+                        </xpath>
+                    </field>
+     </record>
+	</data>
+</odoo>

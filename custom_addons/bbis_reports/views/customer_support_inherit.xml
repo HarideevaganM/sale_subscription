@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <!-- Add search filter for Customer Support -->
+        <record model="ir.ui.view" id="bbis_customer_support_search_view">
+            <field name="name">bbis.customer.support.search</field>
+            <field name="model">website.support.ticket</field>
+            <field name="inherit_id" ref="website_support.website_support_ticket_view_search"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="vehicle_id" string="Vehicle Name/No" filter_domain="[('vehicle_id', 'ilike', self)]"/>
+                    <field name="serial_no" string="Device No"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="leave_report_action_xlsx" model="ir.actions.report">
+            <field name="name">Employee Leave Report</field>
+            <field name="model">leave.report.wizard</field>
+            <field name="report_name">bbis_hr.leave_report_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="print_report_name">'Employee_Leave_Report_' + object.display_name</field>
+            <field name="binding_model_id" ref="model_leave_report_wizard"/>
+        </record>
+        <record id="schedule_leave_report_action_xlsx" model="ir.actions.report">
+            <field name="name">Schedule Leave Balances Report</field>
+            <field name="model">leave.report.wizard</field>
+            <field name="report_name">bbis_hr.schedule_leave_balances_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="print_report_name">'Schedule_Leave_Balances_Report_' + object.display_name</field>
+            <field name="binding_model_id" ref="model_leave_report_wizard"/>
+        </record>
+        <record id="schedule_leave_summary_action_xlsx" model="ir.actions.report">
+            <field name="name">Leaves Summary Report</field>
+            <field name="model">leave.report.wizard</field>
+            <field name="report_name">bbis_hr.schedule_leave_summary_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="print_report_name">'Leaves_Summary_Report_' + object.display_name</field>
+            <field name="binding_model_id" ref="model_leave_report_wizard"/>
+        </record>
+    </data>
+</odoo>

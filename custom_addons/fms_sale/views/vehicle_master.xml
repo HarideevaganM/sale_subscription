@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="vehicle_master_tree_id" model="ir.ui.view">
+        <field name="name">vehicle.master.tree</field>
+        <field name="model">vehicle.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="vehicle_name"/>
+                <field name="partner_id"/>
+                <field name="device_id"/>
+                <field name="device_serial_number_id"/>
+                <field name="activation_date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="vehicle_master_form_id" model="ir.ui.view">
+        <field name="name">vehicle.master.form</field>
+        <field name="model">vehicle.master</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle Master">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="vehicle_name"/>
+                            <field name="device_id"/>
+                            <field name="device_serial_number_id"/>
+                            <field name="chassis_no"/>
+                            <field name="satellite_imei_no"/>
+                            <field name="gsm_no"/>
+                            <field name="gsm_imei_no"/>
+                        </group>
+                        <group>
+                            <field name="device_duplicate" invisible="1"/>
+                            <field name="serial_no" invisible="1"/>
+                            <field name="installation_location_id" readonly="1"/>
+                            <field name="installation_date" readonly="1"/>
+                            <field name="activation_date" readonly="1"/>
+                            <field name="partner_id" options="{'no_create': true}"/>
+                            <field name="reseller_id" options="{'no_create': true}" domain="[('subscription_customer','=', 'reseller_customer')]"/>
+                            <field name="model"/>
+                            <field name="device_status"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="vehicle_master_action_id" model="ir.actions.act_window">
+        <field name="name">Vehicle Master</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">vehicle.master</field>
+<!--        <field name="view_type">form</field>-->
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="vehicle_master_id"
+            name="Vehicle Master"
+            parent="stock.menu_stock_inventory_control"
+            action="vehicle_master_action_id" groups="stock.group_stock_manager"
+            sequence="1"/>
+</odoo>

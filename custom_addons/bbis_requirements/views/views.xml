@@ -1,0 +1,103 @@
+<odoo>
+    <data>
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.move.select</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="origin" string="Source Document"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="sale_subscription_template_view_form" model="ir.ui.view">
+            <field name="name">sale.subscription.form.view</field>
+            <field name="model">sale.order.template</field>
+            <field name="inherit_id" ref="sale_subscription.sale_subscription_template_view_form"/>
+            <field name="arch" type="xml">
+                <field name="tag_ids" position="after">
+                    <field name="set_default"/>
+                </field>
+            </field>
+        </record>
+        <record id="bbis_product_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">bbis.product.category.form.view.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <field name="removal_strategy_id" position="after">
+                    <field name="enable_total"/>
+                </field>
+            </field>
+        </record>
+        <record id="bbis_sale_order_form_view_inherit" model="ir.ui.view">
+            <field name="name">bbis.sale.order.form.view.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="options">{'no_create': true, 'no_edit': True}</attribute>
+                </field>
+                <field name="amount_total" position="after">
+                    <div class="oe_subtotal_footer_separator oe_inline o_td_label"
+                         attrs="{'invisible': [('sale_type', 'not in', ['lease', 'rental'])]}">
+                        <label for="period_amount_total"/>
+                    </div>
+                    <field name="period_amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           attrs="{'invisible': [('sale_type', 'not in', ['lease', 'rental'])]}"/>
+                </field>
+                <button name="action_cancel" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+                <button name="action_cancel" position="before">
+                    <button name="request_cancel" string="Cancel Request" type="object"
+                            attrs="{'invisible': [('state', 'in', ['cancel','cancel_req'])]}"/>
+                    <button name="approve_cancel_request" string="Approve" type="object" class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'cancel_req')]}"/>
+                    <button name="reject_cancel_request" string="Reject" type="object"
+                            attrs="{'invisible': [('state', '!=', 'cancel_req')]}"/>
+                </button>
+                <xpath expr="//button[@name='action_confirm']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ['submit'])]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sale_order_bbis_child_inherit" model="ir.ui.view">
+            <field name="name">sale.order.view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="fms_sale.sale_order_form_inherit_id"/>
+            <field name="arch" type="xml">
+                <button name="action_submit" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ['draft'])]}</attribute>
+                </button>
+            </field>
+        </record>
+
+        <record id="sale_subscription_form_po_inherit" model="ir.ui.view">
+            <field name="name">sale.subscription.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_subscription.sale_subscription_order_view_form"/>
+            <field name="arch" type="xml">
+                <field name="date" position="after">
+                    <field name="po_number"/>
+                    <field name="po_date"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="stock_location_bbis_inherit" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='return_location']" position="after">
+                    <field name="restrict_location"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

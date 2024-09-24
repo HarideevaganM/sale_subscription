@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_work_home,access_hr_work_home,model_hr_work_home,base.group_user,1,1,1,1
+access_proposed_schedule_details,access_proposed_schedule_details,model_proposed_schedule_details,base.group_user,1,1,1,1
+access_hr_ticket_request,access_hr_ticket_request,model_hr_ticket_request,base.group_user,1,1,1,1
+access_hr_ticket_allocation,access_hr_ticket_allocation,model_hr_ticket_allocation,base.group_user,1,1,1,1

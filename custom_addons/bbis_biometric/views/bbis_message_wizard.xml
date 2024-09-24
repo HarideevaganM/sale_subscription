@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<data>
+    <record model="ir.ui.view" id="bbi_message_wizard_form">
+        <field name="name">Biometric Device Form</field>
+        <field name="model">bbis.message.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Biometric Device Form">
+                <sheet>
+                    <p class="text-center">
+                        <field name="message" readonly="1"/>
+                    </p>
+                </sheet>
+                <footer>
+                    <button string="Close" type="object" default_focus="1" class="oe_highlight" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</data>
+</odoo>

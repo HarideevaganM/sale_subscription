@@ -1,0 +1,30 @@
+<odoo>
+<data noupdate="1">
+    <record id="import_expoer_vehicle_master" model="ir.cron">
+        <field name="name">Pull API Scheduler</field>
+        <field name="model_id" ref="model_vehicle_master"/>
+        <field name="state">code</field>
+        <field name="code">model.import_vehicle_master()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+    </record>
+
+    <record id="generete_new_pull_api_token" model="ir.cron">
+        <field name="name">Pull API Scheduler | Generate Token</field>
+        <field name="model_id" ref="model_res_company"/>
+        <field name="state">code</field>
+        <field name="code">model.generate_token_scheduler()</field>
+        <field name="interval_number">3</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+    </record>
+
+    <record id="fms_api_email_notify" model="ir.config_parameter">
+        <field name="key">fms_api_email_notify</field>
+        <field name="value">alfer@fms-tech.com</field>
+    </record>
+</data>
+</odoo>

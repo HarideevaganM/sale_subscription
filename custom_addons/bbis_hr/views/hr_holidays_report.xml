@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<data>
+    <record id="hr_holidays_report_tree_view" model="ir.ui.view">
+        <field name="name">hr.holidays.report.tree</field>
+        <field name="model">hr.holidays.report</field>
+        <field name="arch" type="xml">
+            <tree string="Leaves Report" create="false" edit="false">
+                <field name="employee_id"/>
+                <field name="job_id"/>
+                <field name="office_location_id"/>
+                <field name="holiday_id"/>
+                <field name="leave_type_id"/>
+                <field name="reason"/>
+                <field name="type"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="number_of_days" sum="Leave Balance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_holidays_report_pivot_view" model="ir.ui.view">
+        <field name="name">hr.holidays.report.pivot</field>
+        <field name="model">hr.holidays.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Leaves Report">
+                <field name="date_from" type="col" interval="year"/>
+                <field name="type" type="col"/>
+                <field name="employee_id" type="row"/>
+                <field name="number_of_days" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="hr_holidays_report_search_view" model="ir.ui.view">
+        <field name="name">hr.holidays.report.search</field>
+        <field name="model">hr.holidays.report</field>
+        <field name="arch" type="xml">
+            <search string="Leaves Report">
+                <field name="employee_name" type="row"/>
+                <filter name="validated" string="Approved by CEO" domain="[('state', '=', 'validate')]"/>
+                <separator/>
+                <filter name="annual_leave" string="Annual Leave" domain="[('leave_type_id.is_annual', '=', True)]"/>
+                <filter name="sick_leave" string="Sick Leave" domain="[('leave_type_id.leave_code', '=', 'SL')]"/>
+                <filter name="unpaid_leave" string="Unpaid Leave" domain="[('leave_type_id.leave_code', '=', 'UL')]"/>
+                <separator/>
+                <filter name="is_unused_leave" string="Unused Leaves" domain="[('holiday_id.is_unused_leave', '=', 'True')]"/>
+                <separator/>
+                <filter string="This Year" name="this_year" domain="[('date_from','&lt;=', time.strftime('%%Y-12-31')),('date_from','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                <filter string="Last Year" name="last_year" domain="['&amp;', ('date_from', '&gt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-01-01')), ('date_from', '&lt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-12-31'))]"/>
+                <group  expand="1" string="Group By">
+                    <filter string="Request Type" context="{'group_by':'type'}" help="Request Type"/>
+                    <filter string="Leave Type" context="{'group_by':'leave_type_id'}" help="Leave Types"/>
+                    <filter string="Request Date" context="{'group_by':'request_date'}" help="Request Date"/>
+                    <filter string="Employee Name" name="employee_names" context="{'group_by':'employee_name'}" help="Employee Name"/>
+                    <filter string="Date From" context="{'group_by':'date_from'}" help="Date From"/>
+                    <filter string="Leave Type -> Employee Name" name="leave_type_employee_names" context="{'group_by':['leave_type_id', 'employee_name']}" help="Employee Name"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hr_holidays_report" model="ir.actions.act_window">
+        <field name="name">Leaves Report</field>
+        <field name="res_model">hr.holidays.report</field>
+        <field name="view_mode">pivot</field>
+        <field name="context">{'search_default_leave_type_employee_names':1, 'search_default_validated': 1}</field>
+        <field name="view_id" ref="hr_holidays_report_tree_view"/>
+    </record>
+
+    <menuitem name="Custom Requirements" id="leaves_report_custom_menu" parent="hr_holidays.menu_hr_holidays_report"
+              groups="hr_holidays.group_hr_holidays_manager,account.group_account_manager" sequence="10"/>
+
+    <menuitem name="Leaves Report" id="hr_holidays_report_menu" parent="bbis_hr.leaves_report_custom_menu"
+              action="bbis_hr.action_hr_holidays_report" groups="hr_holidays.group_hr_holidays_manager,account.group_account_manager" sequence="1"/>
+</data>
+</odoo>

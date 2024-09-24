@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+       
+		<record id="view_wizard_exchange" model="ir.ui.view">
+            <field name="name">pos.wizard.exchange.order</field>
+            <field name="model">pos.order.exchange</field>
+            <field name="arch" type="xml">
+                <form string="Order Exchange">
+                   
+                   <sheet>
+                    <group>
+                    <group>
+
+                        <field name="order_id"/>
+                        <field name="session_id"/>
+             
+                    </group>
+                    <group>
+
+                        <field name="order_date"/>             
+                        <field name="customer_id"/>             
+                    </group>
+					</group>
+                    <group>
+                    <field name="exchange_product_line">
+						<tree string="exchange_product_line" editable="bottom">
+							<field name="product_id"/>
+							<field name="qty"/>
+							<field name="discount"/>
+							<field name="unit_price"/>
+							<field name="tax_id"/>
+							<field name="sub_tax"/>
+							<field name="sub_total"/>
+						
+							
+						</tree>
+					</field>
+                    </group>
+                    </sheet>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_view_exchange_wizard" model="ir.actions.act_window">
+            <field name="name">Order Exchange</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.order.exchange</field>
+<!--            <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="import.view_wizard_exchange"/>
+            <field name="target">new</field> 
+        </record>
+        
+
+</odoo>

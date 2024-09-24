@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="bbis_financial_perfomance_no_comp">
+        <div style="page-break-before: always;"/>
+        <table class="bbis-accounting-report-table1" t-att-style="table1_width">
+            <tr>
+                <th rowspan="3">Particular</th>
+                <th t-att-colspan="int(date_range)" class="text-uppercase">
+                    <h2 style="margin:0; font-size:15pt"><strong><t t-esc="sched_title"/></strong></h2>
+                </th>
+                <th rowspan="3">Total <br/>Balance</th>
+            </tr>
+            <t t-set="start_range" t-value="data['start_range']"/>
+            <t t-if="date != 'custom'" t-set="start_range" t-value="start_range + 1"/>
+            <t t-set="end_range" t-value="data['end_range']"/>
+            <tr>
+                <th class="sub-header" t-foreach="range(start_range, end_range)" t-as="month" style="white-space:nowrap">
+                    <t t-set="month_int" t-value="month"/>
+                    <t t-set="month_name" t-value="datetime.date(1900, month_int, 1).strftime('%b')"/>
+                    <span t-esc="month_name"/>
+                    <span t-esc="year.strftime('%Y')"/>
+                </th>
+            </tr>
+            <tr>
+                <th class="sub-header" t-foreach="range(date_range)" t-as="month">
+                    Balance
+                </th>
+            </tr>
+            <tbody>
+                <t t-if="len(sched_data['keys']) > 0">
+                    <t t-foreach="sched_data['keys']" t-as="k">
+                        <t t-set="use_category_name" t-value="0"/>
+                        <t t-if="k in ['Cost of Goods Sold', 'Sale of Services', 'Sale of Products']">
+                            <t t-set="use_category_name" t-value="1"/>
+                        </t>
+                        <tr>
+                            <td t-att-colspan="int(date_range) + 2" class="tbody-header1"><strong t-esc="k"/></td>
+                        </tr>
+                        <t t-foreach="sched_data['list'][k]" t-as="acc">
+                            <t t-if="use_category_name">
+                                <!-- Do not include Freight In since the value is always zero -->
+                                <t t-if="acc != 'Freight In'">
+                                    <!-- Do not print header if group name is the same with account name -->
+                                    <tr t-if="k != acc"><td t-att-colspan="int(date_range) + 2" style="background:#eee;"><strong t-esc="acc"/></td></tr>
+                                    <tr t-foreach="sched_data['list'][k][acc]" t-as="cat">
+                                        <t t-set="total_category" t-value="0.00"/>
+                                        <td><span t-if="cat" t-esc="cat"/></td>
+                                        <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                            <td class="text-right">
+                                                <span t-esc="sched_data['list'][k][acc][cat][ctr]" t-options='{"widget": "float", "precision": 2}'/>
+                                                <t t-set="total_category" t-value="total_category + sched_data['list'][k][acc][cat][ctr]"/>
+                                            </td>
+                                        </t>
+                                        <td class="text-right"><span t-esc="total_category" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                </t>
+                            </t>
+
+                            <t t-else="">
+                                <t t-set="total_acct_name" t-value="{}"/>
+                                <t t-set="total_acct" t-value="0.00"/>
+                                <tr>
+                                    <td><span t-if="acc" t-esc="acc"/></td>
+                                    <t t-foreach="sched_data['list'][k][acc]" t-as="cat">
+                                        <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                            <t t-set="total_acct_name" t-value="get_total_account(ctr, sched_data['list'][k][acc][cat][ctr], total_acct_name)"/>
+                                        </t>
+                                    </t>
+                                    <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                        <t t-set="sum_acct_name" t-value="sum(total_acct_name[ctr]) or 0"/>
+                                        <td class="text-right"><span t-esc="sum_acct_name" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <t t-set="total_acct" t-value="total_acct + sum_acct_name"/>
+                                    </t>
+                                    <td class="text-right"><span t-esc="total_acct" t-options='{"widget": "float", "precision": 2}'/></td>
+                                </tr>
+                            </t>
+                        </t>
+                        <tr>
+                            <td><strong>Total <span t-esc="k"/></strong></td>
+                            <t t-set="total_group_sales" t-value="0.00"/>
+                            <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                                <td class="text-right">
+                                    <strong t-esc="sched_data['total'][k][ctr]" t-options='{"widget": "float", "precision": 2}'/>
+                                    <t t-set="total_group_sales" t-value="total_group_sales + sched_data['total'][k][ctr]"/>
+                                </td>
+                            </t>
+                            <td class="text-right"><strong t-esc="total_group_sales" t-options='{"widget": "float", "precision": 2}'/></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td class="tbody-total"><strong>Total <t t-esc="sched_total_title"/></strong></td>
+                        <t t-set="total_sched_data" t-value="0.00"/>
+                        <t t-foreach="range(start_range, end_range)" t-as="ctr">
+                            <td class="tbody-total text-right">
+                                <strong t-esc="sched_data['total']['total_sales'][ctr]" t-options='{"widget": "float", "precision": 2}'/>
+                                <t t-set="total_sched_data" t-value="total_sched_data + sched_data['total']['total_sales'][ctr]"/>
+                            </td>
+                        </t>
+                        <td class="tbody-total text-right"><strong t-esc="total_sched_data" t-options='{"widget": "float", "precision": 2}'/></td>
+                    </tr>
+                </t>
+                <t t-else="">
+                    <tr><td t-att-colspan="int(date_range) + 2" class="text-center">No records found</td></tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+
+    <template id="bbis_financial_perfomance_scheds">
+        <div style="page-break-before: always;"/>
+        <table class="bbis-accounting-report-table1" style="width:100%">
+            <tr>
+                <td colspan="9" class="text-center">
+                    <h2 style="margin:0; font-size:15pt"><strong t-esc="sched_title"/></h2>
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td colspan="4" class="text-center">
+                    <strong>For the Month of <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></strong>
+                </td>
+                <td colspan="4" class="text-center">
+                    <strong>Year to Date <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></strong>
+                </td>
+            </tr>
+            <tr>
+                <th rowspan="2">Particular</th>
+                <th colspan="2">Comparative Analysis</th>
+                <th rowspan="2">Change in<br/>AED</th>
+                <th rowspan="2">Change in<br/>Percentile</th>
+                <th colspan="2">Comparative Analysis</th>
+                <th rowspan="2">Change in<br/>AED</th>
+                <th rowspan="2">Change in<br/>Percentile</th>
+            </tr>
+            <tr>
+                <th class="sub-header"><span t-esc="cur_month_name"/> <span t-esc="cur_year"/></th>
+                <th class="sub-header"><span t-esc="cur_month_name"/> <span t-esc="prev_year"/></th>
+                <th class="sub-header">YTD <span t-esc="cur_month_name"/> <span t-esc="cur_year"/></th>
+                <th class="sub-header">YTD <span t-esc="cur_month_name"/> <span t-esc="prev_year"/></th>
+            </tr>
+            <tbody>
+                <t t-set="ac_group_list" t-value="current_year_data[cur_year]['keys'] + previous_year_data[prev_year]['keys']"/>
+
+                <t t-if="len(ac_group_list) > 0">
+                    <t t-foreach="set(ac_group_list)" t-as="k">
+                        <t t-set="use_category_name" t-value="0"/>
+                        <t t-if="k in ['Cost of Goods Sold', 'Sale of Services', 'Sale of Products']">
+                            <t t-set="use_category_name" t-value="1"/>
+                        </t>
+                        <t t-set="acc_list" t-value="[]"/>
+
+
+                        <t t-if="k in current_year_data[cur_year]['list']" t-set="acc_list" t-value="acc_list + list(current_year_data[cur_year]['list'][k].keys())"/>
+                        <t t-if="k in previous_year_data[prev_year]['list']" t-set="acc_list" t-value="acc_list + list(previous_year_data[prev_year]['list'][k].keys())"/>
+
+                        <t t-set="use_category_name" t-value="0"/>
+                        <t t-if="k in ['Cost of Goods Sold', 'Sale of Services', 'Sale of Products']">
+                            <t t-set="use_category_name" t-value="1"/>
+                        </t>
+
+                        <t t-if="len(acc_list) > 0">
+                            <tr>
+                                <td t-att-colspan="9" class="tbody-header1"><strong t-esc="k"/></td>
+                            </tr>
+                            <tr t-foreach="set(acc_list)" t-as="acc">
+                                <t t-if="use_category_name">
+                                    <!-- Do not include Freight In since the value is always zero -->
+                                    <t t-if="acc != 'Freight In'">
+                                        <!-- Do not print header if group name is the same with account name -->
+                                        <tr t-if="k != acc"><td t-att-colspan="9" style="background:#eee;"><strong t-esc="acc"/></td></tr>
+                                        <t t-set="cat_list" t-value="[]"/>
+                                        <t t-if="k in current_year_data[cur_year]['list'] and acc in current_year_data[cur_year]['list'][k]" t-set="cat_list" t-value="cat_list + list(current_year_data[cur_year]['list'][k][acc].keys())"/>
+                                        <t t-if="k in previous_year_data[prev_year]['list'] and acc in previous_year_data[prev_year]['list'][k]" t-set="cat_list" t-value="cat_list + list(previous_year_data[prev_year]['list'][k][acc].keys())"/>
+                                        <t t-set="cur_month_cat_value" t-value="0"/>
+                                        <tr t-foreach="set(cat_list)" t-as="cat">
+                                            <t t-set="cur_month_value" t-value="0"/>
+                                            <t t-set="prev_month_value" t-value="0"/>
+                                            <td><span t-esc="cat"/></td>
+                                            <td class="text-right">
+                                                <t t-if="k in current_month_data[cur_year]['list'] and acc in current_month_data[cur_year]['list'][k] and cat in current_month_data[cur_year]['list'][k][acc]">
+                                                    <span t-esc="current_month_data[cur_year]['list'][k][acc][cat]" t-options='{"widget": "float", "precision": 2}'/>
+                                                    <t t-set="cur_month_value" t-value="current_month_data[cur_year]['list'][k][acc][cat]"/>
+                                                    <t t-set="cur_month_cat_value" t-value="cur_month_cat_value + cur_month_value"/>
+                                                </t>
+                                                <t t-else="">0.00</t>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-if="k in previous_month_data[prev_year]['list'] and acc in previous_month_data[prev_year]['list'][k] and cat in previous_month_data[prev_year]['list'][k][acc]">
+                                                    <span t-esc="previous_month_data[prev_year]['list'][k][acc][cat]" t-options='{"widget": "float", "precision": 2}'/>
+                                                    <t t-set="prev_month_value" t-value="previous_month_data[prev_year]['list'][k][acc][cat]"/>
+                                                </t>
+                                                <t t-else="">0.00</t>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-set="month_change_aed" t-value="cur_month_value - prev_month_value"/>
+                                                <span t-esc="month_change_aed" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td class="text-center">
+                                                <t t-if="prev_month_value != 0">
+                                                    <span t-esc="(month_change_aed / prev_month_value) * 100" t-options='{"widget": "float", "precision": 0}'/>
+                                                </t>
+                                                <t t-else="">0</t>%
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-if="k in current_year_data[cur_year]['list'] and acc in current_year_data[cur_year]['list'][k] and cat in current_year_data[cur_year]['list'][k][acc]">
+                                                    <span t-esc="current_year_data[cur_year]['list'][k][acc][cat]" t-options='{"widget": "float", "precision": 2}'/>
+                                                </t>
+                                                <t t-else="">0.00</t>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-if="k in previous_year_data[prev_year]['list'] and acc in previous_year_data[prev_year]['list'][k] and cat in previous_year_data[prev_year]['list'][k][acc]">
+                                                    <span t-esc="previous_year_data[prev_year]['list'][k][acc][cat]" t-options='{"widget": "float", "precision": 2}'/>
+                                                </t>
+                                                <t t-else="">0.00</t>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-if="k in year_diff and acc in year_diff[k] and cat in year_diff[k][acc]" t-esc="year_diff[k][acc][cat]['aed']" t-options='{"widget": "float", "precision": 2}'/>
+                                                <span t-else="">0.00</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-if="k in year_diff and acc in year_diff[k] and cat in year_diff[k][acc]" t-esc="year_diff[k][acc][cat]['percentile']" t-options='{"widget": "float", "precision": 0}'/>
+                                                <span t-else="">0</span>%
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <t t-set="cur_month_acc" t-value="0"/>
+                                    <t t-set="cur_year_acc" t-value="0"/>
+                                    <t t-set="prev_month_acc" t-value="0"/>
+                                    <t t-set="prev_year_acc" t-value="0"/>
+                                    <t t-set="cat_list" t-value="[]"/>
+                                    <t t-if="k in current_year_data[cur_year]['list'] and acc in current_year_data[cur_year]['list'][k]" t-set="cat_list" t-value="cat_list + list(current_year_data[cur_year]['list'][k][acc].keys())"/>
+                                    <t t-if="k in previous_year_data[prev_year]['list'] and acc in previous_year_data[prev_year]['list'][k]" t-set="cat_list" t-value="cat_list + list(previous_year_data[prev_year]['list'][k][acc].keys())"/>
+                                    <t t-foreach="set(cat_list)" t-as="cat">
+                                        <t t-set="cur_month_value" t-value="0"/>
+                                        <t t-set="cur_year_value" t-value="0"/>
+                                        <t t-set="prev_month_value" t-value="0"/>
+                                        <t t-set="prev_year_value" t-value="0"/>
+                                        <t t-if="k in current_month_data[cur_year]['list'] and acc in current_month_data[cur_year]['list'][k] and cat in current_month_data[cur_year]['list'][k][acc]">
+                                            <t t-set="cur_month_value" t-value="current_month_data[cur_year]['list'][k][acc][cat]"/>
+                                            <t t-set="cur_month_acc" t-value="cur_month_acc + cur_month_value"/>
+                                        </t>
+                                        <t t-if="k in previous_month_data[prev_year]['list'] and acc in previous_month_data[prev_year]['list'][k] and cat in previous_month_data[prev_year]['list'][k][acc]">
+                                            <t t-set="prev_month_value" t-value="previous_month_data[prev_year]['list'][k][acc][cat]"/>
+                                            <t t-set="prev_month_acc" t-value="prev_month_acc + prev_month_value"/>
+                                        </t>
+                                        <t t-if="k in current_year_data[cur_year]['list'] and acc in current_year_data[cur_year]['list'][k] and cat in current_year_data[cur_year]['list'][k][acc]">
+                                            <t t-set="cur_year_value" t-value="current_year_data[cur_year]['list'][k][acc][cat]"/>
+                                            <t t-set="cur_year_acc" t-value="cur_year_acc + cur_year_value"/>
+                                        </t>
+                                        <t t-if="k in previous_year_data[prev_year]['list'] and acc in previous_year_data[prev_year]['list'][k] and cat in previous_year_data[prev_year]['list'][k][acc]">
+                                            <t t-set="prev_year_value" t-value="previous_year_data[prev_year]['list'][k][acc][cat]"/>
+                                            <t t-set="prev_year_acc" t-value="prev_year_acc + prev_year_value"/>
+                                        </t>
+                                    </t>
+                                    <t t-set="month_change_acc_aed" t-value="cur_month_acc - prev_month_acc"/>
+                                    <t t-set="month_change_acc_percent" t-value="0"/>
+                                    <t t-if="prev_month_acc != 0">
+                                        <t t-set="month_change_acc_percent" t-value="(month_change_acc_aed / prev_month_acc) * 100"/>
+                                    </t>
+                                    <t t-set="year_change_acc_aed" t-value="cur_year_acc - prev_year_acc"/>
+                                    <t t-set="year_change_acc_percent" t-value="0"/>
+                                    <t t-if="prev_year_acc != 0">
+                                        <t t-set="year_change_acc_percent" t-value="(year_change_acc_aed / prev_year_acc) * 100"/>
+                                    </t>
+                                    <tr>
+                                        <td><span t-esc="acc"/></td>
+                                        <td class="text-right"><span t-esc="cur_month_acc" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-right"><span t-esc="prev_month_acc" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-right"><span t-esc="month_change_acc_aed" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-center"><span t-esc="month_change_acc_percent" t-options='{"widget": "float", "precision": 0}'/>%</td>
+                                        <td class="text-right"><span t-esc="cur_year_acc" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-right"><span t-esc="prev_year_acc" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-right"><span t-esc="year_change_acc_aed" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td class="text-center"><span t-esc="year_change_acc_percent" t-options='{"widget": "float", "precision": 0}'/>%</td>
+                                    </tr>
+                                </t>
+                            </tr>
+                        </t>
+                            <tr>
+                                <td class="tbody-subtotal">Total <span t-esc="k"/></td>
+                                <t t-set="total_group_sales" t-value="0.00"/>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-set="cur_month_value_total" t-value="0"/>
+                                    <t t-set="prev_month_value_total" t-value="0"/>
+
+                                    <t t-if="k in current_month_data[cur_year]['total']">
+                                        <span t-esc="current_month_data[cur_year]['total'][k]" t-options='{"widget": "float", "precision": 2}'/>
+                                        <t t-set="cur_month_value_total" t-value="current_month_data[cur_year]['total'][k]"/>
+                                    </t>
+                                    <t t-else="">0.00</t>
+                                </td>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-if="k in previous_month_data[prev_year]['total']">
+                                        <span t-esc="previous_month_data[prev_year]['total'][k]" t-options='{"widget": "float", "precision": 2}'/>
+                                        <t t-set="prev_month_value_total" t-value="previous_month_data[prev_year]['total'][k]"/>
+                                    </t>
+                                    <t t-else="">0.00</t>
+                                </td>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-set="prev_month_value_total_aed" t-value="cur_month_value_total - prev_month_value_total"/>
+                                    <span t-esc="prev_month_value_total_aed" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-center tbody-subtotal">
+                                    <t t-if="prev_month_value_total != 0">
+                                        <span t-esc="(prev_month_value_total_aed / prev_month_value_total) * 100"
+                                              t-options='{"widget": "float", "precision": 0}'/>
+                                    </t>
+                                    <t t-else="">0</t>%
+                                </td>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-if="k in current_year_data[cur_year]['total']">
+                                        <span t-esc="current_year_data[cur_year]['total'][k]" t-options='{"widget": "float", "precision": 2}'/>
+                                    </t>
+                                    <t t-else="">0.00</t>
+                                </td>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-if="k in previous_year_data[prev_year]['total']">
+                                        <span t-esc="previous_year_data[prev_year]['total'][k]" t-options='{"widget": "float", "precision": 2}'/>
+                                    </t>
+                                    <t t-else="">0.00</t>
+                                </td>
+                                <td class="text-right tbody-subtotal">
+                                    <t t-set="year_scheds_change_aed" t-value="0"/>
+                                    <t t-if="k in previous_year_data[prev_year]['total'] and k in current_year_data[cur_year]['total']">
+                                        <t t-set="year_scheds_change_aed" t-value="previous_year_data[prev_year]['total'][k] - current_year_data[cur_year]['total'][k]"/>
+                                    </t>
+                                    <span t-esc="year_scheds_change_aed" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-center tbody-subtotal">
+                                    <t t-set="year_scheds_change_percentile" t-value="0"/>
+                                    <t t-if="k in previous_year_data[prev_year]['total'] and previous_year_data[prev_year]['total'][k] != 0"
+                                       t-set="year_scheds_change_percentile"
+                                       t-value="(year_scheds_change_aed / previous_year_data[prev_year]['total'][k]) * 100"/>
+                                    <span t-esc="year_scheds_change_percentile" t-options='{"widget": "float", "precision": 0}'/>%
+                                </td>
+                            </tr>
+
+                    </t>
+                    <tr>
+                        <td class="tbody-total"><strong>Total <span t-esc="sched_total_title"/></strong></td>
+                        <td class="tbody-total text-right">
+                            <span t-esc="current_month_data[cur_year]['total']['amount']" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-right">
+                            <span t-esc="previous_month_data[prev_year]['total']['amount']" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-right">
+                            <t t-set="sched_month_change_aed"
+                               t-value="previous_month_data[prev_year]['total']['amount'] - current_month_data[cur_year]['total']['amount']"/>
+                            <span t-esc="sched_month_change_aed" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-center">
+                            <t t-set="sched_month_change_percentile" t-value="0"/>
+                            <t t-if="previous_month_data[prev_year]['total']['amount'] != 0">
+                                <t t-set="sched_month_change_percentile"
+                                   t-value="(sched_month_change_aed / previous_month_data[prev_year]['total']['amount']) * 100"/>
+                            </t>
+                            <span t-esc="sched_month_change_percentile" t-options='{"widget": "float", "precision": 0}'/>%
+                        </td>
+                        <td class="tbody-total text-right">
+                            <span t-esc="current_year_data[cur_year]['total']['amount']" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-right">
+                            <span t-esc="previous_year_data[prev_year]['total']['amount']" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-right">
+                            <t t-set="sched_year_change_aed"
+                               t-value="previous_year_data[prev_year]['total']['amount'] - current_year_data[cur_year]['total']['amount']"/>
+                            <span t-esc="sched_year_change_aed" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td class="tbody-total text-center">
+                            <t t-set="sched_year_change_percentile" t-value="0"/>
+                            <t t-if="previous_year_data[prev_year]['total']['amount'] != 0">
+                                <t t-set="sched_year_change_percentile"
+                                   t-value="(sched_year_change_aed / previous_year_data[prev_year]['total']['amount']) * 100"/>
+                            </t>
+                            <span t-esc="sched_year_change_percentile" t-options='{"widget": "float", "precision": 0}'/>%
+                        </td>
+                    </tr>
+                </t>
+                <t t-else="">
+                    <tr><td t-att-colspan="int(date_range) + 2" class="text-center">No records found</td></tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+</odoo>

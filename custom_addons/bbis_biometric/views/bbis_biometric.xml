@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<data>
+    <record model="ir.ui.view" id="biometric_device_form">
+        <field name="name">Biometric Device Form</field>
+        <field name="model">biometric.device</field>
+        <field name="arch" type="xml">
+            <form string="Biometric Device Form">
+                <header>
+                    <button type="object" name="check_connection" string="Check Connection"/>
+                    <button type="object" name="show_download_wizard" string="Download Attendance"/>
+                    <button type="object" name="upload_attendance" class="oe_highlight" string="Upload to Temp Attendance"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="show_attendance" class="oe_stat_button" type="object">
+                            <div id="oe_hr_attendance_status" class="fa fa-fw fa-user o_button_icon oe_hr_attendance_status_green"/>
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Attendance</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch" string="Working Location"/>
+                            <field name="name"/>
+                            <field name="firmware"/>
+                        </group>
+                        <group>
+                            <field name="ip_address" invisible="1"/>
+                            <field name="port" invisible="1"/>
+                            <field name="password" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- remove readonly for administrator -->
+    <record model="ir.ui.view" id="biometric_device_form_admin">
+        <field name="name">Biometric Device Form Admin</field>
+        <field name="model">biometric.device</field>
+        <field name="groups_id" eval = "[(4, ref('base.group_erp_manager'))]" />
+        <field name="inherit_id" ref="bbis_biometric.biometric_device_form"/>
+        <field name="arch" type="xml">
+            <field name="ip_address" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </field>
+            <field name="port" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </field>
+            <field name="password" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="biometric_device_tree">
+        <field name="name">Biometric Device Tree</field>
+        <field name="model">biometric.device</field>
+        <field name="arch" type="xml">
+            <tree string="Biometric Device List">
+                <field name="name"/>
+                <field name="firmware"/>
+                <field name="branch"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="biometric_device_search">
+        <field name="name">Biometric Device Search</field>
+        <field name="model">biometric.device</field>
+        <field name="arch" type="xml">
+            <search string="Biometric Device Search">
+                <group>
+                    <filter name="date_time" string="Date Time" context="{'group_by': 'date_time'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="action_biometric_device">
+        <field name="name">Biometric Device</field>
+        <field name="res_model">biometric.device</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Biometric Device" id="biometric_device_menu" parent="bbis_attendance_temp.bbis_attendance_custom_menu"
+              action="action_biometric_device" groups="hr_attendance.group_hr_attendance_user" sequence="10"/>
+
+    <record model="ir.ui.view" id="biometric_device_attendance_tree">
+        <field name="name">Biometric Device Attendance Tree</field>
+        <field name="model">biometric.device.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Biometric Device Attendance">
+                <field name="biometric_device"/>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="date_time"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="biometric_device_attendance_form">
+        <field name="name">Biometric Device Attendance Form</field>
+        <field name="model">biometric.device.attendance</field>
+        <field name="arch" type="xml">
+            <form string="Biometric Device Attendance">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="date_time" readonly="1"/>
+                        <field name="biometric_device" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="biometric_device_attendance_search">
+        <field name="name">Biometric Device Attendance Search</field>
+        <field name="model">biometric.device.attendance</field>
+        <field name="arch" type="xml">
+            <search string="Biometric Device Attendance">
+                <field name="name"/>
+                <group>
+                    <filter name="group_name" string="Name" context="{'group_by': 'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="exclude_attendance_import_form">
+        <field name="name">Exclude Attendance Import Form</field>
+        <field name="model">hr.attendance.exclude.import</field>
+        <field name="arch" type="xml">
+            <form string="Exclude Attendance Import">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="user_id"/>
+                        <field name="branch_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="exclude_attendance_import_tree">
+        <field name="name">Exclude Attendance Import Tree</field>
+        <field name="model">hr.attendance.exclude.import</field>
+        <field name="arch" type="xml">
+            <tree string="Exclude Attendance Import">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="branch_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_exclude_attendance_import">
+        <field name="name">Exclude Attendance Import</field>
+        <field name="res_model">hr.attendance.exclude.import</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Exclude Attendance Import" id="exclude_attendance_import_menu" parent="bbis_attendance_temp.bbis_attendance_custom_menu"
+              action="action_exclude_attendance_import" groups="hr_attendance.group_hr_attendance_user" sequence="40"/>
+
+</data>
+</odoo>

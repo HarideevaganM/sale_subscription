@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+
+    <!-- Paper Format -->
+    <record id="bbis_leave_report_format" model="report.paperformat">
+        <field name="name">European A4 low margin</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">30</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">96</field>
+    </record><!-- End: Paper Format -->
+
+    <report id="employee_wise_leave_report"
+        model="leave.report.wizard"
+        string="Year Wise Leave Report"
+        report_type="qweb-pdf"
+        file="bbis_hr.employee_wise_leave_report1"
+        name="bbis_hr.employee_wise_leave_report1"
+        menu="False"
+    />
+
+    <template id="employee_wise_leave_report_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:100px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+                <div class="bbis-company-details">
+                    <h1 class="text-uppercase" style="margin:0; font-size:22pt"><strong>Leave Report</strong></h1>
+                    <div>
+                        <span t-if="date == 'this_year'" t-esc="'This Year'"/>
+                        <span t-elif="date == 'last_year'" t-esc="'Last Year'"/>
+                        <span t-else=""  t-esc="'Employee Anniversary'">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard" style="width:100%;">
+            <div class="page">
+                <table class="leave-body-header" t-att-style="table1_width">
+                    <tr>
+                        <td class="left-table">
+                            <table>
+                                <tr>
+                                    <th>Employee Name:</th><td><span t-esc="data[0]['employee_name']"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Joining Date:</th><td><span t-esc="data[0]['join_date']"/></td>
+                                </tr>
+                            </table>
+                        </td>
+
+                         <td class="left-right">
+                            <table>
+                                <tr>
+                                    <th>Department:</th><td><span t-esc="data[0]['department']"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Position:</th><td><span t-esc="data[0]['job_position']"/></td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>
+                </table>
+
+                <br></br>
+
+                <table class="bbis-accounting-report-table1 row-striped" t-att-style="table1_width" style="padding-left:10px; width:100%">
+                    <th>Leave Type</th>
+                    <th>Available Days</th>
+                    <th>Leaves Accrued</th>
+                    <th>Leaves Taken</th>
+                    <th>Leave Balance</th>
+                    <tbody>
+                        <t t-foreach="data" t-as="data">
+                            <tr>
+                                <td>
+                                    <span t-esc="data['leave_type']"></span>
+                                </td>
+                                <td>
+                                    <span t-esc="data['maximum_available']"></span>
+                                </td>
+                                <td>
+                                    <span t-esc="data['leaves_accrued']"></span>
+                                </td>
+                                <td>
+                                    <span t-esc="data['leaves_taken']"></span>
+                                </td>
+                                <td>
+                                    <span t-esc="data['leave_balance']"></span>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="employee_wise_leave_report1">
+        <t t-call="web.html_container">
+            <t t-call="bbis_hr.employee_wise_leave_report_document"/>
+        </t>
+    </template>
+
+</odoo>
+

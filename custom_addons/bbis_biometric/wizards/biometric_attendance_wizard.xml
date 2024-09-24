@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<data>
+    <record id="biometric_attendance_wizard_form" model="ir.ui.view">
+        <field name="name">Biometric Attendance Wizard Form</field>
+        <field name="model">biometric.attendance.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="branch" readonly="1" string="Working Location"/>
+                        <field name="name" readonly="1"/>
+                        <field name="firmware" readonly="1"/>
+                        <field name="month"/>
+                        <field name="year"/>
+                    </group>
+
+                    <footer>
+                        <button name="download_attendance" string="Download Biometric Attendance" type="object" class="oe_right oe_highlight"/>
+                        <button string="Close" class="btn-default" special="cancel" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</data>
+</odoo>

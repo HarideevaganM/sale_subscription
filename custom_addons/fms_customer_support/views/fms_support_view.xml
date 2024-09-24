@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data> 
+
+    <record id="account_invoice_ticket_rma_inherit_view" model="ir.ui.view">
+        <field name="name">account.ticket.rma.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='journal_id']" position="before">
+                <label for="repair_ids"/>
+                <div>
+                    <field name="repair_ids" string="Repairs" widget="many2many_tags"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+     <record id="sale_order_org_inherit_form_view" model="ir.ui.view">
+        <field name="name">sale.order.org.inherit.form.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                <attribute name="attrs">{'invisible': [('sale_type', '=', 'support')]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                <attribute name="attrs">{'invisible': [('sale_type', '=', 'support')]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                <attribute name="attrs">{'invisible': [('sale_type', '=', 'support')]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+                <attribute name="attrs">{'invisible': [('sale_type', '=', 'support')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_ticket_inherit_form_view" model="ir.ui.view">
+        <field name="name">sale.order.ticket.inherit.form.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="fms_sale.sale_order_form_inherit_id"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='confirm_order']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|','&amp;', ('sale_type', 'in', ('pilot', 'support')),('purchase_type', '!=', 'project'), ('state', 'not in', ('sale','sent'))]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='open_job_card_wizard']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'sale'), ('sale_type', 'in', ('pilot', 'support'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sale_type']" position="after">
+                <field name="support_id" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='sale_type']" position="attributes">
+                <attribute name="attrs">{'invisible': [('support_id', '=', True)]}</attribute>
+            </xpath>
+             <xpath expr="//field[@name='subscription_template_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('sale_type', '=', 'support')]}</attribute>
+            </xpath>
+            <xpath expr="//div[@name='button_box']/button[@name='action_view_invoice']" position="after">
+                <button class="oe_stat_button" name="open_repair_view" type="object" icon="fa-list-ol" attrs="{'invisible':[('repair_count', '=', 0)]}">
+                    <field string="Repairs" name="repair_count" widget="statinfo"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="fms_ticket_tree_view_inherit" model="ir.ui.view">
+        <field name="name">fms.website.ticket.tree.view</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ticket_number']" position="before">
+                <field name='customer_support_id'/>
+            </xpath>
+            <!--<xpath expr="//field[@name='ticket_create_date']" position="replace">
+            </xpath>-->
+            <xpath expr="//field[@name='priority_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='ticket_number']" position="after">
+                <field name='ticket_create_date'/>
+                <field name='partner_id'/>
+                <field name='priority_id'/>
+                <field name='repair_id'/>
+                <field name='repair_state'/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="fms_ticket_view_tree_customer_inherit" model="ir.ui.view">
+        <field name="name">fms.website.ticket.customer.tree.view</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="fms_repair.view_tree_customer_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-muted">states == 'cancel'</attribute>
+                <attribute name="decoration-info">states == 'draft'</attribute>
+               <attribute name="decoration-success">states == 'under_repair'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vehicle_id']" position="before">
+                <!-- <field name='sale_order_ids' widget='many2many_tags'/> -->
+                <field name='repair_job_type'/>
+                <field name='service_sub_type'/>
+            </xpath>
+           <xpath expr="//field[@name='elapsed_time']" position="replace">
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_support_vehicle_id_ticket" model="ir.ui.view">
+        <field name="name">website.support.vehicle_id.type.ticket</field>
+        <field name="model">website.support.ticket</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="fms_repair.website_support_inherit_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vehicle_id']" position="attributes">
+                <attribute name='required'>0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='serial_no']" position="attributes">
+                <attribute name='readonly'>0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vehicle_id']" position="after">
+                <!-- <field name='sale_order_ids' widget='many2many_tags'/> -->
+                <field name="quote_state"/>
+            </xpath>
+            <xpath expr="//button[@name='action_invoice_create']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='elapsed_time']" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='set_to_under_repair']" attributes="replace">
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_support_inherit_view_form_ticket" model="ir.ui.view">
+        <field name="name">website_support_inherit_view_form_ticket</field>
+        <field name="model">website.support.ticket</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='sub_category_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='job_stage']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='close_time']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='schedule_time']" position="attributes">
+                <attribute name='attrs'>{'required': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='schedule_time']" position="after">
+                <field name="engineer_id" required='1'/>
+            </xpath>
+            <xpath expr="//field[@name='support_rating']" position="after">
+                <field name="close_time" string='Close Date'/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_support_draft_type_ticket" model="ir.ui.view">
+        <field name="name">website.support.draft.type.ticket</field>
+        <field name="model">website.support.ticket</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="fms_repair_extended.repair_inherit_website_support_ticket"/>
+        <field name="arch" type="xml">
+            <field name="repair_job_type" position="after">
+                <field name="service_sub_type" required='1' readonly='1'/>
+                <field name="billing_method" required='1' readonly='1'/>
+                <field name="customer_support_id" readonly='1'/>
+                <field name="is_ticket" invisible='1'/>
+            </field>
+            <xpath expr="//field[@name='job_card_type']" position="attributes">
+                <attribute name='readonly'>1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='repair_job_type']" position="attributes">
+                <attribute name='readonly'>1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='create_repair']" position="replace">
+                <button name="create_repair" type="object" string="Create Repair Order"
+                attrs="{'invisible': ['|', ('is_ticket', '=', True), ('states', 'in', ('draft','confirmed','cancel','done','invoiced'))]}" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="fms_repair_new_fomr_view_inherit" model="ir.ui.view">
+        <field name="name">fms.repair.order.new.form.view</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_send_mail']" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='print_repair_order']" position="replace">
+            </xpath>
+            
+            <xpath expr="//button[@name='action_created_invoice']" position="after">
+                <button name="open_order_view" type="object" class="oe_stat_button" icon="fa-pencil-square-o" attrs="{'invisible': [('order_count', '=', 0)] }">
+                    <field name="order_count" widget="statinfo"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='version_number']" position="before">
+                <field name="work_picking_ids" widget='many2many_tags'/>
+            </xpath>
+            <xpath expr="//field[@name='location_id']" position="replace"></xpath>
+            <xpath expr="//field[@name='location_dest_id']" position="replace"></xpath>
+        </field>
+    </record>
+
+    <record id="fms_repair_new_tree_view_inherit" model="ir.ui.view">
+        <field name="name">fms.repair.order.new.tree.view</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-muted">state == 'cancel'</attribute>
+                <attribute name="decoration-info">state == 'draft'</attribute>
+               <attribute name="decoration-success">state == 'ready'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name='repair_date'/>
+                <field name='close_date'/>
+                <field name='customer_support_id'/>
+                <field name='support_id'/>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='address_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='guarantee_limit']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name='vehicle_id'/>
+                <field name='sale_order_ids' widget='many2many_tags'/>
+                <field name='service_sub_type'/>
+                <field name='partner_id'/>
+                <field name='ticket_state'/> 
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">RMA #</attribute>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="after">
+                <field name='rma_note'/> 
+            </xpath>
+        </field>
+    </record>
+
+    <record id="repair_device_mantainace_sub_inherit" model="ir.ui.view">
+        <field name="name">repair.order.device.subscription.inherit</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="fms_repair.repair_models_request_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_invoice_create_maintainance']" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='action_invoice_create_maintainance_before']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='guarantee_limit']" position="attributes">
+                <attribute name='required'>0</attribute>
+            </xpath>
+            <field name="partner_id" position="after">
+                <field name="customer_support_id"/>
+                <field name='service_sub_type' invisible='1'/>
+                <field name="is_open" attrs="{'invisible': ['|', '|', ('is_close', '=', False), ('state', '!=', 'done'), ('repair_job_type', 'not in', ('re_installation'))]}" readonly='1'/>
+                <field name="is_close" attrs="{'invisible': ['|', '|', ('is_close', '=', True),('state', '!=', 'done'), ('repair_job_type', 'not in', ('removal', 'removal_returned'))]}" readonly='1' />
+            </field>
+            <xpath expr="//field[@name='lot_id']" position="attributes">
+                <attribute name='attrs'>{'required': []}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_repair_end_delivery']" position="after">
+                <button name="action_close_subscription" type="object" string="Close Subscription" class="oe_highlight" attrs="{'invisible': ['|', '|', ('is_close', '=', True), ('state', '!=', 'done'), ('repair_job_type', 'not in', ('removal', 'removal_returned'))]}"/>
+                <button name="action_open_subscription" type="object" string="Open Subscription" class="oe_highlight" attrs="{'invisible': ['|', '|', '|', ('is_open', '=', True), ('state', '!=', 'done'), ('repair_job_type', '!=', 're_installation'), ('service_sub_type', '=', 'remove_reinstall')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="repair_service_sub_inherit" model="ir.ui.view">
+        <field name="name">repair.order.service.subscription.inherit</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="fms_repair_extended.res_inherit_repair_inh"/>
+        <field name="arch" type="xml">
+            <field name="repair_job_type" position="after">
+                <field name="service_sub_type" readonly='1'/>
+            </field>
+            <xpath expr="//field[@name='customer_support_id']" position="after">
+                <field name='user_id' required='1'/>
+                <field name='lot_placement' attrs="{'invisible': [('repair_job_type', 'not in', ('re_installation'))]}" />
+            </xpath>
+            <xpath expr="//field[@name='support_id']" position="before">
+                <field name='repair_date' required='1'/>
+            </xpath>
+            <xpath expr="//field[@name='support_id']" position="after">
+                <field name='close_date'/> 
+                <field name="diff_product_id" domain="[('tracking', '=', 'serial')]" attrs="{'invisible': [('repair_job_type', '!=', 'defective_device_replacement')]}" />
+                <field name="diff_lot_id" domain="[('product_id', '=', diff_product_id)]" attrs="{'invisible': [ ('repair_job_type', '!=', 'defective_device_replacement')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='return_lot_id']" position="attributes">
+                <attribute name='attrs'>{'invisible': ['|', ('service_sub_type', '=', 'remove_reinstall'), ('repair_job_type', 'not in', ('re_installation'))]}</attribute> 
+            </xpath>
+            <xpath expr="//field[@name='vechicle_id']" position="attributes">
+                <attribute name='attrs'>{'invisible': [('repair_job_type', 'not in', ('re_installation'))]}</attribute> 
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name='sale_order_ids' widget='many2many_tags'/>
+            </xpath>
+            <xpath expr="//field[@name='lot_id']" position="after">
+                <field name='vehicle_id'/>
+            </xpath>
+            <notebook>
+                <page string="Locations" id='repair_location'>
+                    <group colspan='5' col='4'>
+                        <field name="location_id" string='Source' attrs="{'readonly': [('state','=','done')]}"/>
+                        <field name="location_dest_id" string='Destination' attrs="{'readonly': [('state','=','done')]}"/>
+                    </group>
+                </page>
+                <page string="Notes" id='note_ids'>
+                    <group>
+                        <field name="rma_note" placeholder='closing comment ......'/>
+                        <field name="internal_note" placeholder='internal note .....'/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="fms_ticket_view_search_customer_inherit" model="ir.ui.view">
+        <field name="name">fms.repair.order.customer.search.view</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="support_id"/>
+                <field name="name" string='RMA Number'/>
+                <field name="vehicle_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="fms_customer_support_search_view">
+        <field name="name">fms.customer.support.search</field>
+        <field name="model">fms.customer.support</field>
+        <field name="arch" type="xml">
+            <search string="Work Orders">
+                  <field name="name" string="Work Orders"/>
+                  <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                  <filter string="In Progress" name="progress" domain="[('state','=','ticket')]"/>
+                  <filter string="Confirmed" domain="[('state','=','confirm')]" name="current"/>
+                  <separator/>
+                  <field name="partner_id" filter_domain="[('partner_id', 'child_of', self)]"/>
+                  <separator/>
+                  <group expand="0" string="Group By">
+                      <filter string="Partner" name="partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                      <filter string="Status" name="state" domain="[]" context="{'group_by':'state'}"/>
+                  </group>
+              </search>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="fms_customer_support_tree_view">
+        <field name="name">fms.customer.support.tree</field>
+        <field name="model">fms.customer.support</field>
+        <field name="arch" type="xml">
+            <tree string="work order" decoration-success="state=='confirm'" decoration-muted="state=='cancel'" decoration-primary="state=='ticket'" decoration-info="state=='draft'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="service_sub_type"/>
+                <field name="user_id"/>
+                <field name="billing_method"/>
+                <field name="sale_order_ids" widget='many2many_tags'/>
+                <field name="no_of_vehicles"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record id="fms_customer_support_form_view" model="ir.ui.view" >
+        <field name="name">fms.customer.support.form.view</field>
+        <field name="model">fms.customer.support</field>
+        <field name="arch" type="xml">
+            <form string="Work Orders">
+                <header>
+                    <button name="create_quotation" string="Create Quotation" type="object" class="btn-primary" attrs="{'invisible': ['|', '|', '|', ('billing_method','=', 'no_chargeable'), ('state', 'in', ('draft', 'cancel')), ('quote_done', '=', True), ('work_order_type', '=', 'non_technical')]}"/>
+                    <button name="button_confirm" string="Open Order" type="object" class="btn-primary" states='draft'/>
+                    <button name="create_ticket"  string="Create Support Ticket" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'confirm'), ('ticket_done', '=', True)]}"/>
+                    <button name="button_done" string="Close Order" type="object" class="btn-primary" states='ticket'/>
+                    <button name="button_cancel" string="Cancel" type="object" class="btn-primary" states='draft,confirm,quote,ticket'/>
+                    <field name="state"  widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_support_view" type="object" class="oe_stat_button" icon="fa-edit" attrs="{'invisible': [('support_count', '=', 0)]}">
+                            <field string="Support Ticket" name="support_count" widget="statinfo"/>
+                        </button> 
+                        <button class="oe_stat_button" name="open_quotations" type="object" icon="fa-dollar" attrs="{'invisible': [('quotations_count', '=', 0)]}">
+                            <field string="Quotes" name="quotations_count" widget="statinfo"/>
+                        </button>
+                    </div> 
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="subject" required='1'/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="date" required='1'/>
+                            <field name="close_date"/>
+                            
+                        </group>
+                        <group>
+                            <field name="partner_id" required='1'/>
+                            <field name="email"/>
+                        </group>
+                        <group>
+                            <field name="sale_user_id"/>
+                            <field name="user_id" required='1'/>
+                            <field name="work_order_type" widget='radio' attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="service_sub_type" attrs="{'invisible': [('work_order_type', '=', 'non_technical')], 'required': [('work_order_type', '=', 'technical')]}"/>
+                        </group>
+                        <group>
+                            <field name="contact_name"/>
+                            <field name="phone"/>
+                            <field name="no_of_vehicles" required='1'/>
+                            <field name="billing_method" required='1'/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details">
+                            <field name="description" widget='html'/>
+                        </page>
+                        <page string="Other">
+                            <group>
+                                <field name="sale_order_ids" widget='many2many_tags'/>
+                                <field name='invoice_state'/>
+                                <field name='quote_done'/>
+                                <field name='ticket_done'/> 
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+
+    <record model="ir.actions.act_window" id="action_fms_customer_support">
+        <field name="name">Work Orders</field>
+        <field name="res_model">fms.customer.support</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="website_support.website_support_parent_menu" name="Customer Support"
+        groups="website_support.support_staff" sequence="40" web_icon="fms_customer_support,static/src/img/icon.png"/>
+
+    <menuitem id="fms_customer_support_menu" 
+        name="Work Orders"
+        sequence="1"
+        parent="website_support.website_support_parent_menu"
+        action="action_fms_customer_support"/>
+
+    <menuitem id="fms_repair.delivery_process"
+        name="Delivery"
+        action ="fms_repair.delivery_action"
+        parent="repair.menu_repair_order"
+        sequence="10"
+        active='False'/>
+
+    </data>
+</odoo>

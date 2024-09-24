@@ -1,0 +1,57 @@
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_asset_branch_tree">
+            <field name="name">Asset Branch</field>
+            <field name="model">asset.branch</field>
+            <field name="arch" type="xml">
+                <tree string="All Branch">
+                    <field name="name"/>
+                    <field name="stock_location"/>
+                    <field name="regional_wh_manager"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Check Box to make Vehicle a Product Starts-->
+         <record id="view_asset_branch_form" model="ir.ui.view">
+            <field name="name">Asset Branch</field>
+            <field name="model">asset.branch</field>
+            <field name="arch" type="xml">
+                <form string="Asset Branch">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="stock_location"/>
+                            <field name="regional_wh_manager"/>
+                            <field name="asset_reorder">
+                                <tree editable="bottom">
+                                    <field name="model_id"/>
+                                    <field name="qty"/>
+                                    <field name="branch_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+         </record>
+        <!-- Check Box to make Vehicle a Product End-->
+
+
+        <record model="ir.actions.act_window" id="asset_branch_action">
+            <field name="name">Asset Branch</field>
+            <field name="res_model">asset.branch</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_asset_branch" name="Asset Branch" parent="IT_configuration_menu_root" action="asset_branch_action" sequence="30"/>
+
+
+
+    </data>
+</odoo>

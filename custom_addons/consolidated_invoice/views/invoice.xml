@@ -1,0 +1,168 @@
+<odoo>
+	<data>
+
+    <!--<record id="account.action_invoice_tree1" model="ir.actions.act_window">
+            <field name="name">Invoices</field>
+            <field name="res_model">account.move</field>
+&lt;!&ndash;            <field name="view_type">form</field>&ndash;&gt;
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('move_type','=','out_invoice')]</field>
+            <field name="context">{'move_type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a customer invoice
+              </p><p>
+                Create invoices, register payments and keep track of the discussions with your customers.
+              </p>
+            </field>
+        </record>-->
+        
+    <record id="consolidated_invoice_tree" model="ir.ui.view">
+            <field name="name">account.move.tree</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
+                    <field name="partner_id" groups="base.group_user" string="Customer"/>
+                    <field name="invoice_date"/>
+                    <field name="name"/>
+                    <field name="commercial_partner_id" invisible="1"/>
+<!--                    <field name="reference" invisible="1"/>-->
+                    <field name="name" invisible="1"/>
+                    <field name="journal_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <field name="user_id"/>
+                    <field name="invoice_date_due"/>
+                    <field name="invoice_origin"/>
+                    <field name="amount_untaxed" string="Tax Excluded" sum="Total"/>
+                    <field name="amount_tax" sum="Total"/>
+                    <field name="amount_total_signed" string="Total" sum="Total"/>
+                    <field name="amount_residual_signed" string="Amount Due" sum="Amount Due"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="consolidate_state"/>
+                    <field name="state" invisible="1"/>
+                    <field name="move_type" invisible="context.get('move_type',True)"/>
+                </tree>
+            </field>
+        </record>
+        
+    <record id="consolidated_invoice_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <!-- <button name="action_invoice_open" position="replace">
+            		<button name="action_invoice_open" type="object"  string="Validate" class="oe_highlight o_invoice_validate" groups="account.group_account_invoice" attrs="{'invisible': [('state','!=', 'draft')]}"/>
+                </button> -->
+                <!-- <field name="state" position="replace">
+                	<field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,open,paid" attrs="{}"/>
+                	<field name="consolidate_state" widget="statusbar" nolabel="1" statusbar_visible="draft,validated" attrs="{'invisible': [('consolidate_state_visible','=',False)]}"/>
+                </field>  -->
+<!--                <h1 class="mt0" position="replace">-->
+<!--	            	<h1 class="mt0" attrs="{'invisible': [('consolidate_invoice','=',True)]}">-->
+<!--						<div>-->
+<!--                            <span attrs="{'invisible': ['|',('state','not in',('draft',)), ('move_type','!=','out_invoice')]}">Draft Invoice</span>-->
+<!--                            <span attrs="{'invisible': ['|',('state','not in',('draft',)), ('move_type','!=','out_refund')]}">Draft Credit Note</span>-->
+<!--                            <field name="name" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>-->
+<!--						</div>-->
+<!--						&lt;!&ndash;<div attrs="{'invisible': [('sequence_number_next_prefix','=',False)]}">-->
+<!--                        <span>Invoice Number:</span><br/>-->
+<!--						<field name="sequence_number_next_prefix" class="oe_inline"/>-->
+<!--						<field name="sequence_number_next" class="oe_inline"/>-->
+<!--						</div>&ndash;&gt;-->
+<!--					</h1>-->
+<!--					&lt;!&ndash; <h1>-->
+<!--						<field name="consolidated_number" class="oe_inline"/>-->
+<!--					</h1> &ndash;&gt;-->
+<!--				</h1>-->
+<!--                <xpath expr="/form/sheet/notebook/page[@name='other_info']/group/group/field[@name='user_id']" position="attributes">-->
+<!--                    <attribute name="invisible">0</attribute>-->
+<!--                </xpath>-->
+				<xpath expr="//field[@name='invoice_origin']" position="after">
+                    <field name="consolidate_invoice" readonly="1"/>
+					<field name="consolidate_invoice_created" readonly="1"/>
+					<field name="cons_validate_button_visible" invisible="1"/>
+					<field name="consolidate_state_visible" invisible="1"/>
+                 </xpath>
+                 <xpath expr="//page[@name='other_info']" position="after">
+                 	<page string="Subscription Details">
+	                 	<group>
+	                 		<group>
+	                 			<field name="subscription_start_date"/>
+	                 		</group>
+	                 		<group>
+	                 			<field name="subscription_end_date"/>
+	                 		</group>
+	                 	</group>
+                 	</page>
+                 </xpath>
+            </field>
+        </record>
+
+        <record id="action_consolidated_invoice_tree" model="ir.actions.act_window">
+            <field name="name">Consolidated Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="domain">[('move_type', '=', 'out_invoice'),('consolidate_invoice', '=', True)]</field>
+            <field name="context">{'default_move_type': 'out_invoice'}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a customer invoice
+              </p><p>
+                Create invoices, register payments and keep track of the discussions with your customers.
+              </p>
+            </field>
+        </record>
+        
+    <!--<record id="action_consolidated_invoice_tree" model="ir.actions.act_window">
+            <field name="name">Consolidated Invoices</field>
+            <field name="res_model">account.move</field>
+&lt;!&ndash;            <field name="view_type">form</field>&ndash;&gt;
+            <field name="view_mode">tree,form,kanban</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('move_type','=','out_invoice'),('consolidate_invoice', '=', True)]</field>
+            <field name="context">{'move_type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a customer invoice
+              </p><p>
+                Create invoices, register payments and keep track of the discussions with your customers.
+              </p>
+            </field>
+        </record>-->
+        
+        <record id="action_invoice_consolidated_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="consolidated_invoice_tree"/>
+            <field name="act_window_id" ref="action_consolidated_invoice_tree"/>
+        </record>
+        
+        <!--<record id="action_invoice_consolidated_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="action_consolidated_invoice_tree"/>
+        </record>-->
+    
+    <!-- <record id="view_invoice_tree_inherit_for_consolidate" model="ir.ui.view">
+        <field name="name">account.move.tree.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.move_tree"/>
+        <field name="arch" type="xml">
+        	<field name="state" position="before">
+        		<field name="consolidated_number"/>
+        	</field>
+        </field>
+    </record> -->
+
+    <menuitem action="action_consolidated_invoice_tree" id="menu_action_consolidated_invoice_tree1" parent="account.menu_finance_receivables" sequence="115"/>
+
+</data>
+</odoo>

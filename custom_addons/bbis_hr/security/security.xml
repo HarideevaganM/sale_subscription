@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Group for accessing teams leaves TODO: Add it to the existing group category -->
+    <record id="group_hr_holiday_teams_leaves" model="res.groups">
+        <field name="name">Access Teams Leaves</field>
+    </record>
+    <record id="group_hr_holiday_department_leaves" model="res.groups">
+        <field name="name">Access Department Leaves</field>
+    </record>
+</odoo>

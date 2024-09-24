@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bbis_so_line_multi_update_form" model="ir.ui.view">
+            <field name="name">Sale Order Line Multi Update Form</field>
+            <field name="model">bbis.so.line.multi.update</field>
+            <field name="arch" type="xml">
+                <form string="SO Line Multi Update">
+                    <group>
+                        <field name="order_id"/>
+                        <field name="order_line_ids" domain="[('order_id','=',order_id)]" options="{'no_create': True}">
+                            <tree>
+                                <field name="product_id"/>
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="price_unit"/>
+                            </tree>
+                        </field>
+                        <field name="price"/>
+                    </group>
+
+                    <footer>
+                        <button name="update_price" string="Update Price" type="object" class="btn-primary"/>
+                        <button string="Close" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bbis_sale_order_line_multi_update" model="ir.actions.act_window">
+            <field name="name">Order Lines Update</field>
+            <field name="res_model">bbis.so.line.multi.update</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="bbis_so_line_multi_update_form"/>
+            <field name="binding_model_id" ref="model_sale_order" />
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Setup -->
+    <report id="bbis_reports_age_receivables"
+        model="account.move.line"
+        string="Age Receivables Report"
+        report_type="qweb-pdf"
+        file="bbis_reports.age_receivables_report"
+        name="bbis_reports.age_receivables_report"
+        paperformat="bbis_reports.bbis_sales_rpt_paper_format"
+        print_report_name="Age Receivables" menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Excel report print tag for aged receivables -->
+    <report
+            id="aged_receivables_report_xlsx"
+            model="account.move.line"
+            string="Aged Receivables Report"
+            report_type="xlsx"
+            name="bbis_reports.aged_receivables_report_xlsx"
+            file="Aged Receivables Report"
+            attachment_use="True"
+            menu = "False"
+        />
+    <!-- End of report tag -->
+
+    <!-- Report Template -->
+    <template id="age_receivables_report_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:100px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+                <div class="bbis-company-details">
+                    <h1 class="text-uppercase" style="margin:0; white-space: nowrap; font-size:22pt"><strong>AR Ageing Schedule Report</strong></h1>
+                    <div>
+                        As of
+                        <span t-esc="start_date.strftime('%B %d, %Y')"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <t t-set="column_count" t-value="len(cols)"/>
+                <t t-set="col_multiplier" t-value="1"/>
+                <t t-set="column_count" t-value="6 * col_multiplier"/>
+
+                <table class="bbis-accounting-report-table1 row-striped row-striped" style="width:100%;">
+                    <thead>
+                    <tr>
+                        <th rowspan="3">Company Name</th>
+                        <th t-att-colspan="column_count + col_multiplier" class="text-uppercase">
+                            <h2 style="margin:0; font-size:15pt"><strong>AR AGEING SCHEDULE</strong></h2>
+                        </th>
+                        <!--<th rowspan="3">Total <br/>Quantity</th>-->
+                    </tr>
+                    <tr>
+                        <th t-att-colspan="col_multiplier" class="sub-header" t-foreach="cols" t-as="age" style="white-space:nowrap">
+                            <span t-if="age in ('&lt;30','&gt;360')" t-esc="'('"/>
+                            <span t-esc="age.replace('-', ' to ')"/> Days
+                            <span t-if="age in ('&lt;30','&gt;360')" t-esc="')'"/>
+                        </th>
+                        <th class="sub-header" rowspan="2">Total<br/>Balance</th>
+                    </tr>
+                    <tr>
+                        <t class="sub-header" t-foreach="cols" t-as="age">
+                            <th class="sub-header">Balance</th>
+                        </t>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="len(data['keys']) > 0">
+                            <t t-set="total_balance" t-value="0.00"/>
+
+                            <t t-foreach="data['keys']" t-as="k">
+                                <tr t-if="k != 'Undefined'">
+                                    <td><span t-esc="k"/></td>
+                                    <t t-set="partner_balance" t-value="0"/>
+                                    <t t-foreach="cols" t-as="age">
+                                        <td class="text-right">
+                                            <t t-if="age in data['list'][k]">
+                                                <span t-esc="data['list'][k][age]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                                <t t-set="total_balance" t-value="total_balance + data['list'][k][age]['balance']"/>
+                                                <t t-set="partner_balance" t-value="partner_balance + data['list'][k][age]['balance']"/>
+                                            </t>
+                                            <t t-else="">0.00</t>
+                                        </td>
+                                    </t>
+                                    <td class="text-right">
+                                        <span t-esc="partner_balance" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="'Undefined' in data['keys']">
+                                <td>Undefined</td>
+                                <t t-set="partner_balance" t-value="0"/>
+                                <t t-foreach="cols" t-as="age">
+                                    <td class="text-right">
+                                        <t t-if="age in data['list']['Undefined']">
+                                            <span t-esc="data['list']['Undefined'][age]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                            <t t-set="total_balance" t-value="total_balance + data['list']['Undefined'][age]['balance']"/>
+                                            <t t-set="partner_balance" t-value="partner_balance + data['list']['Undefined'][age]['balance']"/>
+                                        </t>
+                                        <t t-else="">0.00</t>
+                                    </td>
+                                </t>
+                                <td class="text-right">
+                                    <span t-esc="partner_balance" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr>
+                            <td class="tbody-total"><strong>Total</strong></td>
+                            <t t-set="total_report_balance" t-value="0.00"/>
+
+                            <t t-foreach="cols" t-as="age">
+                                <td class="tbody-total text-right">
+                                    <t t-if="age in data['total']['account']">
+                                        <strong t-esc="data['total']['account'][age]['balance']" t-options='{"widget": "float", "precision": 2}'/>
+                                        <t t-set="total_report_balance" t-value="total_report_balance + data['total']['account'][age]['balance']"/>
+                                    </t>
+                                    <t t-else="">0.00</t>
+                                </td>
+                            </t>
+                            <td class="text-right tbody-total">
+                                <strong t-esc="total_report_balance" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="age_receivables_report">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.age_receivables_report_document"/>
+        </t>
+    </template>
+    <!-- End: Template -->
+
+</odoo>

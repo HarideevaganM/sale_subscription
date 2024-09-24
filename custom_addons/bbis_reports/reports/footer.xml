@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sale Quotation/Order Footer -->
+    <template id="bbis_custom_sale_footer">
+        <div style="border-top: 1px solid black;" />
+        <ul class="list-inline bbis-footer-social-link-ul text-center">
+            <li>
+                <img src="/bbis_reports/static/src/img/address.jpg" alt="Address" />
+                <span>Tamouh Tower, 22-C1, Marina Square, Al Reem Island, Abu Dhabi, UAE - P.O. Box 39366</span>
+            </li>
+            <li>
+                <img src="/bbis_reports/static/src/img/phone.jpg" alt="Phone" />
+                <span>+971 2 643 6640</span>
+            </li>
+            <li>
+                <img src="/bbis_reports/static/src/img/fax.jpg" alt="Fax" />
+                <span>+971 2 643 6642</span>
+            </li>
+            <li>
+                <img src="/bbis_reports/static/src/img/email.jpg" alt="Email" />
+                <span>blackbox@fms-tech.com</span>
+            </li>
+            <li>
+                <img src="/bbis_reports/static/src/img/web.jpg" alt="Email" />
+                <span>www.fms-tech.com</span>
+            </li>
+        </ul>
+    </template>
+</odoo>

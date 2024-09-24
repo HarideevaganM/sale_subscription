@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record model="ir.ui.view" id="my_leave_adjustments_search_view">
+        <field name="name">my.leave.adjustments.search.view</field>
+        <field name="model">process.leave.adjustments</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                 <filter string="Sick Leaves" name="sick_leaves" domain="[('holiday_type', '=', 'Sick Leaves')]"/>
+                 <filter string="Pending Leaves" name="pending_leaves" domain="[('remaining_leavs', '!=', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_name" string="Employee" context="{'group_by':'name'}"/>
+                    <filter name="leave_name" string="Leaves" context="{'group_by':'holiday_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="my_leave_adjustments_tree_view" model="ir.ui.view">
+        <field name="name">my.leave.adjustments.tree.view</field>
+        <field name="model">process.leave.adjustments</field>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="joining_date"/>
+                <field name="holiday_type"/>
+                <field name="remaining_leaves"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="actions_leave_adjustments_view" model="ir.actions.act_window">
+        <field name="name">Leave Adjustments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">process.leave.adjustments</field>
+        <!--          <field name="view_type">form</field>-->
+        <field name="view_id" ref="my_leave_adjustments_tree_view"/>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="my_leave_adjustments_search_view"/>
+    </record>
+
+    <!--<act_window
+        id="action_leave_adjustment_process"
+        name="Adjustment Process"
+        res_model="process.leave.adjustments"
+        src_model="process.leave.adjustments"
+        target="new"
+        view_mode="form"
+        key2="client_action_multi"/>-->
+
+    <record id="action_leave_adjustment_process_act" model="ir.actions.server">
+        <field name="name">Leave Adjustment Process</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="bbis_attendance_temp.model_process_leave_adjustments"></field>
+        <field name="binding_model_id" ref="bbis_attendance_temp.model_process_leave_adjustments"></field>
+        <field name="state">code</field>
+        <field name="code">records.process_adjustments()</field>
+        <!--<field name="code">records.filtered(lambda r: r.next_approver_id == uid).sorted(key=lambda r: r.uid)</field>-->
+    </record>
+    <!--<menuitem id="menu_leave_adjustments"
+      name="Leave Adjustments"
+      action="actions_leave_adjustments_view"
+      parent="hr_holidays.menu_hr_holidays_my_leaves"
+      sequence="92"
+      groups="hr_holidays.group_hr_holidays_manager"/>-->
+</odoo>

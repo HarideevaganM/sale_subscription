@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!--Leave report selection wizard screen-->
+    <record id="leave_report_wizard_view" model="ir.ui.view">
+        <field name="name">leave.report.wizard_view</field>
+        <field name="model">leave.report.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="report_name"/>
+                        <field name="employee_id" options="{'no_create_edit': True, 'no_open':True}"/>
+                    </group>
+                    <group>
+                        <field name="leave_type_id" attrs="{'invisible':[('report_name','!=','schedule_leave_balances')]}"/>
+                        <field name="date_filter"/>
+                    </group>
+                </group>
+                <group string="Custom Date" attrs="{'invisible':[('date_filter','!=','custom')]}">
+                    <group><field name="start_date" attrs="{'required':[('date_filter','=','custom')]}"/></group>
+                    <group><field name="end_date" attrs="{'required':[('date_filter','=','custom')]}"/></group>
+                </group>
+                <footer>
+                    <!--<button name="print_reports" string="Print Report" type="object" class="btn-primary"/>-->
+                    <button string="Export to Excel" name="print_xlsx_report" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leave_report_wizard" model="ir.actions.act_window">
+        <field name="name">LEAVE REPORTS</field>
+        <field name="res_model">leave.report.wizard</field>
+        <!--          <field name="view_type">form</field>-->
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_report_name':'leaves_summary'}</field>
+        <field name="view_id" ref="leave_report_wizard_view"/>
+    </record>
+
+    <menuitem id="menu_leave_report_wizard"
+        action="action_leave_report_wizard"
+        name="Download Leaves Report"
+        parent="bbis_hr.leaves_report_custom_menu"
+        sequence="10"/>
+
+</odoo>

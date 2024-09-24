@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <!-- Report Setup -->
+    <report id="bbis_reports_job_card_rma"
+        model="repair.order"
+        string="RMA Job Card"
+        report_type="qweb-pdf"
+        file="bbis_reports.job_card_rma"
+        name="bbis_reports.job_card_rma"
+        paperformat="bbis_reports.bbis_job_card_paper_format"
+        print_report_name="object.name"
+    /><!-- End: End Report Setup -->
+
+     <!-- Report Template -->
+    <template id="job_card_rma_document">
+        <div class="header">
+            <div class="bbis-company-header clear-fix">
+                <img class="bbis-company-logo" style="height:130px; width:auto;" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+
+                <div class="bbis-company-details">
+                    <div t-if="company.street" t-esc="company.street"/>
+                    <div>
+                        <t t-if="company.street2"><span t-esc="company.street2"/>,</t>
+                        <t t-if="company.city"><span t-esc="company.city"/></t>
+                        <t t-if="company.state_id">, <span t-esc="company.state_id.name"/>,</t>
+                        <t t-if="company.zip"><span t-esc="company.zip"/></t>
+
+                    </div>
+                    <div t-if="company.country_id" t-esc="company.country_id.name"/>
+                    <div>
+                        Tel : <span t-esc="company.phone"/>
+                        Fax : <span t-esc="company.fax_new"/>
+                    </div>
+                    <div> Email : <span t-esc="company.email"/></div>
+                    <div>Website : <span t-esc="company.website"/></div>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <h1 class="text-center text-uppercase" style="margin:0 0 30px 0; font-size:22pt"><strong>RMA Job Card</strong></h1>
+
+                <!-- Sale Quotation Order Header -->
+                <div class="bbis-sale-quote-order-header clearfix" >
+                    <table>
+                        <tr>
+                            <th>Date</th><td class="colon-space">:</td>
+                            <td><span t-esc="datetime.datetime.now().strftime('%d/%m/%Y')"/></td>
+                        </tr>
+                        <tr>
+                            <th>Client/Company</th><td class="colon-space">:</td>
+                            <td><span t-field="doc.partner_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <th>Sale Order</th><td class="colon-space">:</td>
+                            <td><span t-if="doc.sale_order_ids" t-field="doc.sale_order_ids[0].name"/></td>
+                        </tr>
+                        <tr>
+                            <th>Sale Type</th><td class="colon-space">:</td>
+                            <td><span t-if="doc.sale_order_ids" t-field="doc.sale_order_ids[0].sale_type"/></td>
+                        </tr>
+                        <tr>
+                            <th>Device Location</th><td class="colon-space">:</td>
+                            <td><span t-field="doc.lot_placement"/></td>
+                        </tr>
+
+                    </table>
+                    <table>
+                        <tr>
+                            <td>
+                                <table style="float:right">
+                                    <tr>
+                                        <th class="text-right nowrap">RMA No.</th><td class="colon-space">:</td>
+                                        <td><span t-field="doc.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-right">Job Type</th><td class="colon-space">:</td>
+                                        <td><span t-field="doc.repair_job_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-right nowrap">Job Sub Type</th><td class="colon-space">:</td>
+                                        <td><span t-field="doc.service_sub_type"/></td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div><!-- End: Sale Quotation Order Header -->
+
+                <!-- Job Order Vehicle Details -->
+                <table class="bbis-job-card-vehicle-table-single">
+                    <tr>
+                        <th class="job-card-header-single" style="width:20%">Vehicle Description</th><td style="width:35%"><span t-field="doc.vehicle_id.vehicle_name"/></td>
+                        <th class="job-card-header-single" style="width:20%">VIN (Chassis) No.</th><td style="width:25%"><span t-field="doc.vehicle_id.chassis_no"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Model/Year</th><td><span t-field="doc.vehicle_id.model"/></td>
+                        <th class="job-card-header-single">Odometer</th><td> </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Reg No.</th><td><b>Old: </b><span t-field="doc.vehicle_id.name"/></td>
+                        <td colspan="2"><b>New: </b><span t-if="doc.repair_job_type == 're_installation'" t-field="doc.vechicle_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Device Type</th><td colspan="3"><span t-field="doc.product_id"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Device Serial</th><td><b>Old: </b><span t-field="doc.lot_id"/></td>
+                        <td colspan="2"><b>New: </b><span t-field="doc.return_lot_id"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Satellite IMEI No.</th><td><b>Old: </b><span t-field="doc.vehicle_id.satellite_imei_no"/></td>
+                        <td colspan="2"><b>New: </b><span t-field="doc.vechicle_id.satellite_imei_no"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">GSM No.</th><td><b>Old: </b><span t-field="doc.vehicle_id.gsm_no"/></td>
+                        <td colspan="2"><b>New: </b><span t-field="doc.vechicle_id.gsm_no"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">SIM Serial No.</th><td><b>Old: </b><span t-field="doc.vehicle_id.gsm_imei_no"/></td>
+                        <td colspan="2"><b>New: </b><span t-field="doc.vechicle_id.gsm_imei_no"/></td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Speed Input</th><td> </td>
+                        <td colspan="2">External CAN Bus Serial: </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Seat Belt</th><td> </td>
+                        <th class="job-card-header-single">Panic Button</th><td> </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">RPM</th><td> </td>
+                        <th class="job-card-header-single">Test Drive</th><td> </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Problem</th><td colspan="3"> </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Rectification</th><td colspan="3"> </td>
+                    </tr>
+                    <tr>
+                        <th class="job-card-header-single">Remarks</th><td colspan="3"> </td>
+                    </tr>
+                </table>
+
+                <!-- Job Order Footer Details -->
+                <table class="job-order-footer-details">
+                    <tr>
+                        <td>
+                            <span>Job done by: </span><span class="footer-underlines" t-field="doc.user_id"/>
+                            <br/><br/><br/>
+                            <span>I agree that all work has been performed to my satisfaction.</span>
+                        </td>
+                        <td>
+                            <span>Checked/Noted by: </span><span class="footer-underlines" /><br/>
+                        </td>
+                    </tr>
+                </table>
+                <table class="job-card-client-signature">
+                    <tr>
+                        <td>
+                            <strong>Client Signature: </strong><span class="footer-underlines"/>
+                        </td>
+                        <td>
+                            <strong>Date: </strong> <span class="footer-underlines"/>
+                        </td>
+                    </tr>
+                </table>
+                <!-- End: Job Order Footer Details -->
+            </div>
+        </div>
+
+        <div class="footer">
+            <t t-call="bbis_reports.bbis_custom_sale_footer"/>
+        </div>
+    </template>
+
+    <template id="job_card_rma">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="bbis_reports.job_card_rma_document"/>
+            </t>
+        </t>
+    </template><!-- End: Report Template -->
+
+</odoo>

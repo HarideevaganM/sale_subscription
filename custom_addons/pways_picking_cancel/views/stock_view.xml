@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_picking_move_cancel_picking" model="ir.ui.view">
+        <field name="name">stock.picking.move.cancel.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_cancel" string='Cancel' type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_form_inherit_pways_cancel_picking" model="ir.ui.view">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('state', 'not in',
+                    ('assigned', 'confirmed', 'partially_available', 'draft',
+                    'waiting',
+                    'done')),
+                    ('is_locked', '=', False)]}
+                </attribute>
+                <attribute name="groups">pways_picking_cancel.group_picking_cancel
+                </attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="btn_reset_to_draft" type="object"
+                    string="Reset to Draft" states="cancel"
+                    groups="pways_picking_cancel.group_picking_cancel"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_inventory_form_pways_cancel_picking" model="ir.ui.view">
+        <field name="name">stock.inventory.form</field>
+        <field name="model">stock.inventory</field>
+        <field name="inherit_id" ref="stock.view_inventory_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel_draft'][@states='confirm']"
+                position="attributes">
+                <attribute name="states"></attribute>
+                <attribute name="attrs">{'invisible': [('state', 'not in',
+                    ('done',
+                    'confirm'))]}
+                </attribute>
+                <attribute name="groups">pways_picking_cancel.group_picking_cancel
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_scrap_form_view_pways_cancel_picking" model="ir.ui.view">
+        <field name="name">stock.scrap.form</field>
+        <field name="model">stock.scrap</field>
+        <field name="inherit_id" ref="stock.stock_scrap_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <button name="btn_action_cancel" states="done" string="Cancel"
+                    type="object" groups="pways_picking_cancel.group_picking_cancel" />
+            </xpath>
+            <field name="product_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="scrap_qty" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="product_uom_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="lot_id" position="attributes">
+                <attribute name="attrs">{'invisible': [('tracking', '=', 'none')],
+                    'required': [('tracking', '!=', 'none')],
+                    'readonly': [('state', 'in',
+                    ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="package_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="owner_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="location_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="scrap_location_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done',
+                    'cancel'))]}
+                </attribute>
+            </field>
+            <field name="picking_id" position="attributes">
+                <attribute name="attrs">{'invisible': [('picking_id', '=', False)],
+                    'readonly': [('state', 'in', ('done', 'cancel'))]}
+                </attribute>
+            </field>
+        </field>
+    </record>
+</odoo>

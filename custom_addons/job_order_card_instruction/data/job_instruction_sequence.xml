@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+         <!-- Job Instruction Sequences-->
+        <record id="job_instruction_seq" model="ir.sequence">
+            <field name="name">Job Instruction Sequence</field>
+            <field name="code">job.instruction.seq</field>
+            <field name="prefix">INS/</field>
+            <field name="padding">4</field>
+        </record>
+
+    </data>
+</odoo>

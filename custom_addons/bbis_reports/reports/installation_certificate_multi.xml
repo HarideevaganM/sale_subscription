@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Report Setup -->
+    <report id="bbis_reports_installation_certificate_multi"
+        model="job.card"
+        string="Installation Certificates (BBIS)"
+        report_type="qweb-pdf"
+        file="bbis_reports.installation_certificate_multi"
+        name="bbis_reports.installation_certificate_multi"
+        paperformat="bbis_reports.bbis_report_paper_format_inst_cert"
+        print_report_name="(object.name)"
+        menu="False"
+    /><!-- End: End Report Setup -->
+
+    <!-- Report Template -->
+    <template id="installation_certificate_document_multi">
+        <div class="header">
+            <div class="text-center">
+                <img class="bbis-installation-cert-logo" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <h2 class="text-center text-uppercase" style="margin-bottom:70px; padding-top:70px"><strong>IVMS FITNESS CERTIFICATE</strong></h2>
+                <p style="font-size:13pt; margin:20px 0" class="text-center">This is to certify that <strong class="text-uppercase" t-field="doc.company_id"/> has completed the installation, configuration and calibration of below device<span t-if="len(certificates) > 1">s</span> on <strong t-field="doc.partner_id"/> vehicle<span t-if="len(certificates) > 1">s</span>, as follow<span t-if="len(certificates) > 1">s</span>:</p>
+                <table class="bbis-inst-cert-vehicle-table">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Vehicle Model</th>
+                        <th class="text-center">Vehicle Plate No.</th>
+                        <th class="text-center">Device</th>
+                        <th class="text-center">IVMS Device Serial No.</th>
+                        <th class="text-center">Installation Date</th>
+                    </tr>
+                    <t t-foreach="certificates" t-as="c">
+                        <tr>
+                            <td class="text-center"><span t-esc="c_index + 1"/></td>
+                            <td class="text-center"><span t-field="c.vehicle_number.vehicle_name"/></td>
+                            <td class="text-center"><span t-field="c.vehicle_number.name"/></td>
+                            <td class="text-center"><span t-field="c.device_id.name"/></td>
+                            <td class="text-center"><span t-field="c.serial_no"/></td>
+                            <td class="text-center"><span t-field="c.installation_date"/></td>
+                        </tr>
+                    </t>
+                </table>
+                <p style="font-size:13pt">This certificate is being issued upon the request of the above-named company.</p>
+                <p style="font-size:13pt">Issued on <span t-esc="time.strftime('%B %d, %Y')"/>.</p>
+
+                <table style="width:100%; margin-top:40px;">
+                    <tr>
+                        <td style="width:65%"> </td>
+                        <td class="bbis-inst-cert-signatory" style="font-size:13pt;">
+                            <img class="bbis-inst-cert-sign" src="/bbis_reports/static/src/img/marwan-signature.png" alt="Signature" height="150px"/>
+                            <strong t-field="doc.company_id"/><br/>
+                            Eng. Marwan Al Charbaji<br/>
+                            Operations Manager<br/>
+                            <img class="bbis-inst-cert-seal" t-att-src="'data:image/png;base64,%s' % to_text(doc.company_id.seal)" width="280px"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <div style="background:#000000; height:1px; margin-bottom:5px"/>
+            <ul class="list-inline bbis-footer-social-link-ul-inst-cert text-center">
+                <li>
+                    <img src="/bbis_reports/static/src/img/address.jpg" alt="Address" />
+                    <span>Tamouh Tower, 22-C1, Marina Square, Al Reem Island, Abu Dhabi, UAE - P.O. Box 39366</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/phone.jpg" alt="Phone" />
+                    <span>+971 2 643 6640</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/fax.jpg" alt="Fax" />
+                    <span>+971 2 643 6642</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/email.jpg" alt="Email" />
+                    <span>blackbox@fms-tech.com</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/web.jpg" alt="Email" />
+                    <span>www.fms-tech.com</span>
+                </li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="installation_certificate_multi">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.installation_certificate_document_multi" />
+        </t>
+    </template>
+
+    <!-- Renewal certificate multi -->
+    <template id="renewal_certificate_document_multi">
+        <div class="header">
+            <div class="text-center">
+                <img class="bbis-installation-cert-logo" src="/bbis_reports/static/src/img/blackbox-logo.svg" alt="Logo"/>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <div class="page">
+                <h2 class="text-center text-uppercase" style="margin-bottom:70px; padding-top:70px"><strong>IVMS FITNESS CERTIFICATE</strong></h2>
+                <p style="font-size:13pt; margin:20px 0" class="text-center">This is to certify that <strong class="text-uppercase" t-field="docs[0].company_id"/> has completed the installation, configuration and calibration of below device<span t-if="len(docs) > 1">s</span> on <strong t-field="docs[0].partner_id"/> vehicle<span t-if="len(docs) > 1">s</span>, as follow<span t-if="len(docs) > 1">s</span>:</p>
+                <table class="bbis-inst-cert-vehicle-table">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Vehicle Model</th>
+                        <th class="text-center">Vehicle Plate No.</th>
+                        <th class="text-center">Device</th>
+                        <th class="text-center">IVMS Device Serial No.</th>
+                        <th class="text-center">Installation Date</th>
+                    </tr>
+                    <t t-foreach="docs" t-as="c">
+                        <tr>
+                            <td class="text-center"><span t-esc="c_index + 1"/></td>
+                            <td class="text-center"><span t-field="c.vehicle_number.vehicle_name"/></td>
+                            <td class="text-center"><span t-field="c.vehicle_number.name"/></td>
+                            <td class="text-center"><span t-field="c.device_id.name"/></td>
+                            <td class="text-center"><span t-field="c.serial_no"/></td>
+<!--                            <td class="text-center"><span t-field="c.installation_date"/></td>-->
+                            <t t-if="c.rma_closed_date">
+                                <td class="text-center"><span t-field="c.rma_closed_date"/></td>
+                            </t>
+                            <t t-else="">
+                                <td class="text-center"><span t-field="c.installation_date"/></td>
+                            </t>
+                        </tr>
+                    </t>
+                </table>
+                <p style="font-size:13pt">This certificate is being issued upon the request of the above-named company.</p>
+                <p style="font-size:13pt">Issued on <span t-esc="time.strftime('%B %d, %Y')"/>.</p>
+
+                <table style="width:100%; margin-top:40px;">
+                    <tr>
+                        <td style="width:65%"> </td>
+                        <td class="bbis-inst-cert-signatory" style="font-size:13pt;">
+                            <img class="bbis-inst-cert-sign" src="/bbis_reports/static/src/img/marwan-signature.png" alt="Signature" height="150px"/>
+                            <strong t-field="docs[0].company_id"/><br/>
+                            Eng. Marwan Al Charbaji<br/>
+                            Operations Manager<br/>
+                            <img class="bbis-inst-cert-seal" t-att-src="'data:image/png;base64,%s' % to_text(docs[0].company_id.seal)" width="280px"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <div style="background:#000000; height:1px; margin-bottom:5px"/>
+            <ul class="list-inline bbis-footer-social-link-ul-inst-cert text-center">
+                <li>
+                    <img src="/bbis_reports/static/src/img/address.jpg" alt="Address" />
+                    <span>Tamouh Tower, 22-C1, Marina Square, Al Reem Island, Abu Dhabi, UAE - P.O. Box 39366</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/phone.jpg" alt="Phone" />
+                    <span>+971 2 643 6640</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/fax.jpg" alt="Fax" />
+                    <span>+971 2 643 6642</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/email.jpg" alt="Email" />
+                    <span>blackbox@fms-tech.com</span>
+                </li>
+                <li>
+                    <img src="/bbis_reports/static/src/img/web.jpg" alt="Email" />
+                    <span>www.fms-tech.com</span>
+                </li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="renewal_certificate_multi">
+        <t t-call="web.html_container">
+            <t t-call="bbis_reports.renewal_certificate_document_multi" />
+        </t>
+    </template>
+
+    <!-- End: Report Template -->
+</odoo>

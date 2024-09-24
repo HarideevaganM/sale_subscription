@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bbis_purchase_order_form_inherit" model="ir.ui.view">
+            <field name="name">bbis.purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form" />
+            <field name="arch" type="xml">
+                <field name="invoice_status" position="replace">
+                    <label for="invoice_status"/>
+                    <div name="invoice_status">
+                        <div class="o_row">
+                            <field name="invoice_status"/>
+                            <button string="Update Status" states="purchase,done" groups="account.group_account_manager,base.group_erp_manager" type="object" name="update_invoice_status" class="oe_link oe_read_only" colspan="2"/>
+                        </div>
+                    </div>
+                    <field name="invoice_status_change" groups="base.group_no_one"/>
+                </field>
+
+                <field name="partner_id" position="after">
+                    <field name="partner_child_ids" invisible="1"/>
+                    <field name="contact_person" domain="[('id', 'in', partner_child_ids)]" context="{'default_parent_id': partner_id}"/>
+                </field>
+
+                <!-- Add the discount and discount fix column in purchase order.-->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                    <field name="discount_fix"/>
+                    <field name="discount"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="bbis_purchase_order_form_inherit1" model="ir.ui.view">
+            <field name="name">bbis.purchase.order.form.inherit1</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="fms_sale.purchase_order_inherit" />
+            <field name="arch" type="xml">
+                <!-- rename warenty to warranty -->
+                <field name="warenty" position="attributes">
+                    <attribute name="string">Warranty</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="hr_default_email_footer">
+            <br/><br/>
+            <p>Thank You,</p>
+            <p style="margin:0; color:#F05A29"><b>Black Box Integrated Systems LLC</b></p>
+            <p style="color: #808080; margin:0;"><small>This is a system generated mail. No need of sending replies.</small></p>
+        </template>
+
+        <template id="message_outside_expense">
+            <div style="font-family:Arial; font-size: 14px;">
+                <p>Dear <t t-esc="next_approve"/>,</p>
+                <p>You have been assigned to the approval of Expense Entry submitted by <t t-esc="object.user_id.name"/>.</p>
+                <p style="line-height:1.2;">
+                    Date : <b t-esc="object.date"/><br/>
+                    Reason : <b t-esc="object.name"/><br/>
+                    Total Amount : <b t-esc="object.total_amount"/>
+                </p>
+                <br/>
+                <p style="margin:0">
+                    <a href="/web#id=${object.id}&amp;view_type=form&amp;model=hr.expense"
+                    style="background-color: #2c286c; border: 10px solid #2c286c; text-decoration: none; color: #fff; font-size: 14px;">
+                    View Expense</a>
+                </p>
+                <t t-call="bbis_hr.hr_default_email_footer"/>
+            </div>
+        </template>
+
+        <template id="mail_expense_refused">
+            <div style="font-family:Arial; font-size: 14px;">
+                <p>Dear <t t-esc="next_approve"/>,</p>
+                <t t-if="mail_to == 'hr'">
+                    <p>This is to notify you that the Expense Request of <t t-esc="object.employee_id.name"/> has been refused by Accounts Department.</p>
+                </t>
+                <t t-else="">
+                    <p>Sorry, your expense request has been refused by Accounts Department.</p>
+                </t>
+                <p>Reason: <b t-esc="reason"/></p>
+                <br/>
+                <p style="margin:0">
+                    <a href="/web#id=${object.id}&amp;view_type=form&amp;model=hr.expense"
+                    style="background-color: #2c286c; border: 10px solid #2c286c; text-decoration: none; color: #fff; font-size: 14px;">
+                    View Expense</a>
+                </p>
+                <t t-call="bbis_hr.hr_default_email_footer"/>
+            </div>
+        </template>
+
+        <template id="message_outside_work">
+            <div style="font-family:Arial; font-size: 14px;">
+                <p>Dear <t t-esc="next_approve"/>,</p>
+                <p t-if="object.state != 'approve'">You have been assigned to the approval of Outside Work Request submitted by <t t-esc="object.user_id.sudo().name"/>.</p>
+                <p t-else="">
+                    <span t-if="object._context.get('send_hr_assistant')">
+                        This is to notify you that an outside work request has been approved.
+                    </span>
+                    <span t-else="">
+                        Congratulations! Your outside work request has been approved.
+                    </span>
+                </p>
+                <p style="line-height:1.2;">
+                   From Date : <b t-esc="object.from_date"/><br/>
+                   To Date : <b t-esc="object.to_date"/><br/>
+                   No:Of Days : <b t-esc="object.no_of_days"/><br/>
+                   Reason : <b t-esc="object.reason_work_from_home"/>
+                </p>
+                <br/>
+                <p style="margin:0">
+                    <a href="/web#id=${object.id}&amp;view_type=form&amp;model=hr.work.outside"
+                    style="background-color: #2c286c; border: 10px solid #2c286c; text-decoration: none; color: #fff; font-size: 14px;">
+                    View Work Request</a>
+                </p>
+                <t t-call="bbis_hr.hr_default_email_footer"/>
+            </div>
+        </template>
+
+    </data>
+</odoo>

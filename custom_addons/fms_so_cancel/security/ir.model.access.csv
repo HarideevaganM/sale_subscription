@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_advance_cancel_inv_group_sale_salesman,sale_advance_cancel_inv_group_sale_salesman,model_sale_advance_cancel_inv,sales_team.group_sale_salesman,1,1,1,0

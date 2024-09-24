@@ -1,0 +1,76 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="wizard_with_step_form">
+            <field name="name">wizard_with_step.form</field>
+            <field name="model">all.asset.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Asset Report">
+                    <group>
+                        <field name="name"/>
+                        <field name="xls_output" colspan="2"/>
+                    </group>
+
+                    <footer>
+						<button name="print_report" string="Print" type="object" class="oe_highlight" />
+						or
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+
+                </form>
+            </field>
+
+        </record>
+
+
+        <record id="action_all_asset_report" model="ir.actions.act_window">
+			<field name="name">Asset Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">all.asset.report</field>
+			<!--          <field name="view_type">form</field>-->
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+        <menuitem name="Asset Report" id="asset_report_menu" parent="IT_report_menu_root" groups="base.group_user" sequence="10"
+        action="action_all_asset_report" icon="STOCK_PRINT"/>
+
+
+
+        <record model="ir.ui.view" id="wizard_with_step_form2">
+            <field name="name">wizard_with_step.form</field>
+            <field name="model">allocated.asset.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Allocated Asset Report">
+                    <group>
+                        <field name="name"/>
+                        <field name="xls_output" colspan="2"/>
+                    </group>
+
+                    <footer>
+						<button name="allocated_print_report" string="Print" type="object" class="oe_highlight" />
+						or
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+
+                </form>
+            </field>
+
+        </record>
+
+
+        <record id="action_allocated_asset_report" model="ir.actions.act_window">
+			<field name="name">Asset Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">allocated.asset.report</field>
+			<!--          <field name="view_type">form</field>-->
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+        <menuitem name="Allocated Asset Report" id="allocated_asset_report_menu" parent="IT_report_menu_root" groups="base.group_user" sequence="10"
+        action="action_allocated_asset_report" icon="STOCK_PRINT"/>
+
+    </data>
+</odoo>

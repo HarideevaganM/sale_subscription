@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--INHERITED ACCOUNT INVOICE FORM TO HIDE PRINT AND SEND BY EMAIL BUTTONS-->
+
+    <record id="account_invoice_form_inherit_itc" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.itc</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[4]" position="after">
+                <page string="ITC Permit Details">
+                    <field name="itc_permit_ids" widget="one2many_list">
+                        <tree create="false" editable="false">
+                            <field name="request_number"/>
+                            <field name="permit_id"/>
+                            <field name="partner_id"/>
+                            <field name="vehicle_no"/>
+                            <field name="permit_start_date"/>
+                            <field name="permit_end_date"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

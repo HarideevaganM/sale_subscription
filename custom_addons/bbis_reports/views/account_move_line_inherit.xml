@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+        <!-- Add search filter for Account Move Line -->
+        <record model="ir.ui.view" id="bbis_account_move_line_search_view">
+            <field name="name">bbis.account.move.line.search</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='posted']" position="after">
+                    <separator/>
+                    <filter string="Operating Income" domain="[('user_type_id', '=', 14)]" help="Operating Income" name="operating_income"/>
+                    <filter string="Other Income" domain="[('user_type_id', '=', 13)]" help="Other Income" name="other_income"/>
+                    <filter string="Cost of Revenue" domain="[('user_type_id', '=', 17)]" help="Cost of Revenue" name="cost_of_revenue"/>
+                    <filter string="Expenses" domain="[('user_type_id', '=', 16)]" help="Expenses" name="expenses"/>
+                    <filter string="Depreciation" domain="[('user_type_id', '=', 15)]" help="Depreciation" name="depreciation"/>
+                    <separator/>
+                    <filter string="Unit Device" domain="[('product_category', '=', 'Unit Device')]" help="Unit Device" name="unit_device"/>
+                    <separator/>
+                    <filter string="This Month" name="this_month" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <filter string="Last Month" name="last_month" domain="['&amp;', ('date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-01')), ('date', '&lt;', context_today().strftime('%%Y-%%m-01'))]"/>
+                    <separator/>
+                    <filter string="This Year" name="this_year" domain="[('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                    <filter string="Last Year" name="last_year" domain="['&amp;', ('date', '&gt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-01-01')), ('date', '&lt;=', (context_today() - relativedelta(years=1)).strftime('%%Y-12-31'))]"/>
+                    <separator/>
+                    <filter string="Collections" domain="[('journal_id.name', 'in', ('Tax Invoices','Cash Invoice','Cash'))]" help="Collections" name="collections"/>
+                </xpath>
+                <xpath expr="//group" position="inside">
+                    <filter string="Product" context="{'group_by':'product_id'}"/>
+                    <filter string="Product Category" context="{'group_by':'product_category'}"/>
+                    <filter string="Account Type" context="{'group_by':'user_type_id'}"/>
+                    <filter string="Account Group" context="{'group_by':'group_id'}"/>
+                    <filter string="Account > Product Category" context="{'group_by':['account_id', 'product_category']}"/>
+                    <filter string="Account Type > Date" context="{'group_by':['user_type_id','date']}"/>
+                    <filter string="Account Type > Account" context="{'group_by':['user_type_id','account_id']}"/>
+                    <filter string="Account Type > Group > Account" name="type_group_account" context="{'group_by':['user_type_id', 'group_id', 'account_id']}"/>
+                    <filter string="Product Category > Product > Partner" name="prod_type_prod_partner" context="{'group_by':['product_category', 'product_id', 'partner_id']}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

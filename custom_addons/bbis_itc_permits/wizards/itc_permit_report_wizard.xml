@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--Wizard for ITC Permit Report.-->
+        <record id="bbis_itc_permit_reports" model="ir.ui.view">
+            <field name="name">Print Vehicle ITC Permit Reports</field>
+            <field name="model">itc.permit.report.wizard</field>
+            <field name="arch" type="xml">
+            <form string="Print Vehicle ITC Permit Reports">
+                <group>
+                    <group>
+                        <field name="report_type"/>
+                        <field name="smart_mobility_data" attrs="{'invisible': [('report_type', '!=', 'odoo_sm_comparison')]}"/>
+                    </group>
+                </group>
+                <group attrs="{'invisible': [('report_type', '=', 'odoo_sm_comparison')]}">
+                    <group>
+                        <field name="date_based" attrs="{'invisible': [('report_type', '=', 'so_itc')]}"/>
+                        <field name="start_date"/>
+                    </group>
+                    <group>
+                        <field name="partner_id" attrs="{'invisible': [('report_type', '=', 'so_itc')]}"/>
+                        <field name="end_date"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Export to Excel" name="print_xlsx_report" type="object" class="btn-primary"/>
+                    <!--<button string='Print SO with ITC' name="print_so_itc_orders" type="object" class="btn-primary"
+                            attrs="{'invisible': [('report_type', '=', 'itc_permit')]}"/>-->
+                    <button string="Close" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_itc_permit_report" model="ir.actions.act_window">
+            <field name="name">ITC Permit Report</field>
+            <field name="res_model">itc.permit.report.wizard</field>
+            <!--          <field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="bbis_itc_permit_reports"/>
+        </record>
+
+
+        <menuitem name="ITC Permit Report"
+              action="action_itc_permit_report"
+              id="menu_itc_permit_report"
+              parent="sale_subscription.menu_report_product_all" sequence="2"/>
+
+    </data>
+</odoo>
