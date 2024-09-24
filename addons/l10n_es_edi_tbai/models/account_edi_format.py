@@ -10,8 +10,8 @@ from uuid import uuid4
 from markupsafe import Markup, escape
 
 import requests
-# from cryptography.hazmat.primitives import hashes, serialization
-# from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.x509.oid import NameOID
 from lxml import etree
 from pytz import timezone
 from requests.exceptions import RequestException

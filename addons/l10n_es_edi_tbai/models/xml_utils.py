@@ -5,8 +5,8 @@ import hashlib
 import re
 from base64 import b64encode, encodebytes
 
-# from cryptography.hazmat.primitives import hashes
-# from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 from lxml import etree
 from odoo.tools.xml_utils import cleanup_xml_node
 

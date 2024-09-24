@@ -4,8 +4,8 @@
 from base64 import b64decode
 from pytz import timezone
 from datetime import datetime
-# from cryptography.hazmat.backends import default_backend
-# from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, pkcs12
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, pkcs12
 
 
 from odoo import _, api, fields, models, tools

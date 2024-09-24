@@ -5,11 +5,11 @@ from lxml import etree
 from datetime import date, datetime
 from odoo import models, fields, _, api
 from odoo.exceptions import UserError
-# from cryptography.hazmat.primitives.serialization import load_pem_private_key
-# from cryptography.hazmat.primitives.asymmetric.ec import ECDSA
-# from cryptography.hazmat.primitives import hashes
-# from cryptography.hazmat.backends import default_backend
-# from cryptography.x509 import load_der_x509_certificate
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.asymmetric.ec import ECDSA
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_der_x509_certificate
 
 
 class AccountEdiFormat(models.Model):

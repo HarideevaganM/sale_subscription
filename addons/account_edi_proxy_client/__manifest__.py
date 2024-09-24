@@ -13,7 +13,7 @@ Odoo database.
     'category': 'Accounting/Accounting',
     'depends': ['account_edi'],
     'external_dependencies': {
-        # 'python': ['cryptography']
+        'python': ['cryptography']
     },
     'data': [
         'security/ir.model.access.csv',

@@ -6,9 +6,9 @@ from odoo.tools import float_repr
 from datetime import datetime
 from base64 import b64decode, b64encode
 from lxml import etree
-# from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-# from cryptography.hazmat.backends import default_backend
-# from cryptography.x509 import load_der_x509_certificate
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_der_x509_certificate
 
 
 class AccountMove(models.Model):
