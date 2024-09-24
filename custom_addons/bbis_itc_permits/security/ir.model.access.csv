@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_itc_permit_team,bbis_itc_permits.itc_permit,model_itc_permit,base.group_user,1,0,0,0
-access_itc_permit,bbis_itc_permits.itc_permit,model_itc_permit,bbis_itc_permits.group_itc_permit_users,1,1,1,1
-access_itc_permit_sales_team,bbis_itc_permits_sales_team,model_itc_permit,sales_team.group_sale_salesman,1,0,1,0
-access_itc_permit_wizard,bbis_itc_permits.itc_permit_wizard,model_itc_permit_wizard,bbis_itc_permits.group_itc_permit_users,1,1,1,1
-access_invoice_itc,bbis_invoice_itc,model_invoice_itc_details,base.group_user,1,1,1,1

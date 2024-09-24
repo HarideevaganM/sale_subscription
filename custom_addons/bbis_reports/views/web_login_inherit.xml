@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<odoo>
-    <!-- No need for this because you can disable reset password directly in Settings -> Users -> Reset Password -->
-    <template id="bbs_remove_web_login_reset_pwd" inherit_id="auth_signup.login" name="Remove Reset Password">
-        <xpath expr="//a[@t-if='reset_password_enabled']" position="replace"/>
-    </template>
-</odoo>

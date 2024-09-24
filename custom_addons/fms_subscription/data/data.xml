@@ -1,9 +1,0 @@
-<odoo>
-
-<!--    <record id="sale_subscription_stage_in_hold" model="sale.subscription.stage">-->
-<!--        <field name="name">Hold</field>-->
-<!--        <field name="category">hold</field>-->
-<!--        <field name="sequence">45</field>-->
-<!--    </record>-->
-
-</odoo>

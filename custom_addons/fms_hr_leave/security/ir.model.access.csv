@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_fms_hr_leave_fms_hr_leave,fms_hr_leave.fms_hr_leave,model_fms_hr_leave_fms_hr_leave,,1,0,0,0
